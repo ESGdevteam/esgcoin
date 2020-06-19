@@ -4,36 +4,34 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>burstcoin</groupId>
-  <artifactId>burstcoin</artifactId>
-  <version>2.5.1</version>
-  <name>Burstcoin Reference Software</name>
-  <url>https://github.com/burst-apps-team/burstcoin</url>
+  <groupId>amazonascoin</groupId>
+  <artifactId>amazonascoin</artifactId>
+  <version>2.4.2</version>
+  <name>Amazonascoin Reference Software</name>
+  <url>https://github.com/AmzDevelopmentTeam/amazonascoin</url>
 
   <scm>
-    <connection>scm:git:git@github.com:burst-apps-team/burstcoin.git</connection>
-    <developerConnection>scm:git:git@github.com:burst-apps-team/burstcoin.git</developerConnection>
-    <url>https://github.com/burst-apps-team/burstcoin</url>
+    <connection>scm:git:git@github.com:AmzDevelopmentTeam/amazonascoin.git</connection>
+    <developerConnection>scm:git:git@github.com:AmzDevelopmentTeam/amazonascoin.git</developerConnection>
+    <url>https://github.com/AmzDevelopmentTeam/amazonascoin</url>
   </scm>
 
   <packaging>jar</packaging>
 
   <properties>
-    <versionQualifier></versionQualifier>
     <bcprov-jdk15on.version>1.62</bcprov-jdk15on.version>
-    <burstkit4j.version>v0.12.2</burstkit4j.version>
-    <rxjava.version>2.2.12</rxjava.version>
+    <amzkit4j.version>0.15.2</amzkit4j.version>
+    <rxjava.version>2.2.11</rxjava.version>
     <ehcache.version>3.8.0</ehcache.version>
     <flywaydb.version>5.2.4</flywaydb.version>
-    <grpc.version>1.23.0</grpc.version>
+    <grpc.version>1.22.1</grpc.version>
     <gson.version>2.8.5</gson.version>
     <h2.version>1.4.199</h2.version>
-    <cli.version>1.4</cli.version>
     <hikaricp.version>3.3.1</hikaricp.version>
     <java.version>1.8</java.version>
-    <jetty.version>9.4.20.v20190813</jetty.version>
+    <jetty.version>9.4.19.v20190610</jetty.version>
     <jocl.version>2.0.1</jocl.version>
-    <jooq.version>3.12.1</jooq.version>
+    <jooq.version>3.11.11</jooq.version>
     <mariadb.version>2.4.3</mariadb.version>
     <owasp.version>1.2.2</owasp.version>
     <slf4j.version>1.7.28</slf4j.version>
@@ -47,10 +45,7 @@
     <powermock.version>2.0.2</powermock.version>
     <apachehttpclient.version>4.5.9</apachehttpclient.version>
     <jacoco.version>0.8.4</jacoco.version>
-    <jiconfont.version>1.0.0</jiconfont.version>
-    <font_awesome.version>4.7.0.1</font_awesome.version>
-    <darklaf.version>1.4.3.1</darklaf.version>
-    
+
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
 
@@ -71,9 +66,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.github.burst-apps-team</groupId>
-      <artifactId>burstkit4j</artifactId>
-      <version>${burstkit4j.version}</version>
+      <groupId>com.github.AmzDevelopmentTeam</groupId>
+      <artifactId>amzkit4j</artifactId>
+      <version>${amzkit4j.version}</version>
     </dependency>
 
     <dependency>
@@ -165,12 +160,6 @@
       <groupId>com.google.zxing</groupId>
       <artifactId>javase</artifactId>
       <version>${xzing.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>${cli.version}</version>
     </dependency>
 
     <dependency>
@@ -296,24 +285,6 @@
     </dependency>
 
     <dependency>
-      <groupId>com.github.jiconfont</groupId>
-      <artifactId>jiconfont-swing</artifactId>
-      <version>${jiconfont.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.github.jiconfont</groupId>
-      <artifactId>jiconfont-font_awesome</artifactId>
-      <version>${font_awesome.version}</version>
-    </dependency>
-    
-	<dependency>
-		<groupId>com.github.weisj</groupId>
-		<artifactId>darklaf-core</artifactId>
-		<version>${darklaf.version}</version>
-	</dependency>
-
-    <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
       <version>${apachehttpclient.version}</version>
@@ -326,7 +297,7 @@
       <id>protoc</id>
       <build>
         <plugins>
-	        <plugin>
+          <plugin>
             <groupId>org.xolstice.maven.plugins</groupId>
             <artifactId>protobuf-maven-plugin</artifactId>
             <version>0.6.1</version>
@@ -360,7 +331,7 @@
             <version>3.8.1</version>
             <configuration>
               <excludes>
-                <exclude>brs/BurstGUI.java</exclude>
+                <exclude>brs/AmzGUI.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -388,6 +359,7 @@
     </extensions>
 
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -399,7 +371,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>brs.BurstLauncher</mainClass>
+              <mainClass>brs.AmzLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -414,44 +386,6 @@
           </execution>
         </executions>
       </plugin>
-
-        <plugin>
-          <groupId>com.akathist.maven.plugins.launch4j</groupId>
-          <artifactId>launch4j-maven-plugin</artifactId>
-          <version>1.7.25</version>
-          <executions>
-            <execution>
-              <id>l4j-clui</id>
-              <phase>package</phase>
-              <goals><goal>launch4j</goal></goals>
-              <configuration>
-                <headerType>gui</headerType>
-                <outfile>target/burst.exe</outfile>
-                <dontWrapJar>true</dontWrapJar>
-                <downloadUrl>https://www.java.com/en/download/manual.jsp</downloadUrl>
-                <errTitle>Burst Reference Software</errTitle>
-                <icon>resources/images/burst_overlay_logo.ico</icon>
-                <jar>burst.jar</jar>
-                <jre>
-                  <minVersion>1.8.0</minVersion>
-                  <runtimeBits>64</runtimeBits>
-                </jre>
-                <versionInfo>
-                  <fileVersion>${project.version}.0</fileVersion>
-                  <txtFileVersion>${project.version}${versionQualifier}</txtFileVersion>
-                  <fileDescription>Burst Reference Software</fileDescription>
-                  <copyright>Burstcoin Apps Team</copyright>
-                  <productVersion>${project.version}.0</productVersion>
-                  <txtProductVersion>${project.version}${versionQualifier}</txtProductVersion>
-                  <productName>BRS</productName>
-                  <internalName>BRS</internalName>
-                  <originalFilename>burst.exe</originalFilename>
-                </versionInfo>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
-
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -470,7 +404,7 @@
                 <delete dir="${project.basedir}/dist"/>
                 <mkdir dir="${project.basedir}/dist"/>
                 <mkdir dir="${project.basedir}/dist/tmp"/>
-                <mkdir dir="${project.basedir}/dist/tmp/burst_db"/>
+                <mkdir dir="${project.basedir}/dist/tmp/amz_db"/>
               </target>
             </configuration>
           </execution>
@@ -484,7 +418,7 @@
               <target>
                 <!-- copy jar -->
                 <copy file="${project.basedir}/target/${project.build.finalName}-jar-with-dependencies.jar"
-                  tofile="${project.basedir}/dist/tmp/burst.jar"/>
+                  tofile="${project.basedir}/dist/tmp/amz.jar"/>
 
                 <!-- copy html dir -->
                 <copy todir="${project.basedir}/dist/tmp/html">
@@ -501,26 +435,24 @@
                 <!-- copy remaining files from root dir -->
                 <copy todir="${project.basedir}/dist/tmp">
                   <fileset dir="${project.basedir}">
-                  <!-- TODO: deprecated files
-                    <include name="Burst_Wallet.url"/>
+                    <include name="Amz_Wallet.url"/>
                     <include name="genscoop.cl"/>
                     <include name="init-mysql.sql"/>
-                    <include name="burst.sh"/>
-                    -->
                     <include name="LICENSE.txt"/>
                     <include name="README.md"/>
                     <include name="README_refactoring.md"/>
-                    <include name="burst.exe"/>
+                    <include name="amz.cmd"/>
+                    <include name="amz.sh"/>
                   </fileset>
                 </copy>
 
-                <!-- workaround to keep org. burst.(sh|cmd) working, if build with compile scripts
-                <copy file="${project.basedir}/burst.sh"
-                      tofile="${project.basedir}/dist/tmp/burst.sh"/> -->
-                <copy file="${project.basedir}/target/burst.exe"
-                  tofile="${project.basedir}/dist/tmp/burst.exe"/>
+                <!-- workaround to keep org. amz.(sh|cmd) working, if build with compile scripts -->
+                <copy file="${project.basedir}/amz.sh"
+                      tofile="${project.basedir}/dist/tmp/amz.sh"/>
+                <copy file="${project.basedir}/amz.cmd"
+                  tofile="${project.basedir}/dist/tmp/amz.cmd"/>
                 <!-- create zip file -->
-                <zip destfile="${project.basedir}/dist/${project.build.finalName}${versionQualifier}.zip"
+                <zip destfile="${project.basedir}/dist/${project.build.finalName}.zip"
                      basedir="${project.basedir}/dist/tmp"/>
               </target>
             </configuration>
@@ -557,7 +489,7 @@
         <configuration>
           <jdbc>
             <driver>org.mariadb.jdbc.Driver</driver>
-            <url>jdbc:mysql://localhost:3306/burstwallet</url>
+            <url>jdbc:mysql://localhost:3306/amzwallet</url>
             <user>root</user>
             <password />
           </jdbc>
@@ -565,7 +497,7 @@
             <name>org.jooq.codegen.JavaGenerator</name>
             <database>
               <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
-              <inputSchema>burstwallet</inputSchema>
+              <inputSchema>amzwallet</inputSchema>
               <outputSchema>DB</outputSchema>
               <includes>.*</includes>
               <excludes />

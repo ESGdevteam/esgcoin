@@ -19,8 +19,8 @@ import static brs.schema.Tables.TRANSACTION;
 
 public class SqlBlockchainStore implements BlockchainStore {
 
-  private final TransactionDb transactionDb = Burst.getDbs().getTransactionDb();
-  private final BlockDb blockDb = Burst.getDbs().getBlockDb();
+  private final TransactionDb transactionDb = Amz.getDbs().getTransactionDb();
+  private final BlockDb blockDb = Amz.getDbs().getBlockDb();
   private final IndirectIncomingStore indirectIncomingStore;
 
   public SqlBlockchainStore(IndirectIncomingStore indirectIncomingStore) {
@@ -30,7 +30,7 @@ public class SqlBlockchainStore implements BlockchainStore {
   @Override
   public Collection<Block> getBlocks(int from, int to) {
     return Db.useDSLContext(ctx -> {
-      int blockchainHeight = Burst.getBlockchain().getHeight();
+      int blockchainHeight = Amz.getBlockchain().getHeight();
       return
         getBlocks(ctx.selectFrom(BLOCK)
                 .where(BLOCK.HEIGHT.between(to > 0 ? blockchainHeight - to : 0).and(blockchainHeight - Math.max(from, 0)))
@@ -55,7 +55,7 @@ public class SqlBlockchainStore implements BlockchainStore {
     return blockRecords.map(blockRecord -> {
       try {
         return blockDb.loadBlock(blockRecord);
-      } catch (BurstException.ValidationException e) {
+      } catch (AmzException.ValidationException e) {
         throw new RuntimeException(e);
       }
     });
@@ -90,7 +90,7 @@ public class SqlBlockchainStore implements BlockchainStore {
               .fetch(result -> {
                 try {
                   return blockDb.loadBlock(result);
-                } catch (BurstException.ValidationException e) {
+                } catch (AmzException.ValidationException e) {
                   throw new RuntimeException(e.toString(), e);
                 }
               });
@@ -114,9 +114,9 @@ public class SqlBlockchainStore implements BlockchainStore {
 
   @Override
   public Collection<Transaction> getTransactions(Account account, int numberOfConfirmations, byte type, byte subtype, int blockTimestamp, int from, int to, boolean includeIndirectIncoming) {
-    int height = numberOfConfirmations > 0 ? Burst.getBlockchain().getHeight() - numberOfConfirmations : Integer.MAX_VALUE;
+    int height = numberOfConfirmations > 0 ? Amz.getBlockchain().getHeight() - numberOfConfirmations : Integer.MAX_VALUE;
     if (height < 0) {
-      throw new IllegalArgumentException("Number of confirmations required " + numberOfConfirmations + " exceeds current blockchain height " + Burst.getBlockchain().getHeight());
+      throw new IllegalArgumentException("Number of confirmations required " + numberOfConfirmations + " exceeds current blockchain height " + Amz.getBlockchain().getHeight());
     }
     return Db.useDSLContext(ctx -> {
       ArrayList<Condition> conditions = new ArrayList<>();
@@ -164,7 +164,7 @@ public class SqlBlockchainStore implements BlockchainStore {
     return rs.map(r -> {
       try {
         return transactionDb.loadTransaction(r);
-      } catch (BurstException.ValidationException e) {
+      } catch (AmzException.ValidationException e) {
         throw new RuntimeException(e);
       }
     });

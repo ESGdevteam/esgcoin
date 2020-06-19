@@ -1,6 +1,6 @@
 package brs.at;
 
-import brs.Burst;
+import brs.Amz;
 import brs.Constants;
 import brs.fluxcapacitor.FluxValues;
 
@@ -30,11 +30,11 @@ public class AtConstants {
     private AtConstants() {
         // constants for AT version 1
         MIN_FEE.put((short) 1, 1000L);
-        STEP_FEE.put((short) 1, Constants.ONE_BURST / 10L);
+        STEP_FEE.put((short) 1, Constants.ONE_AMZ / 10L);
         MAX_STEPS.put((short) 1, 2000L);
         API_STEP_MULTIPLIER.put((short) 1, 10L);
 
-        COST_PER_PAGE.put((short) 1, Constants.ONE_BURST);
+        COST_PER_PAGE.put((short) 1, Constants.ONE_AMZ);
 
         MAX_WAIT_FOR_NUM_OF_BLOCKS.put((short) 1, 31536000L);
         MAX_SLEEP_BETWEEN_BLOCKS.put((short) 1, 31536000L);
@@ -47,7 +47,7 @@ public class AtConstants {
         MAX_MACHINE_CALL_STACK_PAGES.put((short) 1, 10L);
 
         BLOCKS_FOR_RANDOM.put((short) 1, 15L); //for testing 2 -> normally 1440
-        MAX_PAYLOAD_FOR_BLOCK.put((short) 1, (Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)) / 2L); //use at max half size of the block.
+        MAX_PAYLOAD_FOR_BLOCK.put((short) 1, (Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)) / 2L); //use at max half size of the block.
         AVERAGE_BLOCK_MINUTES.put((short) 1, 4L);
         // end of AT version 1
 
@@ -64,13 +64,13 @@ public class AtConstants {
 
         PAGE_SIZE.put((short) 2, 256L);
 
-        MAX_MACHINE_CODE_PAGES.put((short) 2, 20L);
+        MAX_MACHINE_CODE_PAGES.put((short) 2, 10L);
         MAX_MACHINE_DATA_PAGES.put((short) 2, 10L);
         MAX_MACHINE_USER_STACK_PAGES.put((short) 2, 10L);
         MAX_MACHINE_CALL_STACK_PAGES.put((short) 2, 10L);
 
         BLOCKS_FOR_RANDOM.put((short) 2, 15L); //for testing 2 -> normally 1440
-        MAX_PAYLOAD_FOR_BLOCK.put((short) 2, (Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)) / 2L); //use at max half size of the block.
+        MAX_PAYLOAD_FOR_BLOCK.put((short) 2, (Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)) / 2L); //use at max half size of the block.
         AVERAGE_BLOCK_MINUTES.put((short) 2, 4L);
         // end of AT version 2
     }
@@ -80,7 +80,7 @@ public class AtConstants {
     }
 
     public short atVersion(int blockHeight) {
-        return Burst.getFluxCapacitor().getValue(FluxValues.AT_VERSION, blockHeight);
+        return Amz.getFluxCapacitor().getValue(FluxValues.AT_VERSION, blockHeight);
     }
 
     public long stepFee(int height) {

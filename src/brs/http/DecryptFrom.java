@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.crypto.EncryptedData;
 import brs.http.common.Parameters;
 import brs.services.ParameterService;
@@ -30,7 +30,7 @@ public final class DecryptFrom extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     Account account = parameterService.getAccount(req);
     if (account.getPublicKey() == null) {
       return INCORRECT_ACCOUNT;

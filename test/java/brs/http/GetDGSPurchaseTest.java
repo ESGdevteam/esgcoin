@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.DigitalGoodsStore.Purchase;
 import brs.common.QuickMocker;
 import brs.crypto.EncryptedData;
@@ -36,7 +36,7 @@ public class GetDGSPurchaseTest {
 
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final EncryptedData mockEncryptedData = mock(EncryptedData.class);

@@ -4,8 +4,8 @@ import brs.Attachment.AdvancedPaymentEscrowResult;
 import brs.Attachment.AdvancedPaymentSubscriptionSubscribe;
 import brs.Attachment.MessagingAliasSell;
 import brs.BlockchainImpl;
-import brs.Burst;
-import brs.BurstException.NotValidException;
+import brs.Amz;
+import brs.AmzException.NotValidException;
 import brs.Escrow.DecisionType;
 import brs.Transaction;
 import brs.TransactionType;
@@ -27,20 +27,20 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class TransactionDuplicatesCheckerImplTest {
 
   private TransactionDuplicatesCheckerImpl t = new TransactionDuplicatesCheckerImpl();
 
   @Before
   public void setUp() {
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
 
-    final FluxCapacitor mockFluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.PRE_POC2);
-    when(Burst.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
+    final FluxCapacitor mockFluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.PRE_DYMAXION);
+    when(Amz.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
     BlockchainImpl mockBlockchain = mock(BlockchainImpl.class);
     when(mockBlockchain.getHeight()).thenReturn(4);
-    when(Burst.getBlockchain()).thenReturn(mockBlockchain);
+    when(Amz.getBlockchain()).thenReturn(mockBlockchain);
 
     TransactionType.init(mockBlockchain, mockFluxCapacitor, null, null, null, null, null, null);
 

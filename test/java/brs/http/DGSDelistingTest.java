@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class DGSDelistingTest extends AbstractTransactionTest {
 
   private DGSDelisting t;
@@ -43,7 +43,7 @@ public class DGSDelistingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockAccount = mock(Account.class);
@@ -56,9 +56,9 @@ public class DGSDelistingTest extends AbstractTransactionTest {
     when(mockParameterService.getSenderAccount(eq(req))).thenReturn(mockAccount);
     when(mockParameterService.getGoods(eq(req))).thenReturn(mockGoods);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsDelisting attachment = (Attachment.DigitalGoodsDelisting) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -68,7 +68,7 @@ public class DGSDelistingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsDelistedUnknownGoods() throws BurstException {
+  public void processRequest_goodsDelistedUnknownGoods() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockAccount = mock(Account.class);
@@ -83,7 +83,7 @@ public class DGSDelistingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_otherSellerIdUnknownGoods() throws BurstException {
+  public void processRequest_otherSellerIdUnknownGoods() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockAccount = mock(Account.class);

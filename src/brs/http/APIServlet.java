@@ -15,7 +15,6 @@ import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -71,7 +70,6 @@ public final class APIServlet extends HttpServlet {
     map.put("getAccountTransactionIds", new GetAccountTransactionIds(parameterService, blockchain));
     map.put("getAccountTransactions", new GetAccountTransactions(parameterService, blockchain));
     map.put("getAccountLessors", new GetAccountLessors(parameterService, blockchain));
-    map.put("getAccountAssets", new GetAccountAssets(parameterService, accountService));
     map.put("sellAlias", new SellAlias(parameterService, blockchain, apiTransactionManager));
     map.put("buyAlias", new BuyAlias(parameterService, blockchain, aliasService, apiTransactionManager));
     map.put("getAlias", new GetAlias(parameterService, aliasService));
@@ -157,8 +155,6 @@ public final class APIServlet extends HttpServlet {
     map.put("getAccountATs", new GetAccountATs(parameterService, atService, accountService));
     map.put("getGuaranteedBalance", new GetGuaranteedBalance(parameterService));
     map.put("generateSendTransactionQRCode", new GenerateDeeplinkQRCode(deeplinkQRCodeGenerator));
-    map.put("generateDeeplink", GenerateDeeplink.instance);
-    map.put("generateDeeplinkQRCode", GenerateDeeplinkQR.instance);
 
     if (propertyService.getBoolean(Props.API_DEBUG)) {
       map.put("clearUnconfirmedTransactions", new ClearUnconfirmedTransactions(transactionProcessor));
@@ -184,7 +180,7 @@ public final class APIServlet extends HttpServlet {
         response = processRequest(req);
       } catch (ParameterException e) {
         response = e.getErrorResponse();
-      } catch (BurstException | RuntimeException e) {
+      } catch (AmzException | RuntimeException e) {
         logger.debug("Error processing API request", e);
         response = ERROR_INCORRECT_REQUEST;
       }
@@ -196,7 +192,7 @@ public final class APIServlet extends HttpServlet {
       writeJsonToResponse(resp, response);
     }
 
-    abstract JsonElement processRequest(HttpServletRequest request) throws BurstException;
+    abstract JsonElement processRequest(HttpServletRequest request) throws AmzException;
   }
 
   abstract static class HttpRequestHandler {
@@ -254,24 +250,23 @@ public final class APIServlet extends HttpServlet {
       process(req, resp);
     } catch (Exception e) { // We don't want to send exception information to client...
       resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
-      logger.warn("Error handling request", e);
+      logger.warn("Error handling GET request", e);
     }
   }
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
-    doGet(req, resp);
-  }
-  
-  @Override
-  protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-    doGet(req, resp);
+    try {
+      process(req, resp);
+    } catch (Exception e) { // We don't want to send exception information to client...
+      resp.setStatus(HttpStatus.INTERNAL_SERVER_ERROR_500);
+      logger.warn("Error handling GET request", e);
+    }
   }
 
   private void process(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-    resp.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, HEAD");
+    resp.setHeader("Access-Control-Allow-Methods", "GET, POST");
     resp.setHeader("Access-Control-Allow-Origin", allowedOrigins);
-    resp.setHeader("Access-Control-Allow-Headers", allowedOrigins);
     resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate, private");
     resp.setHeader("Pragma", "no-cache");
     resp.setDateHeader("Expires", 0);
@@ -290,12 +285,6 @@ public final class APIServlet extends HttpServlet {
         writeJsonToResponse(resp, ERROR_NOT_ALLOWED);
         return;
       }
-    }
-    
-    if("OPTIONS".equals(req.getMethod())) {
-      // For HTTP OPTIONS reply with ACCEPTED status code -- per CORS handshake
-      resp.setStatus(HttpServletResponse.SC_ACCEPTED);
-      return;
     }
 
     String requestType = req.getParameter("requestType");

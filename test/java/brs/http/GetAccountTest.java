@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Account.AccountAsset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.services.AccountService;
@@ -41,7 +41,7 @@ public class GetAccountTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final long mockAccountId = 123L;
     final String mockAccountName = "accountName";
     final String mockAccountDescription = "accountDescription";

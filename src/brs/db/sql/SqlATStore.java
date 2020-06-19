@@ -1,10 +1,10 @@
 package brs.db.sql;
 
-import brs.Burst;
+import brs.Amz;
 import brs.at.AT;
 import brs.at.AtApiHelper;
 import brs.at.AtConstants;
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.ATStore;
 import brs.db.store.DerivedTableManager;
@@ -22,17 +22,17 @@ import static brs.schema.Tables.*;
 
 public class SqlATStore implements ATStore {
 
-  private final BurstKey.LongKeyFactory<brs.at.AT> atDbKeyFactory = new DbKey.LongKeyFactory<brs.at.AT>(AT.ID) {
+  private final AmzKey.LongKeyFactory<brs.at.AT> atDbKeyFactory = new DbKey.LongKeyFactory<brs.at.AT>(AT.ID) {
       @Override
-      public BurstKey newKey(brs.at.AT at) {
+      public AmzKey newKey(brs.at.AT at) {
         return at.dbKey;
       }
     };
   private final VersionedEntityTable<brs.at.AT> atTable;
 
-  private final BurstKey.LongKeyFactory<brs.at.AT.ATState> atStateDbKeyFactory = new DbKey.LongKeyFactory<brs.at.AT.ATState>(AT_STATE.AT_ID) {
+  private final AmzKey.LongKeyFactory<brs.at.AT.ATState> atStateDbKeyFactory = new DbKey.LongKeyFactory<brs.at.AT.ATState>(AT_STATE.AT_ID) {
       @Override
-      public BurstKey newKey(brs.at.AT.ATState atState) {
+      public AmzKey newKey(brs.at.AT.ATState atState) {
         return atState.dbKey;
       }
     };
@@ -84,7 +84,7 @@ public class SqlATStore implements ATStore {
   private void saveATState(DSLContext ctx, brs.at.AT.ATState atState) {
     ctx.mergeInto(AT_STATE, AT_STATE.AT_ID, AT_STATE.STATE, AT_STATE.PREV_HEIGHT, AT_STATE.NEXT_HEIGHT, AT_STATE.SLEEP_BETWEEN, AT_STATE.PREV_BALANCE, AT_STATE.FREEZE_WHEN_SAME_BALANCE, AT_STATE.MIN_ACTIVATE_AMOUNT, AT_STATE.HEIGHT, AT_STATE.LATEST)
             .key(AT_STATE.AT_ID, AT_STATE.HEIGHT)
-            .values(atState.getATId(), brs.at.AT.compressState(atState.getState()), atState.getPrevHeight(), atState.getNextHeight(), atState.getSleepBetween(), atState.getPrevBalance(), atState.getFreezeWhenSameBalance(), atState.getMinActivationAmount(), Burst.getBlockchain().getHeight(), true)
+            .values(atState.getATId(), brs.at.AT.compressState(atState.getState()), atState.getPrevHeight(), atState.getNextHeight(), atState.getSleepBetween(), atState.getPrevBalance(), atState.getFreezeWhenSameBalance(), atState.getMinActivationAmount(), Amz.getBlockchain().getHeight(), true)
             .execute();
   }
 
@@ -99,7 +99,7 @@ public class SqlATStore implements ATStore {
       AtApiHelper.getLong(at.getId()), AtApiHelper.getLong(at.getCreator()), at.getName(), at.getDescription(),
       at.getVersion(), at.getcSize(), at.getdSize(), at.getcUserStackBytes(),
       at.getcCallStackBytes(), at.getCreationBlockHeight(),
-      brs.at.AT.compressState(at.getApCodeBytes()), Burst.getBlockchain().getHeight()
+      brs.at.AT.compressState(at.getApCodeBytes()), Amz.getBlockchain().getHeight()
     ).execute();
   }
 
@@ -122,11 +122,11 @@ public class SqlATStore implements ATStore {
       ).and(
               ACCOUNT.LATEST.isTrue()
       ).and(
-              AT_STATE.NEXT_HEIGHT.lessOrEqual(Burst.getBlockchain().getHeight() + 1)
+              AT_STATE.NEXT_HEIGHT.lessOrEqual(Amz.getBlockchain().getHeight() + 1)
       ).and(
               ACCOUNT.BALANCE.greaterOrEqual(
-                      AtConstants.getInstance().stepFee(Burst.getBlockchain().getHeight())
-                              * AtConstants.getInstance().apiStepMultiplier(Burst.getBlockchain().getHeight())
+                      AtConstants.getInstance().stepFee(Amz.getBlockchain().getHeight())
+                              * AtConstants.getInstance().apiStepMultiplier(Amz.getBlockchain().getHeight())
               )
       ).and(
               AT_STATE.FREEZE_WHEN_SAME_BALANCE.isFalse().or(
@@ -177,7 +177,7 @@ public class SqlATStore implements ATStore {
   }
 
   @Override
-  public BurstKey.LongKeyFactory<brs.at.AT> getAtDbKeyFactory() {
+  public AmzKey.LongKeyFactory<brs.at.AT> getAtDbKeyFactory() {
     return atDbKeyFactory;
   }
 
@@ -187,7 +187,7 @@ public class SqlATStore implements ATStore {
   }
 
   @Override
-  public BurstKey.LongKeyFactory<brs.at.AT.ATState> getAtStateDbKeyFactory() {
+  public AmzKey.LongKeyFactory<brs.at.AT.ATState> getAtStateDbKeyFactory() {
     return atStateDbKeyFactory;
   }
 

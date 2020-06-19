@@ -24,7 +24,7 @@ public class APITestServlet extends HttpServlet {
       + "    <meta charset=\"UTF-8\"/>\n"
       + "    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">"
       + "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-      + "    <title>Burst http API</title>\n"
+      + "    <title>Amz http API</title>\n"
       + "    <link href=\"css/bootstrap.min.css\" rel=\"stylesheet\" type=\"text/css\" />"
       + "    <style type=\"text/css\">\n"
       + "        table {border-collapse: collapse;}\n"
@@ -48,7 +48,7 @@ public class APITestServlet extends HttpServlet {
       + "            }\n"
       + "        }\n"
       + "        function submitForm(form) {\n"
-      + "            var url = '/burst';\n"
+      + "            var url = '/amz';\n"
       + "            for (i = 0; i < form.elements.length; i++) {\n"
       + "                if (form.elements[i].type != 'button' && form.elements[i].value && form.elements[i].value != 'submit') {\n"
       + "                    url += ((i == 0 && '?') || '&') + form.elements[i].name + '=' + form.elements[i].value;\n"
@@ -63,7 +63,7 @@ public class APITestServlet extends HttpServlet {
       + "                form.getElementsByClassName(\"result\")[0].textContent = resultStr;\n"
       + "            })\n"
       + "            .fail(function() {\n"
-      + "                alert('API not available, check if Burst Server is running!');\n"
+      + "                alert('API not available, check if Amz Server is running!');\n"
       + "            });\n"
       + "            if ($(form).has('.uri-link').length > 0) {\n"
       + "                  var html = '<a href=\"' + url + '\" target=\"_blank\" style=\"font-size:12px;font-weight:normal;\">Open GET URL</a>';"
@@ -77,13 +77,13 @@ public class APITestServlet extends HttpServlet {
       + "<div class=\"navbar navbar-default\" role=\"navigation\">"
       + "   <div class=\"container\" style=\"min-width: 90%;\">"
       + "       <div class=\"navbar-header\">"
-      + "           <a class=\"navbar-brand\" href=\"/test\">Burst http API</a>"
+      + "           <a class=\"navbar-brand\" href=\"/test\">Amz http API</a>"
       + "       </div>"
       + "       <div class=\"navbar-collapse collapse\">"
       + "           <ul class=\"nav navbar-nav navbar-right\">"
       + "               <li><input type=\"text\" class=\"form-control\" id=\"search\" "
       + "                    placeholder=\"Search\" style=\"margin-top:8px;\"></li>\n"
-      + "               <li><a href=\"https://burstwiki.org/en/the-burst-api/\" target=\"_blank\" style=\"margin-left:20px;\">Wiki Docs</a></li>"
+      + "               <li><a href=\"https://amzwiki.org/en/the-amz-api/\" target=\"_blank\" style=\"margin-left:20px;\">Wiki Docs</a></li>"
       + "               <li><a href=\"/doc/index.html\" target=\"_blank\" style=\"margin-left:20px;\">Javadoc Index</a></li>"
       + "           </ul>"
       + "       </div>"
@@ -274,7 +274,7 @@ public class APITestServlet extends HttpServlet {
     }
     buf.append("\">");
     buf.append("<div class=\"panel-body\">");
-    buf.append("<form action=\"/burst\" method=\"POST\" onsubmit=\"return submitForm(this);\">");
+    buf.append("<form action=\"/amz\" method=\"POST\" onsubmit=\"return submitForm(this);\">");
     buf.append("<input type=\"hidden\" name=\"requestType\" value=\"").append(requestType).append("\"/>");
     buf.append("<div class=\"col-xs-12 col-lg-6\" style=\"width: 40%;\">");
     buf.append("<table class=\"table\">");

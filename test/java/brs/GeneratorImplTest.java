@@ -20,7 +20,6 @@ import static org.mockito.Mockito.mock;
 @RunWith(JUnit4.class)
 public class GeneratorImplTest {
     private Generator generator;
-    private Generator generatorLnTime;
 
     private static final byte[] exampleGenSig = Convert.parseHexString("6ec823b5fd86c4aee9f7c3453cacaf4a43296f48ede77e70060ca8225c2855d0");
     private static final long exampleBaseTarget = 70312;
@@ -38,10 +37,8 @@ public class GeneratorImplTest {
         TimeService timeService = mock(TimeService.class);
 
         FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.POC2);
-        FluxCapacitor fluxCapacitorLnTime = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.POC2, FluxValues.SODIUM);
 
         generator = new GeneratorImpl(blockchain, timeService, fluxCapacitor);
-        generatorLnTime = new GeneratorImpl(blockchain, timeService, fluxCapacitorLnTime);
     }
 
     @Test
@@ -52,16 +49,8 @@ public class GeneratorImplTest {
 
     @Test
     public void testGeneratorCalculateDeadline() {
-    	BigInteger hit = generator.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generator.calculateDeadline(hit, exampleBaseTarget, exampleHeight);
+        BigInteger deadline = generator.calculateDeadline(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleBaseTarget, exampleHeight);
         assertEquals(BigInteger.valueOf(7157291745432L), deadline);
-    }
-
-    @Test
-    public void testGeneratorCalculateLnDeadline() {
-    	BigInteger hit = generatorLnTime.calculateHit(TestConstants.TEST_ACCOUNT_NUMERIC_ID_PARSED, 0, exampleGenSig, generator.calculateScoop(exampleGenSig, exampleHeight), exampleHeight);
-        BigInteger deadline = generatorLnTime.calculateDeadline(hit, exampleBaseTarget, exampleHeight);
-        assertEquals(BigInteger.valueOf(1296L), deadline);
     }
 
     @Test

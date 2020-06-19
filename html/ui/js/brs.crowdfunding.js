@@ -11,7 +11,7 @@ var BRS = (function(BRS, $, undefined) {
         if (!isLoaded) {
             isLoaded = true;
             $.ajax({
-                url: '//' + window.location.hostname.toLowerCase() + myPort + '/burst',
+                url: '//' + window.location.hostname.toLowerCase() + myPort + '/amz',
                 type: 'POST',
                 dataType: "json",
                 data: "requestType=getATIds",
@@ -51,7 +51,7 @@ var BRS = (function(BRS, $, undefined) {
             deadline: 100
         };
         $.ajax({
-            url: '//' + window.location.hostname.toLowerCase() + myPort + '/burst',
+            url: '//' + window.location.hostname.toLowerCase() + myPort + '/amz',
             type: 'POST',
             dataType: "json",
             data: jsonRequest,
@@ -70,12 +70,12 @@ var BRS = (function(BRS, $, undefined) {
         var nameA = $('#funding-name').val();
         var descA = $('#funding-description').val();
         var weeksA = $('#sel1').val();
-        var burstsA = $('#funding-amount').val();
-        burstsA = burstsA * 100000000;
+        var amzsA = $('#funding-amount').val();
+        amzsA = amzsA * 100000000;
         var passA = $('#funding-password').val();
         var feeA = 1000000000;
         var minA = 700000000;
-        var hexA = Number(burstsA).toString(16).toLowerCase();
+        var hexA = Number(amzsA).toString(16).toLowerCase();
         var finalA = '';
         if ((hexA.length % 2) !== 0) {
             hexA = "0" + hexA;
@@ -109,7 +109,7 @@ var BRS = (function(BRS, $, undefined) {
             minActivationAmountNQT: minA
         };
         $.ajax({
-            url: '//' + window.location.hostname.toLowerCase() + myPort + '/burst',
+            url: '//' + window.location.hostname.toLowerCase() + myPort + '/amz',
             type: 'POST',
             dataType: "json",
             data: jsonRequest,
@@ -207,7 +207,7 @@ var BRS = (function(BRS, $, undefined) {
             at: atId
         };
         $.ajax({
-            url: '//' + window.location.hostname.toLowerCase() + myPort + '/burst',
+            url: '//' + window.location.hostname.toLowerCase() + myPort + '/amz',
             type: 'POST',
             dataType: "json",
             data: jsonRequest,
@@ -222,7 +222,7 @@ var BRS = (function(BRS, $, undefined) {
             requestType: "getBlockchainStatus"
         };
         $.ajax({
-            url: '//' + window.location.hostname.toLowerCase() + myPort + '/burst',
+            url: '//' + window.location.hostname.toLowerCase() + myPort + '/amz',
             type: 'POST',
             dataType: "json",
             data: jsonRequest,

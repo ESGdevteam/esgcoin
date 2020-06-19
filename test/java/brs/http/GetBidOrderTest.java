@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Order.Bid;
 import brs.assetexchange.AssetExchange;
 import brs.common.QuickMocker;
@@ -35,7 +35,7 @@ public class GetBidOrderTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final long bidOrderId = 123L;
     Bid mockBid = mock(Bid.class);
     when(mockBid.getId()).thenReturn(bidOrderId);
@@ -50,7 +50,7 @@ public class GetBidOrderTest {
   }
 
   @Test
-  public void processRequest_orderNotFoundUnknownOrder() throws BurstException {
+  public void processRequest_orderNotFoundUnknownOrder() throws AmzException {
     final long bidOrderId = 123L;
 
     HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ORDER_PARAMETER, bidOrderId));

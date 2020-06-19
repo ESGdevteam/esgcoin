@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Attachment;
-import brs.BurstException;
+import brs.AmzException;
 import brs.common.AbstractUnitTest;
 import com.google.gson.JsonElement;
 import org.mockito.ArgumentCaptor;
@@ -17,10 +17,10 @@ public abstract class AbstractTransactionTest extends AbstractUnitTest {
 
   @FunctionalInterface
   public interface TransactionCreationFunction<R> {
-    R apply() throws BurstException;
+    R apply() throws AmzException;
   }
 
-  protected Attachment attachmentCreatedTransaction(TransactionCreationFunction r, APITransactionManager apiTransactionManagerMock) throws BurstException {
+  protected Attachment attachmentCreatedTransaction(TransactionCreationFunction r, APITransactionManager apiTransactionManagerMock) throws AmzException {
     final ArgumentCaptor<Attachment> ac = ArgumentCaptor.forClass(Attachment.class);
 
     when(apiTransactionManagerMock.createTransaction(any(HttpServletRequest.class), nullable(Account.class), nullable(Long.class), anyLong(), ac.capture(), anyLong())).thenReturn(mock(JsonElement.class));

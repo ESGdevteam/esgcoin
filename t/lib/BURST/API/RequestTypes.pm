@@ -1,5 +1,5 @@
 # For Emacs: -*- mode:cperl; eval: (folding-mode 1); coding:utf-8; -*-
-package BURST::API::RequestTypes;
+package AMZ::API::RequestTypes;
 
 # {{{ use block
 
@@ -33,7 +33,7 @@ my $ua      = LWP::UserAgent->new(
 my %config = (
     protocol    => ($ENV{BRS_APITEST_PROTO}  // 'http'),
     server      => ($ENV{BRS_APITEST_SERVER} // 'localhost'),
-    port        => ($ENV{BRS_APITEST_PORT}   // 8125),
+    port        => ($ENV{BRS_APITEST_PORT}   // 8132),
     max_retries => 3,
 );
 
@@ -42,14 +42,14 @@ my $API_URL = $config{protocol}
             . $config{server}
             . ':'
             . $config{port}
-            . '/burst'
+            . '/amz'
             ;
 
 # }}}
 # {{{ Data::Rx definitions
 
 
-my $CGPX = 'tag:burst.cryptoguru.org,2018:rx'; # own CG prefix
+my $CGPX = 'tag:amz.cryptoguru.org,2018:rx'; # own CG prefix
 
 my $rx = Data::Rx->new({
     type_plugins => [ 'Data::Rx::Type::PCRE' ]
@@ -65,7 +65,7 @@ $rx->add_prefix(
 );
 
 $rx->learn_type(
-    "$CGPX/balanceBURST" => {
+    "$CGPX/balanceAMZ" => {
         type  => '//int',
         range => {
             min => 0,
@@ -159,7 +159,7 @@ our $reqtypes = [ # we want to define a sequence of tests
          required => {
              accountRS => {
                  type => '//str',
-                 value => 'BURST-DPQM-9X88-LEU3-CNSST',
+                 value => 'AMZ-DPQM-9X88-LEU3-CNSST',
              },
              account => {
                  type => '//int',
@@ -184,7 +184,7 @@ our $reqtypes = [ # we want to define a sequence of tests
              requestProcessingTime => '//int',
          },
          args => {
-             account => 'BURST-DPQM-9X88-LEU3-CNSST'
+             account => 'AMZ-DPQM-9X88-LEU3-CNSST'
          },
      },
     # }}}
@@ -448,7 +448,7 @@ our $reqtypes = [ # we want to define a sequence of tests
             numberOfAssets => '//int',
             freeMemory => '//int',
             availableProcessors => '//int',
-            totalEffectiveBalanceNXT => '/brs/balanceBURST',
+            totalEffectiveBalanceNXT => '/brs/balanceAMZ',
             numberOfAccounts => '//int',
             numberOfBlocks => '//int',
             version => '//str',
@@ -538,7 +538,7 @@ our $reqtypes = [ # we want to define a sequence of tests
         required => {
             accountRS => {
                 type => '//str',
-                value => "BURST-EMXC-3PFB-J8HQ-GJ9HZ",
+                value => "AMZ-EMXC-3PFB-J8HQ-GJ9HZ",
             },
             account => {
                     type => '//int',

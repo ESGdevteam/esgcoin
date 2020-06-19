@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Asset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.Order.Ask;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
@@ -43,7 +43,7 @@ public class GetAskOrdersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final long assetIndex = 5;
     final int firstIndex = 1;
     final int lastIndex = 3;

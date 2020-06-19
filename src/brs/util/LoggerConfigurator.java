@@ -2,18 +2,14 @@ package brs.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import brs.Burst;
-
 /**
- * Handle logging for the Burst node server
+ * Handle logging for the Amz node server
  */
 
 public final class LoggerConfigurator {
@@ -37,8 +33,8 @@ public final class LoggerConfigurator {
   public static void init() {
     final String managerPackage = "java.util.logging.manager";
     String oldManager = System.getProperty(managerPackage);
-    System.setProperty(managerPackage, "brs.util.BurstLogManager");
-    if (!(LogManager.getLogManager() instanceof BurstLogManager)) {
+    System.setProperty(managerPackage, "brs.util.AmzLogManager");
+    if (!(LogManager.getLogManager() instanceof AmzLogManager)) {
       System.setProperty(managerPackage,
                          (oldManager != null ? oldManager : "java.util.logging.LogManager"));
     }
@@ -46,21 +42,18 @@ public final class LoggerConfigurator {
       try {
         boolean foundProperties = false;
         Properties loggingProperties = new Properties();
-        try (InputStream is = new FileInputStream(new File(Burst.CONF_FOLDER, "logging-default.properties"))) {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream("logging-default.properties")) {
           if (is != null) {
             loggingProperties.load(is);
             foundProperties = true;
           }
         }
-        try (InputStream is = new FileInputStream(new File(Burst.CONF_FOLDER, "logging.properties"))) {
+        try (InputStream is = ClassLoader.getSystemResourceAsStream("logging.properties")) {
           if (is != null) {
             loggingProperties.load(is);
             foundProperties = true;
           }
         }
-        catch (Exception e) {
-        	logger.info("Custom user logging.properties not loaded");
-		}
         if (foundProperties) {
           ByteArrayOutputStream outStream = new ByteArrayOutputStream();
           loggingProperties.store(outStream, "logging properties");
@@ -83,8 +76,8 @@ public final class LoggerConfigurator {
    * LoggerConfigurator shutdown
    */
   public static void shutdown() {
-    if (LogManager.getLogManager() instanceof BurstLogManager) {
-      ((BurstLogManager) LogManager.getLogManager()).burstShutdown();
+    if (LogManager.getLogManager() instanceof AmzLogManager) {
+      ((AmzLogManager) LogManager.getLogManager()).amzShutdown();
     }
   }
 }

@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.DigitalGoodsStore;
 import brs.http.common.Parameters;
 import brs.services.DGSGoodsStoreService;
@@ -24,7 +24,7 @@ public final class GetDGSGoods extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     long sellerId = ParameterParser.getSellerId(req);
     int firstIndex = ParameterParser.getFirstIndex(req);
     int lastIndex = ParameterParser.getLastIndex(req);

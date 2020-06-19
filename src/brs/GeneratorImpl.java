@@ -10,7 +10,7 @@ import brs.util.Convert;
 import brs.util.Listener;
 import brs.util.Listeners;
 import brs.util.ThreadPool;
-import burst.kit.crypto.BurstCrypto;
+import amz.kit.crypto.AmzCrypto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +28,10 @@ public class GeneratorImpl implements Generator {
 
   private final Listeners<GeneratorState, Event> listeners = new Listeners<>();
   private final ConcurrentMap<Long, GeneratorStateImpl> generators = new ConcurrentHashMap<>();
-  private final BurstCrypto burstCrypto = BurstCrypto.getInstance();
+  private final AmzCrypto amzCrypto = AmzCrypto.getInstance();
   private final Blockchain blockchain;
   private final TimeService timeService;
   private final FluxCapacitor fluxCapacitor;
-  
-  private static final double LN_SCALE = ((double) Constants.BURST_BLOCK_TIME) / Math.log((double) Constants.BURST_BLOCK_TIME);
 
   public GeneratorImpl(Blockchain blockchain, TimeService timeService, FluxCapacitor fluxCapacitor) {
     this.blockchain = blockchain;
@@ -113,12 +111,12 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public byte[] calculateGenerationSignature(byte[] lastGenSig, long lastGenId) {
-    return burstCrypto.calculateGenerationSignature(lastGenSig, lastGenId);
+    return amzCrypto.calculateGenerationSignature(lastGenSig, lastGenId);
   }
 
   @Override
   public int calculateScoop(byte[] genSig, long height) {
-    return burstCrypto.calculateScoop(genSig, height);
+    return amzCrypto.calculateScoop(genSig, height);
   }
 
   private int getPocVersion(int blockHeight) {
@@ -127,25 +125,17 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
-    return burstCrypto.calculateHit(accountId, nonce, genSig, scoop, getPocVersion(blockHeight));
+    return amzCrypto.calculateHit(accountId, nonce, genSig, scoop, getPocVersion(blockHeight));
   }
 
   @Override
   public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, byte[] scoopData) {
-    return burstCrypto.calculateHit(accountId, nonce, genSig, scoopData);
+    return amzCrypto.calculateHit(accountId, nonce, genSig, scoopData);
   }
 
   @Override
-  public BigInteger calculateDeadline(BigInteger hit, long baseTarget, int blockHeight) {
-    BigInteger deadline = hit.divide(BigInteger.valueOf(baseTarget));
-    if(fluxCapacitor.getValue(FluxValues.SODIUM, blockHeight)) {
-      if(deadline.bitLength() < 100 && deadline.longValue() > 0L) {
-    	  // Avoid the double precision limit for extremely large numbers (of no value) and zero logarithm
-    	  double lnDeadline = Math.log(deadline.doubleValue()) * LN_SCALE;
-    	  deadline = BigInteger.valueOf((long)lnDeadline);
-      }
-    }
-    return deadline;
+  public BigInteger calculateDeadline(long accountId, long nonce, byte[] genSig, int scoop, long baseTarget, int blockHeight) {
+    return amzCrypto.calculateDeadline(accountId, nonce, genSig, scoop, baseTarget, getPocVersion(blockHeight));
   }
 
   public class GeneratorStateImpl implements GeneratorState {
@@ -153,8 +143,6 @@ public class GeneratorImpl implements Generator {
     private final String secretPhrase;
     private final byte[] publicKey;
     private final BigInteger deadline;
-    private final BigInteger hit;
-    private final long baseTarget;
     private final long nonce;
     private final long block;
 
@@ -176,9 +164,7 @@ public class GeneratorImpl implements Generator {
 
       int scoopNum = calculateScoop(newGenSig, lastBlock.getHeight() + 1L);
 
-      baseTarget = lastBlock.getBaseTarget();
-      hit = calculateHit(accountId, nonce, newGenSig, scoopNum, lastBlock.getHeight() + 1);
-      deadline = calculateDeadline(hit, baseTarget, lastBlock.getHeight() + 1);
+      deadline = calculateDeadline(accountId, nonce, newGenSig, scoopNum, lastBlock.getBaseTarget(), lastBlock.getHeight() + 1);
     }
 
     @Override
@@ -194,11 +180,6 @@ public class GeneratorImpl implements Generator {
     @Override
     public BigInteger getDeadline() {
       return deadline;
-    }
-    
-    @Override
-    public BigInteger getDeadlineLegacy() {
-      return hit.divide(BigInteger.valueOf(baseTarget));
     }
 
     @Override
@@ -234,7 +215,7 @@ public class GeneratorImpl implements Generator {
     }
 
     @Override
-    public BigInteger calculateDeadline(BigInteger hit, long baseTarget, int blockHeight) {
+    public BigInteger calculateDeadline(long accountId, long nonce, byte[] genSig, int scoop, long baseTarget, int blockHeight) {
       return BigInteger.valueOf(propertyService.getInt(Props.DEV_MOCK_MINING_DEADLINE));
     }
   }

@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.DigitalGoodsStore;
 import brs.services.DGSGoodsStoreService;
 import com.google.gson.JsonArray;
@@ -23,7 +23,7 @@ public final class GetDGSPendingPurchases extends APIServlet.JsonRequestHandler 
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     long sellerId = ParameterParser.getSellerId(req);
 
     if (sellerId == 0) {

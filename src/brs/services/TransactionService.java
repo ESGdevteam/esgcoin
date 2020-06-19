@@ -1,13 +1,13 @@
 package brs.services;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Transaction;
 
 public interface TransactionService {
 
   boolean verifyPublicKey(Transaction transaction);
 
-  void validate(Transaction transaction) throws BurstException.ValidationException;
+  void validate(Transaction transaction) throws AmzException.ValidationException;
 
   boolean applyUnconfirmed(Transaction transaction);
 

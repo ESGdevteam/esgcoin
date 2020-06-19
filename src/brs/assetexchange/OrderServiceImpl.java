@@ -3,8 +3,8 @@ package brs.assetexchange;
 import brs.*;
 import brs.Order.Ask;
 import brs.Order.Bid;
-import brs.db.BurstKey;
-import brs.db.BurstKey.LongKeyFactory;
+import brs.db.AmzKey;
+import brs.db.AmzKey.LongKeyFactory;
 import brs.db.VersionedEntityTable;
 import brs.db.store.OrderStore;
 import brs.services.AccountService;
@@ -90,25 +90,25 @@ class OrderServiceImpl {
   }
 
   public void addAskOrder(Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
-    BurstKey dbKey = askOrderDbKeyFactory.newKey(transaction.getId());
+    AmzKey dbKey = askOrderDbKeyFactory.newKey(transaction.getId());
     Ask order = new Ask(dbKey, transaction, attachment);
     askOrderTable.insert(order);
     matchOrders(attachment.getAssetId());
   }
 
   public void addBidOrder(Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
-    BurstKey dbKey = bidOrderDbKeyFactory.newKey(transaction.getId());
+    AmzKey dbKey = bidOrderDbKeyFactory.newKey(transaction.getId());
     Bid order = new Bid(dbKey, transaction, attachment);
     bidOrderTable.insert(order);
     matchOrders(attachment.getAssetId());
   }
 
   private Ask getNextAskOrder(long assetId) {
-    return Burst.getStores().getOrderStore().getNextOrder(assetId);
+    return Amz.getStores().getOrderStore().getNextOrder(assetId);
   }
 
   private Bid getNextBidOrder(long assetId) {
-    return Burst.getStores().getOrderStore().getNextBid(assetId);
+    return Amz.getStores().getOrderStore().getNextBid(assetId);
   }
 
   private void matchOrders(long assetId) {
@@ -124,7 +124,7 @@ class OrderServiceImpl {
       }
 
 
-      Trade trade = tradeService.addTrade(assetId, Burst.getBlockchain().getLastBlock(), askOrder, bidOrder);
+      Trade trade = tradeService.addTrade(assetId, Amz.getBlockchain().getLastBlock(), askOrder, bidOrder);
 
       askOrderUpdateQuantityQNT(askOrder, Convert.safeSubtract(askOrder.getQuantityQNT(), trade.getQuantityQNT()));
       Account askAccount = accountService.getAccount(askOrder.getAccountId());

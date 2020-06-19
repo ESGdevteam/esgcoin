@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Alias;
 import brs.Alias.Offer;
-import brs.BurstException;
+import brs.AmzException;
 import brs.services.AliasService;
 import brs.services.ParameterService;
 import brs.util.FilteringIterator;
@@ -27,7 +27,7 @@ public final class GetAliases extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     final int timestamp = ParameterParser.getTimestamp(req);
     final long accountId = parameterService.getAccount(req).getId();
     int firstIndex = ParameterParser.getFirstIndex(req);

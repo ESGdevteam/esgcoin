@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static brs.Constants.FEE_QUANT;
-import static brs.Constants.ONE_BURST;
+import static brs.Constants.ONE_AMZ;
 
 public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
@@ -253,7 +253,6 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 } else {
                   logger.warn("Our peer want to feed us a fork that is more than "
                           + Constants.MAX_ROLLBACK + " blocks old.");
-                  peer.blacklist("feeding us a too old fork");
                   return;
                 }
               }
@@ -309,7 +308,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                   logger.info(e.toString() + " - autoflushing cache to get rid of it", e);
                   downloadCache.resetCache();
                   return;
-                } catch (RuntimeException | BurstException.ValidationException e) {
+                } catch (RuntimeException | AmzException.ValidationException e) {
                   logger.info("Failed to parse block: {}" + e.toString(), e);
                   logger.info("Failed to parse block trace: {}", Arrays.toString(e.getStackTrace()));
                   peer.blacklist(e, "pulled invalid data using getCumulativeDifficulty");
@@ -342,7 +341,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 processFork(peer, downloadCache.getForkList(), commonBlockId);
               }
 
-            } catch (BurstException.StopException e) {
+            } catch (AmzException.StopException e) {
               logger.info("Blockchain download stopped: {}", e.getMessage());
             } catch (Exception e) {
               logger.info("Error in blockchain download thread", e);
@@ -728,7 +727,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
   }
 
   @Override
-  public void processPeerBlock(JsonObject request, Peer peer) throws BurstException {
+  public void processPeerBlock(JsonObject request, Peer peer) throws AmzException {
     Block newBlock = Block.parseBlock(request, blockchain.getHeight());
      //* This process takes care of the blocks that is announced by peers We do not want to be fed forks.
     Block chainblock = downloadCache.getLastBlock();
@@ -786,7 +785,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
           Genesis.getGenesisBlockSignature(), null, transactions, 0, byteATs, -1);
       blockService.setPrevious(genesisBlock, null);
       addBlock(genesisBlock);
-    } catch (BurstException.ValidationException e) {
+    } catch (AmzException.ValidationException e) {
       logger.info(e.getMessage());
       throw new RuntimeException(e.toString(), e);
     }
@@ -880,7 +879,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 + transaction.getStringId() + " at height " + previousLastBlock.getHeight(),
                 transaction);
           }
-            if (Burst.getFluxCapacitor().getValue(FluxValues.AUTOMATED_TRANSACTION_BLOCK) && !economicClustering.verifyFork(transaction)) {
+            if (Amz.getFluxCapacitor().getValue(FluxValues.AUTOMATED_TRANSACTION_BLOCK) && !economicClustering.verifyFork(transaction)) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("Block {} height {} contains transaction that was generated on a fork: {} ecBlockId {} ecBlockHeight {}", block.getStringId(), previousLastBlock.getHeight() + 1, transaction.getStringId(), transaction.getECBlockHeight(), Convert.toUnsignedLong(transaction.getECBlockId()));
                 }
@@ -897,7 +896,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
           try {
             transactionService.validate(transaction);
-          } catch (BurstException.ValidationException e) {
+          } catch (AmzException.ValidationException e) {
             throw new TransactionNotAcceptedException(e.getMessage(), transaction);
           }
 
@@ -914,10 +913,10 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
           throw new BlockNotAcceptedException("Total amount or fee don't match transaction totals for block " + block.getHeight());
         }
 
-        if (Burst.getFluxCapacitor().getValue(FluxValues.SODIUM)) {
+        if (Amz.getFluxCapacitor().getValue(FluxValues.NEXT_FORK)) {
           Arrays.sort(feeArray);
           for (int i = 0; i < feeArray.length; i++) {
-            if (feeArray[i] < Constants.FEE_QUANT * (i + 1)) {
+            if (feeArray[i] >= Constants.FEE_QUANT * (i + 1)) {
               throw new BlockNotAcceptedException("Transaction fee is not enough to be included in this block " + block.getHeight());
             }
           }
@@ -985,7 +984,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
     calculatedRemainingFee += atBlock.getTotalFees();
     // ATs
     if (subscriptionService.isEnabled()) {
-      calculatedRemainingFee += subscriptionService.applyUnconfirmed(block.getTimestamp(), block.getHeight());
+      calculatedRemainingFee += subscriptionService.applyUnconfirmed(block.getTimestamp());
     }
     if (remainingAmount != null && remainingAmount != calculatedRemainingAmount) {
       throw new BlockNotAcceptedException("Calculated remaining amount doesn't add up for block " + block.getHeight());
@@ -1074,8 +1073,8 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       UnconfirmedTransactionStore unconfirmedTransactionStore = stores.getUnconfirmedTransactionStore();
       SortedSet<Transaction> orderedBlockTransactions = new TreeSet<>();
 
-      int blockSize   = Burst.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS);
-      int payloadSize = Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH);
+      int blockSize   = Amz.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS);
+      int payloadSize = Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH);
 
       long totalAmountNQT = 0;
       long totalFeeNQT = 0;
@@ -1106,12 +1105,12 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                                 && transaction.getExpiration() >= blockTimestamp
                                 && transaction.getTimestamp() <= blockTimestamp + MAX_TIMESTAMP_DIFFERENCE
                                 && (
-                                !Burst.getFluxCapacitor().getValue(FluxValues.AUTOMATED_TRANSACTION_BLOCK)
+                                !Amz.getFluxCapacitor().getValue(FluxValues.AUTOMATED_TRANSACTION_BLOCK)
                                         || economicClustering.verifyFork(transaction)
                         ))
                 .filter(transaction -> preCheckUnconfirmedTransaction(transactionDuplicatesChecker, unconfirmedTransactionStore, transaction)); // Extra check for transactions that are to be considered
 
-        if (Burst.getFluxCapacitor().getValue(FluxValues.PRE_POC2)) {
+        if (Amz.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION)) {
           // In this step we get all unconfirmed transactions and then sort them by slot, followed by priority
           Map<Long, Map<Long, Transaction>> unconfirmedTransactionsOrderedBySlotThenPriority = new HashMap<>();
             inclusionCandidates.collect(Collectors.toMap(Function.identity(), priorityCalculator::applyAsLong)).forEach((transaction, priority) -> {
@@ -1167,7 +1166,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
             slotToTakeFrom.remove(highestPriority.get());
           });
           transactionsToBeIncluded = unconfirmedTransactionsOrderedBySlot;
-        } else { // Before Pre-POC2 HF, just choose highest priority
+        } else { // Before Pre-Dymaxion HF, just choose highest priority
           Map<Long, Transaction> transactionsOrderedByPriority = inclusionCandidates.collect(Collectors.toMap(priorityCalculator::applyAsLong, Function.identity()));
           Map<Long, Transaction> transactionsOrderedBySlot = new HashMap<>();
           AtomicLong currentSlot = new AtomicLong(1);
@@ -1191,7 +1190,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
             continue;
           }
 
-          long slotFee = Burst.getFluxCapacitor().getValue(FluxValues.PRE_POC2) ? slot * FEE_QUANT : ONE_BURST;
+          long slotFee = Amz.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? slot * FEE_QUANT : ONE_AMZ;
           if (transaction.getFeeNQT() >= slotFee) {
             if (transactionService.applyUnconfirmed(transaction)) {
               try {
@@ -1201,9 +1200,9 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
                 totalFeeNQT += transaction.getFeeNQT();
                 orderedBlockTransactions.add(transaction);
                 blockSize--;
-              } catch (BurstException.NotCurrentlyValidException e) {
+              } catch (AmzException.NotCurrentlyValidException e) {
                 transactionService.undoUnconfirmed(transaction);
-              } catch (BurstException.ValidationException e) {
+              } catch (AmzException.ValidationException e) {
                 unconfirmedTransactionStore.remove(transaction);
                 transactionService.undoUnconfirmed(transaction);
               }
@@ -1216,7 +1215,7 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
 
         if (subscriptionService.isEnabled()) {
           subscriptionService.clearRemovals();
-          totalFeeNQT += subscriptionService.calculateFees(blockTimestamp, previousBlock.getHeight() + 1);
+          totalFeeNQT += subscriptionService.calculateFees(blockTimestamp);
         }
       }
       catch (Exception e) {
@@ -1252,10 +1251,10 @@ public final class BlockchainProcessorImpl implements BlockchainProcessor {
       byte[] previousBlockHash = Crypto.sha256().digest(previousBlock.getBytes());
       try {
         block = new Block(getBlockVersion(), blockTimestamp,
-            previousBlock.getId(), totalAmountNQT, totalFeeNQT, Burst.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH) - payloadSize, payloadHash, publicKey,
+            previousBlock.getId(), totalAmountNQT, totalFeeNQT, Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH) - payloadSize, payloadHash, publicKey,
             generationSignature, null, previousBlockHash, new ArrayList<>(orderedBlockTransactions), nonce,
             byteATs, previousBlock.getHeight());
-      } catch (BurstException.ValidationException e) {
+      } catch (AmzException.ValidationException e) {
         // shouldn't happen because all transactions are already validated
         logger.info("Error generating block", e);
         return;

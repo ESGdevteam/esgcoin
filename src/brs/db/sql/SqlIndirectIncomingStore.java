@@ -1,6 +1,6 @@
 package brs.db.sql;
 
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.IndirectIncomingStore;
 import org.jooq.DSLContext;
@@ -19,9 +19,9 @@ public class SqlIndirectIncomingStore implements IndirectIncomingStore {
     private final EntitySqlTable<IndirectIncoming> indirectIncomingTable;
 
     public SqlIndirectIncomingStore(DerivedTableManager derivedTableManager) {
-        BurstKey.LinkKeyFactory<IndirectIncoming> indirectIncomingDbKeyFactory = new DbKey.LinkKeyFactory<IndirectIncoming>("account_id", "transaction_id") {
+        AmzKey.LinkKeyFactory<IndirectIncoming> indirectIncomingDbKeyFactory = new DbKey.LinkKeyFactory<IndirectIncoming>("account_id", "transaction_id") {
             @Override
-            public BurstKey newKey(IndirectIncoming indirectIncoming) {
+            public AmzKey newKey(IndirectIncoming indirectIncoming) {
                 return newKey(indirectIncoming.getAccountId(), indirectIncoming.getTransactionId());
             }
         };

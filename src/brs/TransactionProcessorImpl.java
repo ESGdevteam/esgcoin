@@ -1,6 +1,6 @@
 package brs;
 
-import brs.BurstException.ValidationException;
+import brs.AmzException.ValidationException;
 import brs.db.store.Dbs;
 import brs.db.store.Stores;
 import brs.fluxcapacitor.FluxValues;
@@ -193,9 +193,9 @@ public class TransactionProcessorImpl implements TransactionProcessor {
   }
 
   @Override
-  public Integer broadcast(Transaction transaction) throws BurstException.ValidationException {
+  public Integer broadcast(Transaction transaction) throws AmzException.ValidationException {
     if (! transaction.verifySignature()) {
-      throw new BurstException.NotValidException("Transaction signature verification failed");
+      throw new AmzException.NotValidException("Transaction signature verification failed");
     }
     List<Transaction> processedTransactions;
     if (dbs.getTransactionDb().hasTransaction(transaction.getId())) {
@@ -220,12 +220,12 @@ public class TransactionProcessorImpl implements TransactionProcessor {
       if (logger.isDebugEnabled()) {
         logger.debug("Could not accept new transaction {}", transaction.getStringId());
       }
-      throw new BurstException.NotValidException("Invalid transaction " + transaction.getStringId());
+      throw new AmzException.NotValidException("Invalid transaction " + transaction.getStringId());
     }
   }
 
   @Override
-  public void processPeerTransactions(JsonObject request, Peer peer) throws BurstException.ValidationException {
+  public void processPeerTransactions(JsonObject request, Peer peer) throws AmzException.ValidationException {
     JsonArray transactionsData = JSON.getAsJsonArray(request.get("transactions"));
     List<Transaction> processedTransactions = processPeerTransactions(transactionsData, peer);
 
@@ -235,12 +235,12 @@ public class TransactionProcessorImpl implements TransactionProcessor {
   }
 
   @Override
-  public Transaction parseTransaction(byte[] bytes) throws BurstException.ValidationException {
+  public Transaction parseTransaction(byte[] bytes) throws AmzException.ValidationException {
     return Transaction.parseTransaction(bytes);
   }
 
   @Override
-  public Transaction parseTransaction(JsonObject transactionData) throws BurstException.NotValidException {
+  public Transaction parseTransaction(JsonObject transactionData) throws AmzException.NotValidException {
     return Transaction.parseTransaction(transactionData, blockchain.getHeight());
   }
     
@@ -274,7 +274,7 @@ public class TransactionProcessorImpl implements TransactionProcessor {
 
   @Override
   public int getTransactionVersion(int previousBlockHeight) {
-    return Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, previousBlockHeight) ? 1 : 0;
+    return Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, previousBlockHeight) ? 1 : 0;
   }
 
   // Watch: This is not really clean
@@ -283,13 +283,13 @@ public class TransactionProcessorImpl implements TransactionProcessor {
       try {
         unconfirmedTransactionStore.put(transaction, null);
       }
-      catch ( BurstException.ValidationException e ) {
+      catch ( AmzException.ValidationException e ) {
         logger.debug("Discarding invalid transaction in for later processing: " + JSON.toJsonString(transaction.getJsonObject()), e);
       }
     }
   }
 
-  private List<Transaction> processPeerTransactions(JsonArray transactionsData, Peer peer) throws BurstException.ValidationException {
+  private List<Transaction> processPeerTransactions(JsonArray transactionsData, Peer peer) throws AmzException.ValidationException {
 	  if (blockchain.getLastBlock().getTimestamp() < timeService.getEpochTime() - 60 * 1440 && ! testUnconfirmedTransactions) {
       return new ArrayList<>();
     }
@@ -305,8 +305,8 @@ public class TransactionProcessorImpl implements TransactionProcessor {
           continue;
         }
         transactions.add(transaction);
-      } catch (BurstException.NotCurrentlyValidException ignore) {
-      } catch (BurstException.NotValidException e) {
+      } catch (AmzException.NotCurrentlyValidException ignore) {
+      } catch (AmzException.NotValidException e) {
         if (logger.isDebugEnabled()) {
           logger.debug("Invalid transaction from peer: {}", JSON.toJsonString(transactionData));
         }
@@ -316,7 +316,7 @@ public class TransactionProcessorImpl implements TransactionProcessor {
     return processTransactions(transactions, peer);
   }
 
-  private List<Transaction> processTransactions(Collection<Transaction> transactions, Peer peer) throws BurstException.ValidationException {
+  private List<Transaction> processTransactions(Collection<Transaction> transactions, Peer peer) throws AmzException.ValidationException {
     synchronized (unconfirmedTransactionsSyncObj) {
       if (transactions.isEmpty()) {
         return Collections.emptyList();

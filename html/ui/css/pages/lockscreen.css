@@ -9,7 +9,7 @@ html.lockscreen, html.lockscreen body {
 }
 
 .lockscreen {
-  background: linear-gradient(141deg, #3dc6c2 0%, #3ca4bc 25%, #3c8dbc 50%, #3c73bc 75%, #2b50bf 100%);
+  background: linear-gradient(141deg, #23877F 0%, #23877F 25%, #23877F 50%, #23877F 75%, #23877F 100%);
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

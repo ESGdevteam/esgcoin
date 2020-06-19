@@ -938,7 +938,7 @@ BRS = (function (BRS, $, undefined) {
                     if (reg.test(response.aliasURI)) {
                         setAliasType("uri", response.aliasURI);
                     }
-                    else if ((aliasURI = /acct:(.*)@burst/.exec(response.aliasURI)) || (aliasURI = /nacc:(.*)/.exec(response.aliasURI))) {
+                    else if ((aliasURI = /acct:(.*)@amz/.exec(response.aliasURI)) || (aliasURI = /nacc:(.*)/.exec(response.aliasURI))) {
                         setAliasType("account", response.aliasURI);
                         response.aliasURI = String(aliasURI[1]).toUpperCase();
                     }
@@ -984,8 +984,8 @@ BRS = (function (BRS, $, undefined) {
         data.aliasURI = $.trim(data.aliasURI).toLowerCase();
 
         if (data.type === "account") {
-            if (!(/acct:(.*)@burst/.test(data.aliasURI)) && !(/nacc:(.*)/.test(data.aliasURI))) {
-                if (/^(BURST\-)/i.test(data.aliasURI)) {
+            if (!(/acct:(.*)@amz/.test(data.aliasURI)) && !(/nacc:(.*)/.test(data.aliasURI))) {
+                if (/^(AMZ\-)/i.test(data.aliasURI)) {
                     var address = new NxtAddress();
 
                     if (!address.set(data.aliasURI)) {
@@ -994,11 +994,11 @@ BRS = (function (BRS, $, undefined) {
                         };
                     }
                     else {
-                        data.aliasURI = "acct:" + data.aliasURI + "@burst";
+                        data.aliasURI = "acct:" + data.aliasURI + "@amz";
                     }
                 }
                 else if (/^\d+$/.test(data.aliasURI)) {
-                    data.aliasURI = "acct:" + data.aliasURI + "@burst";
+                    data.aliasURI = "acct:" + data.aliasURI + "@amz";
                 }
                 else {
                     return {
@@ -1043,10 +1043,10 @@ BRS = (function (BRS, $, undefined) {
         else if (type === "account") {
             $("#register_alias_uri_label").html($.t("account_id"));
             $("#register_alias_uri").prop("placeholder", $.t("account_id"));
-            $("#register_alias_uri").val("").mask("BURST-****-****-****-*****");
+            $("#register_alias_uri").val("").mask("AMZ-****-****-****-*****");
 
             if (uri) {
-                var match = uri.match(/acct:(.*)@burst/i);
+                var match = uri.match(/acct:(.*)@amz/i);
                 if (!match) {
                     match = uri.match(/nacc:(.*)/i);
                 }
@@ -1065,7 +1065,7 @@ BRS = (function (BRS, $, undefined) {
                         uri = "";
                     }
                 }
-                else if (!/^BURST\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(uri)) {
+                else if (!/^AMZ\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{4}\-[A-Z0-9]{5}/i.test(uri)) {
                     uri = BRS.accountRS;
                 }
 
@@ -1115,12 +1115,12 @@ BRS = (function (BRS, $, undefined) {
                     if ("priceNQT" in response) {
                         if (response.buyer == BRS.account) {
                             message = $.t("alias_sale_direct_offer", {
-                                "burst": BRS.formatAmount(response.priceNQT)
+                                "amz": BRS.formatAmount(response.priceNQT)
                             }) + " <a href='#' data-alias='" + String(response.aliasName).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>";
                         }
                         else if (typeof response.buyer == "undefined") {
                             message = $.t("alias_sale_indirect_offer", {
-                                "burst": BRS.formatAmount(response.priceNQT)
+                                "amz": BRS.formatAmount(response.priceNQT)
                             }) + " <a href='#' data-alias='" + String(response.aliasName).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>";
                         }
                         else {
@@ -1260,12 +1260,12 @@ BRS = (function (BRS, $, undefined) {
                 if ("priceNQT" in response) {
                     if (response.buyer === BRS.account) {
                         $("#alias_sale_callout").html($.t("alias_sale_direct_offer", {
-                            "burst": BRS.formatAmount(response.priceNQT)
+                            "amz": BRS.formatAmount(response.priceNQT)
                         }) + " <a href='#' data-alias='" + String(response.aliasName).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>").show();
                     }
                     else if (typeof response.buyer === "undefined") {
                         $("#alias_sale_callout").html($.t("alias_sale_indirect_offer", {
-                            "burst": BRS.formatAmount(response.priceNQT)
+                            "amz": BRS.formatAmount(response.priceNQT)
                         }) + " <a href='#' data-alias='" + String(response.aliasName).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>").show();
                     }
                     else {

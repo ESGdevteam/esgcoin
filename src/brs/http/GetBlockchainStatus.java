@@ -3,7 +3,7 @@ package brs.http;
 import brs.Block;
 import brs.Blockchain;
 import brs.BlockchainProcessor;
-import brs.Burst;
+import brs.Amz;
 import brs.peer.Peer;
 import brs.services.TimeService;
 import com.google.gson.JsonElement;
@@ -29,8 +29,8 @@ final class GetBlockchainStatus extends APIServlet.JsonRequestHandler {
   @Override
   JsonElement processRequest(HttpServletRequest req) {
     JsonObject response = new JsonObject();
-    response.addProperty("application", Burst.APPLICATION);
-    response.addProperty("version", Burst.VERSION.toString());
+    response.addProperty("application", Amz.APPLICATION);
+    response.addProperty("version", Amz.VERSION.toString());
     response.addProperty(TIME_RESPONSE, timeService.getEpochTime());
     Block lastBlock = blockchain.getLastBlock();
     response.addProperty("lastBlock", lastBlock.getStringId());

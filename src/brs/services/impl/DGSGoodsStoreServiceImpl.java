@@ -5,8 +5,8 @@ import brs.DigitalGoodsStore.Event;
 import brs.DigitalGoodsStore.Goods;
 import brs.DigitalGoodsStore.Purchase;
 import brs.crypto.EncryptedData;
-import brs.db.BurstKey;
-import brs.db.BurstKey.LongKeyFactory;
+import brs.db.AmzKey;
+import brs.db.AmzKey.LongKeyFactory;
 import brs.db.VersionedEntityTable;
 import brs.db.VersionedValuesTable;
 import brs.db.store.DigitalGoodsStoreStore;
@@ -155,7 +155,7 @@ public class DGSGoodsStoreServiceImpl implements DGSGoodsStoreService {
 
   @Override
   public void listGoods(Transaction transaction, Attachment.DigitalGoodsListing attachment) {
-    BurstKey dbKey = goodsDbKeyFactory.newKey(transaction.getId());
+    AmzKey dbKey = goodsDbKeyFactory.newKey(transaction.getId());
     Goods goods = new Goods(dbKey, transaction, attachment);
     goodsTable.insert(goods);
     goodsListeners.notify(goods, Event.GOODS_LISTED);

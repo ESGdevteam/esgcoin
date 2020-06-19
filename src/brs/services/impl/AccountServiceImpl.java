@@ -5,12 +5,12 @@ import brs.Account.AccountAsset;
 import brs.Account.Event;
 import brs.Account.RewardRecipientAssignment;
 import brs.AssetTransfer;
-import brs.Burst;
+import brs.Amz;
 import brs.Constants;
 import brs.crypto.Crypto;
-import brs.db.BurstKey;
-import brs.db.BurstKey.LinkKeyFactory;
-import brs.db.BurstKey.LongKeyFactory;
+import brs.db.AmzKey;
+import brs.db.AmzKey.LinkKeyFactory;
+import brs.db.AmzKey.LongKeyFactory;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.VersionedEntityTable;
 import brs.db.store.AccountStore;
@@ -29,7 +29,7 @@ public class AccountServiceImpl implements AccountService {
 
   private final AccountStore accountStore;
   private final VersionedBatchEntityTable<Account> accountTable;
-  private final LongKeyFactory<Account> accountBurstKeyFactory;
+  private final LongKeyFactory<Account> accountAmzKeyFactory;
   private final VersionedEntityTable<AccountAsset> accountAssetTable;
   private final LinkKeyFactory<AccountAsset> accountAssetKeyFactory;
   private final VersionedEntityTable<RewardRecipientAssignment> rewardRecipientAssignmentTable;
@@ -43,7 +43,7 @@ public class AccountServiceImpl implements AccountService {
   public AccountServiceImpl(AccountStore accountStore, AssetTransferStore assetTransferStore) {
     this.accountStore = accountStore;
     this.accountTable = accountStore.getAccountTable();
-    this.accountBurstKeyFactory = accountStore.getAccountKeyFactory();
+    this.accountAmzKeyFactory = accountStore.getAccountKeyFactory();
     this.assetTransferStore = assetTransferStore;
     this.accountAssetTable = accountStore.getAccountAssetTable();
     this.accountAssetKeyFactory = accountStore.getAccountAssetKeyFactory();
@@ -63,17 +63,17 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public Account getAccount(long id) {
-    return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id));
+    return id == 0 ? null : accountTable.get(accountAmzKeyFactory.newKey(id));
   }
 
   @Override
   public Account getAccount(long id, int height) {
-    return id == 0 ? null : accountTable.get(accountBurstKeyFactory.newKey(id), height);
+    return id == 0 ? null : accountTable.get(accountAmzKeyFactory.newKey(id), height);
   }
 
   @Override
   public Account getAccount(byte[] publicKey) {
-    final Account account = accountTable.get(accountBurstKeyFactory.newKey(getId(publicKey)));
+    final Account account = accountTable.get(accountAmzKeyFactory.newKey(getId(publicKey)));
 
     if (account == null) {
       return null;
@@ -114,7 +114,7 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public Account getOrAddAccount(long id) {
-    Account account = accountTable.get(accountBurstKeyFactory.newKey(id));
+    Account account = accountTable.get(accountAmzKeyFactory.newKey(id));
     if (account == null) {
       account = new Account(id);
       accountTable.insert(account);
@@ -160,7 +160,7 @@ public class AccountServiceImpl implements AccountService {
     }
     AccountAsset accountAsset;
 
-    BurstKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
+    AmzKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
     accountAsset = accountAssetTable.get(newKey);
     long assetBalance = accountAsset == null ? 0 : accountAsset.getQuantityQNT();
     assetBalance = Convert.safeAdd(assetBalance, quantityQNT);
@@ -180,7 +180,7 @@ public class AccountServiceImpl implements AccountService {
       return;
     }
     AccountAsset accountAsset;
-    BurstKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
+    AmzKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
     accountAsset = accountAssetTable.get(newKey);
     long unconfirmedAssetBalance = accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
     unconfirmedAssetBalance = Convert.safeAdd(unconfirmedAssetBalance, quantityQNT);
@@ -200,7 +200,7 @@ public class AccountServiceImpl implements AccountService {
       return;
     }
     AccountAsset accountAsset;
-    BurstKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
+    AmzKey newKey = accountAssetKeyFactory.newKey(account.getId(), assetId);
     accountAsset = accountAssetTable.get(newKey);
     long assetBalance = accountAsset == null ? 0 : accountAsset.getQuantityQNT();
     assetBalance = Convert.safeAdd(assetBalance, quantityQNT);
@@ -265,20 +265,20 @@ public class AccountServiceImpl implements AccountService {
 
   @Override
   public void setRewardRecipientAssignment(Account account, Long recipient) {
-    int currentHeight = Burst.getBlockchain().getLastBlock().getHeight();
+    int currentHeight = Amz.getBlockchain().getLastBlock().getHeight();
     RewardRecipientAssignment assignment = getRewardRecipientAssignment(account.getId());
     if (assignment == null) {
-      BurstKey burstKey = rewardRecipientAssignmentKeyFactory.newKey(account.getId());
-      assignment = new RewardRecipientAssignment(account.getId(), account.getId(), recipient, (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME), burstKey);
+      AmzKey amzKey = rewardRecipientAssignmentKeyFactory.newKey(account.getId());
+      assignment = new RewardRecipientAssignment(account.getId(), account.getId(), recipient, (int) (currentHeight + Constants.AMZ_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME), amzKey);
     } else {
-      assignment.setRecipient(recipient, (int) (currentHeight + Constants.BURST_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME));
+      assignment.setRecipient(recipient, (int) (currentHeight + Constants.AMZ_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME));
     }
     rewardRecipientAssignmentTable.insert(assignment);
   }
 
   @Override
   public long getUnconfirmedAssetBalanceQNT(Account account, long assetId) {
-    BurstKey newKey = Burst.getStores().getAccountStore().getAccountAssetKeyFactory().newKey(account.getId(), assetId);
+    AmzKey newKey = Amz.getStores().getAccountStore().getAccountAssetKeyFactory().newKey(account.getId(), assetId);
     AccountAsset accountAsset = accountAssetTable.get(newKey);
     return accountAsset == null ? 0 : accountAsset.getUnconfirmedQuantityQNT();
   }

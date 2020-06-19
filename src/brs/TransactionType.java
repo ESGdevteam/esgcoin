@@ -2,8 +2,8 @@ package brs;
 
 import brs.Attachment.AbstractAttachment;
 import brs.Attachment.AutomatedTransactionsCreation;
-import brs.BurstException.NotValidException;
-import brs.BurstException.ValidationException;
+import brs.AmzException.NotValidException;
+import brs.AmzException.ValidationException;
 import brs.assetexchange.AssetExchange;
 import brs.at.AT;
 import brs.at.AtConstants;
@@ -24,7 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 import static brs.Constants.FEE_QUANT;
-import static brs.Constants.ONE_BURST;
+import static brs.Constants.ONE_AMZ;
 
 public abstract class TransactionType {
 
@@ -37,7 +37,7 @@ public abstract class TransactionType {
   private static final byte TYPE_COLORED_COINS = 2;
   private static final byte TYPE_DIGITAL_GOODS = 3;
   private static final byte TYPE_ACCOUNT_CONTROL = 4;
-  private static final byte TYPE_BURST_MINING = 20; // jump some for easier nxt updating
+  private static final byte TYPE_AMZ_MINING = 20; // jump some for easier nxt updating
   private static final byte TYPE_ADVANCED_PAYMENT = 21;
   private static final byte TYPE_AUTOMATED_TRANSACTIONS = 22;
 
@@ -72,7 +72,7 @@ public abstract class TransactionType {
 
   private static final byte SUBTYPE_ACCOUNT_CONTROL_EFFECTIVE_BALANCE_LEASING = 0;
 
-  private static final byte SUBTYPE_BURST_MINING_REWARD_RECIPIENT_ASSIGNMENT = 0;
+  private static final byte SUBTYPE_AMZ_MINING_REWARD_RECIPIENT_ASSIGNMENT = 0;
 
   private static final byte SUBTYPE_ADVANCED_PAYMENT_ESCROW_CREATION = 0;
   private static final byte SUBTYPE_ADVANCED_PAYMENT_ESCROW_SIGN = 1;
@@ -144,8 +144,8 @@ public abstract class TransactionType {
     Map<Byte, TransactionType> accountControlTypes = new HashMap<>();
     accountControlTypes.put(SUBTYPE_ACCOUNT_CONTROL_EFFECTIVE_BALANCE_LEASING, AccountControl.EFFECTIVE_BALANCE_LEASING);
 
-    Map<Byte, TransactionType> burstMiningTypes = new HashMap<>();
-    burstMiningTypes.put(SUBTYPE_BURST_MINING_REWARD_RECIPIENT_ASSIGNMENT, BurstMining.REWARD_RECIPIENT_ASSIGNMENT);
+    Map<Byte, TransactionType> amzMiningTypes = new HashMap<>();
+    amzMiningTypes.put(SUBTYPE_AMZ_MINING_REWARD_RECIPIENT_ASSIGNMENT, AmzMining.REWARD_RECIPIENT_ASSIGNMENT);
 
     Map<Byte, TransactionType> advancedPaymentTypes = new HashMap<>();
     advancedPaymentTypes.put(SUBTYPE_ADVANCED_PAYMENT_ESCROW_CREATION, AdvancedPayment.ESCROW_CREATION);
@@ -160,7 +160,7 @@ public abstract class TransactionType {
     TRANSACTION_TYPES.put(TYPE_COLORED_COINS, Collections.unmodifiableMap(coloredCoinsTypes));
     TRANSACTION_TYPES.put(TYPE_DIGITAL_GOODS, Collections.unmodifiableMap(digitalGoodsTypes));
     TRANSACTION_TYPES.put(TYPE_ACCOUNT_CONTROL, Collections.unmodifiableMap(accountControlTypes));
-    TRANSACTION_TYPES.put(TYPE_BURST_MINING, Collections.unmodifiableMap(burstMiningTypes));
+    TRANSACTION_TYPES.put(TYPE_AMZ_MINING, Collections.unmodifiableMap(amzMiningTypes));
     TRANSACTION_TYPES.put(TYPE_ADVANCED_PAYMENT, Collections.unmodifiableMap(advancedPaymentTypes));
     TRANSACTION_TYPES.put(TYPE_AUTOMATED_TRANSACTIONS, Collections.unmodifiableMap(atTypes));
   }
@@ -182,8 +182,8 @@ public abstract class TransactionType {
         return "Digital Goods";
       case TYPE_ACCOUNT_CONTROL:
         return "Account Control";
-      case TYPE_BURST_MINING:
-        return "Burst Mining";
+      case TYPE_AMZ_MINING:
+        return "Amz Mining";
       case TYPE_ADVANCED_PAYMENT:
         return "Advanced Payment";
       case TYPE_AUTOMATED_TRANSACTIONS:
@@ -206,11 +206,11 @@ public abstract class TransactionType {
 
   public abstract String getDescription();
 
-  public abstract Attachment.AbstractAttachment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException;
+  public abstract Attachment.AbstractAttachment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException;
 
-  abstract Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException;
+  abstract Attachment.AbstractAttachment parseAttachment(JsonObject attachmentData) throws AmzException.NotValidException;
 
-  abstract void validateAttachment(Transaction transaction) throws BurstException.ValidationException;
+  abstract void validateAttachment(Transaction transaction) throws AmzException.ValidationException;
 
   // return false if double spending
   public final boolean applyUnconfirmed(Transaction transaction, Account senderAccount) {
@@ -275,7 +275,7 @@ public abstract class TransactionType {
     builder.encryptToSelfMessage(Appendix.EncryptToSelfMessage.parse(attachmentData));
   }
 
-  public void parseAppendices(Transaction.Builder builder, int flags, byte version, ByteBuffer buffer) throws BurstException.ValidationException {
+  public void parseAppendices(Transaction.Builder builder, int flags, byte version, ByteBuffer buffer) throws AmzException.ValidationException {
     int position = 1;
     if ((flags & position) != 0) {
       builder.message(new Appendix.Message(buffer, version));
@@ -366,9 +366,9 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         if (transaction.getAmountNQT() <= 0 || transaction.getAmountNQT() >= Constants.MAX_BALANCE_NQT) {
-          throw new BurstException.NotValidException("Invalid ordinary payment");
+          throw new AmzException.NotValidException("Invalid ordinary payment");
         }
       }
 
@@ -390,19 +390,19 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.PaymentMultiOutCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.PaymentMultiOutCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.PaymentMultiOutCreation(buffer, transactionVersion);
       }
 
       @Override
-      Attachment.PaymentMultiOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      Attachment.PaymentMultiOutCreation parseAttachment(JsonObject attachmentData) throws AmzException.NotValidException {
         return new Attachment.PaymentMultiOutCreation(attachmentData);
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        if (!fluxCapacitor.getValue(FluxValues.PRE_POC2, transaction.getHeight())) {
-          throw new BurstException.NotCurrentlyValidException("Multi Out Payments are not allowed before the Pre POC2 block");
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
+        if (!fluxCapacitor.getValue(FluxValues.PRE_DYMAXION, transaction.getHeight())) {
+          throw new AmzException.NotCurrentlyValidException("Multi Out Payments are not allowed before the Pre Dymaxion block");
         }
 
         Attachment.PaymentMultiOutCreation attachment = (Attachment.PaymentMultiOutCreation) transaction.getAttachment();
@@ -411,7 +411,7 @@ public abstract class TransactionType {
                 || amountNQT >= Constants.MAX_BALANCE_NQT
                 || amountNQT != transaction.getAmountNQT()
                 || attachment.getRecipients().size() < 2) {
-          throw new BurstException.NotValidException("Invalid multi out payment");
+          throw new AmzException.NotValidException("Invalid multi out payment");
         }
       }
 
@@ -450,24 +450,24 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.PaymentMultiSameOutCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.PaymentMultiSameOutCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.PaymentMultiSameOutCreation(buffer, transactionVersion);
       }
 
       @Override
-      Attachment.PaymentMultiSameOutCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      Attachment.PaymentMultiSameOutCreation parseAttachment(JsonObject attachmentData) throws AmzException.NotValidException {
         return new Attachment.PaymentMultiSameOutCreation(attachmentData);
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        if (!fluxCapacitor.getValue(FluxValues.PRE_POC2, transaction.getHeight())) {
-          throw new BurstException.NotCurrentlyValidException("Multi Same Out Payments are not allowed before the Pre POC2 block");
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
+        if (!fluxCapacitor.getValue(FluxValues.PRE_DYMAXION, transaction.getHeight())) {
+          throw new AmzException.NotCurrentlyValidException("Multi Same Out Payments are not allowed before the Pre Dymaxion block");
         }
 
         Attachment.PaymentMultiSameOutCreation attachment = (Attachment.PaymentMultiSameOutCreation) transaction.getAttachment();
         if (attachment.getRecipients().size() < 2 && (transaction.getAmountNQT() % attachment.getRecipients().size() == 0 ) ) {
-          throw new BurstException.NotValidException("Invalid multi out payment");
+          throw new AmzException.NotValidException("Invalid multi out payment");
         }
       }
 
@@ -543,13 +543,13 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment attachment = transaction.getAttachment();
         if (transaction.getAmountNQT() != 0) {
-          throw new BurstException.NotValidException("Invalid arbitrary message: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid arbitrary message: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (! fluxCapacitor.getValue(FluxValues.DIGITAL_GOODS_STORE) && transaction.getMessage() == null) {
-          throw new BurstException.NotCurrentlyValidException("Missing message appendix not allowed before DGS block");
+          throw new AmzException.NotCurrentlyValidException("Missing message appendix not allowed before DGS block");
         }
       }
 
@@ -559,7 +559,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public void parseAppendices(Transaction.Builder builder, int flags, byte version, ByteBuffer buffer) throws BurstException.ValidationException {
+      public void parseAppendices(Transaction.Builder builder, int flags, byte version, ByteBuffer buffer) throws AmzException.ValidationException {
         int position = 1;
         if ((flags & position) != 0 || (version == 0)) {
           builder.message(new Appendix.Message(buffer, version));
@@ -593,7 +593,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.MessagingAliasAssignment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.MessagingAliasAssignment parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.MessagingAliasAssignment(buffer, transactionVersion);
       }
 
@@ -615,19 +615,19 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.MessagingAliasAssignment attachment = (Attachment.MessagingAliasAssignment) transaction.getAttachment();
         if (attachment.getAliasName().isEmpty()
                 || Convert.toBytes(attachment.getAliasName()).length > Constants.MAX_ALIAS_LENGTH
                 || attachment.getAliasURI().length() > Constants.MAX_ALIAS_URI_LENGTH) {
-          throw new BurstException.NotValidException("Invalid alias assignment: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid alias assignment: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (!TextUtils.isInAlphabet(attachment.getAliasName())) {
-          throw new BurstException.NotValidException("Invalid alias name: " + attachment.getAliasName());
+          throw new AmzException.NotValidException("Invalid alias name: " + attachment.getAliasName());
         }
         Alias alias = aliasService.getAlias(attachment.getAliasName());
         if (alias != null && alias.getAccountId() != transaction.getSenderId()) {
-          throw new BurstException.NotCurrentlyValidException("Alias already owned by another account: " + attachment.getAliasName());
+          throw new AmzException.NotCurrentlyValidException("Alias already owned by another account: " + attachment.getAliasName());
         }
       }
 
@@ -651,7 +651,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.MessagingAliasSell parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.MessagingAliasSell parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.MessagingAliasSell(buffer, transactionVersion);
       }
 
@@ -675,35 +675,35 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         if (! fluxCapacitor.getValue(FluxValues.DIGITAL_GOODS_STORE, blockchain.getLastBlock().getHeight())) {
-          throw new BurstException.NotYetEnabledException("Alias transfer not yet enabled at height " + blockchain.getLastBlock().getHeight());
+          throw new AmzException.NotYetEnabledException("Alias transfer not yet enabled at height " + blockchain.getLastBlock().getHeight());
         }
         if (transaction.getAmountNQT() != 0) {
-          throw new BurstException.NotValidException("Invalid sell alias transaction: " + JSON.toJsonString(transaction.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid sell alias transaction: " + JSON.toJsonString(transaction.getJsonObject()));
         }
         final Attachment.MessagingAliasSell attachment =
                 (Attachment.MessagingAliasSell) transaction.getAttachment();
         final String aliasName = attachment.getAliasName();
         if (aliasName == null || aliasName.isEmpty()) {
-          throw new BurstException.NotValidException("Missing alias name");
+          throw new AmzException.NotValidException("Missing alias name");
         }
         long priceNQT = attachment.getPriceNQT();
         if (priceNQT < 0 || priceNQT > Constants.MAX_BALANCE_NQT) {
-          throw new BurstException.NotValidException("Invalid alias sell price: " + priceNQT);
+          throw new AmzException.NotValidException("Invalid alias sell price: " + priceNQT);
         }
         if (priceNQT == 0) {
           if (Genesis.CREATOR_ID == transaction.getRecipientId()) {
-            throw new BurstException.NotValidException("Transferring aliases to Genesis account not allowed");
+            throw new AmzException.NotValidException("Transferring aliases to Genesis account not allowed");
           } else if (transaction.getRecipientId() == 0) {
-            throw new BurstException.NotValidException("Missing alias transfer recipient");
+            throw new AmzException.NotValidException("Missing alias transfer recipient");
           }
         }
         final Alias alias = aliasService.getAlias(aliasName);
         if (alias == null) {
-          throw new BurstException.NotCurrentlyValidException("Alias hasn't been registered yet: " + aliasName);
+          throw new AmzException.NotCurrentlyValidException("Alias hasn't been registered yet: " + aliasName);
         } else if (alias.getAccountId() != transaction.getSenderId()) {
-          throw new BurstException.NotCurrentlyValidException("Alias doesn't belong to sender: " + aliasName);
+          throw new AmzException.NotCurrentlyValidException("Alias doesn't belong to sender: " + aliasName);
         }
       }
 
@@ -727,7 +727,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.MessagingAliasBuy parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.MessagingAliasBuy parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.MessagingAliasBuy(buffer, transactionVersion);
       }
 
@@ -752,31 +752,31 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         if (! fluxCapacitor.getValue(FluxValues.DIGITAL_GOODS_STORE, blockchain.getLastBlock().getHeight())) {
-          throw new BurstException.NotYetEnabledException("Alias transfer not yet enabled at height " + blockchain.getLastBlock().getHeight());
+          throw new AmzException.NotYetEnabledException("Alias transfer not yet enabled at height " + blockchain.getLastBlock().getHeight());
         }
         final Attachment.MessagingAliasBuy attachment =
                 (Attachment.MessagingAliasBuy) transaction.getAttachment();
         final String aliasName = attachment.getAliasName();
         final Alias alias = aliasService.getAlias(aliasName);
         if (alias == null) {
-          throw new BurstException.NotCurrentlyValidException("Alias hasn't been registered yet: " + aliasName);
+          throw new AmzException.NotCurrentlyValidException("Alias hasn't been registered yet: " + aliasName);
         } else if (alias.getAccountId() != transaction.getRecipientId()) {
-          throw new BurstException.NotCurrentlyValidException("Alias is owned by account other than recipient: "
+          throw new AmzException.NotCurrentlyValidException("Alias is owned by account other than recipient: "
                   + Convert.toUnsignedLong(alias.getAccountId()));
         }
         Alias.Offer offer = aliasService.getOffer(alias);
         if (offer == null) {
-          throw new BurstException.NotCurrentlyValidException("Alias is not for sale: " + aliasName);
+          throw new AmzException.NotCurrentlyValidException("Alias is not for sale: " + aliasName);
         }
         if (transaction.getAmountNQT() < offer.getPriceNQT()) {
           String msg = "Price is too low for: " + aliasName + " ("
                   + transaction.getAmountNQT() + " < " + offer.getPriceNQT() + ")";
-          throw new BurstException.NotCurrentlyValidException(msg);
+          throw new AmzException.NotCurrentlyValidException(msg);
         }
         if (offer.getBuyerId() != 0 && offer.getBuyerId() != transaction.getSenderId()) {
-          throw new BurstException.NotCurrentlyValidException("Wrong buyer for " + aliasName + ": "
+          throw new AmzException.NotCurrentlyValidException("Wrong buyer for " + aliasName + ": "
                   + Convert.toUnsignedLong(transaction.getSenderId()) + " expected: "
                   + Convert.toUnsignedLong(offer.getBuyerId()));
         }
@@ -802,7 +802,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.MessagingAccountInfo parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.MessagingAccountInfo parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.MessagingAccountInfo(buffer, transactionVersion);
       }
 
@@ -812,12 +812,12 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.MessagingAccountInfo attachment = (Attachment.MessagingAccountInfo)transaction.getAttachment();
         if (Convert.toBytes(attachment.getName()).length > Constants.MAX_ACCOUNT_NAME_LENGTH
                 || Convert.toBytes(attachment.getDescription()).length > Constants.MAX_ACCOUNT_DESCRIPTION_LENGTH
         ) {
-          throw new BurstException.NotValidException("Invalid account info issuance: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid account info issuance: " + JSON.toJsonString(attachment.getJsonObject()));
         }
       }
 
@@ -863,7 +863,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.ColoredCoinsAssetIssuance parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.ColoredCoinsAssetIssuance parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.ColoredCoinsAssetIssuance(buffer, transactionVersion);
       }
 
@@ -891,7 +891,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.ColoredCoinsAssetIssuance attachment = (Attachment.ColoredCoinsAssetIssuance)transaction.getAttachment();
         if (attachment.getName().length() < Constants.MIN_ASSET_NAME_LENGTH
                 || attachment.getName().length() > Constants.MAX_ASSET_NAME_LENGTH
@@ -900,10 +900,10 @@ public abstract class TransactionType {
                 || attachment.getQuantityQNT() <= 0
                 || attachment.getQuantityQNT() > Constants.MAX_ASSET_QUANTITY_QNT
         ) {
-          throw new BurstException.NotValidException("Invalid asset issuance: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid asset issuance: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (!TextUtils.isInAlphabet(attachment.getName())) {
-          throw new BurstException.NotValidException("Invalid asset name: " + attachment.getName());
+          throw new AmzException.NotValidException("Invalid asset name: " + attachment.getName());
         }
       }
 
@@ -927,7 +927,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.ColoredCoinsAssetTransfer parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.ColoredCoinsAssetTransfer parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.ColoredCoinsAssetTransfer(buffer, transactionVersion);
       }
 
@@ -963,23 +963,23 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.ColoredCoinsAssetTransfer attachment = (Attachment.ColoredCoinsAssetTransfer)transaction.getAttachment();
         if (transaction.getAmountNQT() != 0
                 || attachment.getComment() != null && attachment.getComment().length() > Constants.MAX_ASSET_TRANSFER_COMMENT_LENGTH
                 || attachment.getAssetId() == 0) {
-          throw new BurstException.NotValidException("Invalid asset transfer amount or comment: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid asset transfer amount or comment: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (transaction.getVersion() > 0 && attachment.getComment() != null) {
-          throw new BurstException.NotValidException("Asset transfer comments no longer allowed, use message " +
+          throw new AmzException.NotValidException("Asset transfer comments no longer allowed, use message " +
                   "or encrypted message appendix instead");
         }
         Asset asset = assetExchange.getAsset(attachment.getAssetId());
         if (attachment.getQuantityQNT() <= 0 || (asset != null && attachment.getQuantityQNT() > asset.getQuantityQNT())) {
-          throw new BurstException.NotValidException("Invalid asset transfer asset or quantity: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid asset transfer asset or quantity: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (asset == null) {
-          throw new BurstException.NotCurrentlyValidException("Asset " + Convert.toUnsignedLong(attachment.getAssetId()) +
+          throw new AmzException.NotCurrentlyValidException("Asset " + Convert.toUnsignedLong(attachment.getAssetId()) +
                   " does not exist yet");
         }
       }
@@ -994,18 +994,18 @@ public abstract class TransactionType {
     abstract static class ColoredCoinsOrderPlacement extends ColoredCoins {
 
       @Override
-      final void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      final void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.ColoredCoinsOrderPlacement attachment = (Attachment.ColoredCoinsOrderPlacement)transaction.getAttachment();
         if (attachment.getPriceNQT() <= 0 || attachment.getPriceNQT() > Constants.MAX_BALANCE_NQT
                 || attachment.getAssetId() == 0) {
-          throw new BurstException.NotValidException("Invalid asset order placement: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid asset order placement: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         Asset asset = assetExchange.getAsset(attachment.getAssetId());
         if (attachment.getQuantityQNT() <= 0 || (asset != null && attachment.getQuantityQNT() > asset.getQuantityQNT())) {
-          throw new BurstException.NotValidException("Invalid asset order placement asset or quantity: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid asset order placement asset or quantity: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (asset == null) {
-          throw new BurstException.NotCurrentlyValidException("Asset " + Convert.toUnsignedLong(attachment.getAssetId()) +
+          throw new AmzException.NotCurrentlyValidException("Asset " + Convert.toUnsignedLong(attachment.getAssetId()) +
                   " does not exist yet");
         }
       }
@@ -1173,14 +1173,14 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.ColoredCoinsAskOrderCancellation attachment = (Attachment.ColoredCoinsAskOrderCancellation) transaction.getAttachment();
         Order ask = assetExchange.getAskOrder(attachment.getOrderId());
         if (ask == null) {
-          throw new BurstException.NotCurrentlyValidException("Invalid ask order: " + Convert.toUnsignedLong(attachment.getOrderId()));
+          throw new AmzException.NotCurrentlyValidException("Invalid ask order: " + Convert.toUnsignedLong(attachment.getOrderId()));
         }
         if (ask.getAccountId() != transaction.getSenderId()) {
-          throw new BurstException.NotValidException("Order " + Convert.toUnsignedLong(attachment.getOrderId()) + " was created by account "
+          throw new AmzException.NotValidException("Order " + Convert.toUnsignedLong(attachment.getOrderId()) + " was created by account "
                   + Convert.toUnsignedLong(ask.getAccountId()));
         }
       }
@@ -1220,14 +1220,14 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.ColoredCoinsBidOrderCancellation attachment = (Attachment.ColoredCoinsBidOrderCancellation) transaction.getAttachment();
         Order bid = assetExchange.getBidOrder(attachment.getOrderId());
         if (bid == null) {
-          throw new BurstException.NotCurrentlyValidException("Invalid bid order: " + Convert.toUnsignedLong(attachment.getOrderId()));
+          throw new AmzException.NotCurrentlyValidException("Invalid bid order: " + Convert.toUnsignedLong(attachment.getOrderId()));
         }
         if (bid.getAccountId() != transaction.getSenderId()) {
-          throw new BurstException.NotValidException("Order " + Convert.toUnsignedLong(attachment.getOrderId()) + " was created by account "
+          throw new AmzException.NotValidException("Order " + Convert.toUnsignedLong(attachment.getOrderId()) + " was created by account "
                   + Convert.toUnsignedLong(bid.getAccountId()));
         }
       }
@@ -1255,17 +1255,17 @@ public abstract class TransactionType {
     }
 
     @Override
-    final void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+    final void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
       if (! fluxCapacitor.getValue(FluxValues.DIGITAL_GOODS_STORE, blockchain.getLastBlock().getHeight())) {
-        throw new BurstException.NotYetEnabledException("Digital goods listing not yet enabled at height " + blockchain.getLastBlock().getHeight());
+        throw new AmzException.NotYetEnabledException("Digital goods listing not yet enabled at height " + blockchain.getLastBlock().getHeight());
       }
       if (transaction.getAmountNQT() != 0) {
-        throw new BurstException.NotValidException("Invalid digital goods transaction");
+        throw new AmzException.NotValidException("Invalid digital goods transaction");
       }
       doValidateAttachment(transaction);
     }
 
-    abstract void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException;
+    abstract void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException;
 
 
     public static final TransactionType LISTING = new DigitalGoods() {
@@ -1281,7 +1281,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.DigitalGoodsListing parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.DigitalGoodsListing parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.DigitalGoodsListing(buffer, transactionVersion);
       }
 
@@ -1297,7 +1297,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsListing attachment = (Attachment.DigitalGoodsListing) transaction.getAttachment();
         if (attachment.getName().isEmpty()
                 || attachment.getName().length() > Constants.MAX_DGS_LISTING_NAME_LENGTH
@@ -1305,7 +1305,7 @@ public abstract class TransactionType {
                 || attachment.getTags().length() > Constants.MAX_DGS_LISTING_TAGS_LENGTH
                 || attachment.getQuantity() < 0 || attachment.getQuantity() > Constants.MAX_DGS_LISTING_QUANTITY
                 || attachment.getPriceNQT() <= 0 || attachment.getPriceNQT() > Constants.MAX_BALANCE_NQT) {
-          throw new BurstException.NotValidException("Invalid digital goods listing: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods listing: " + JSON.toJsonString(attachment.getJsonObject()));
         }
       }
 
@@ -1345,14 +1345,14 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsDelisting attachment = (Attachment.DigitalGoodsDelisting) transaction.getAttachment();
         DigitalGoodsStore.Goods goods = dgsGoodsStoreService.getGoods(attachment.getGoodsId());
         if (goods != null && transaction.getSenderId() != goods.getSellerId()) {
-          throw new BurstException.NotValidException("Invalid digital goods delisting - seller is different: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods delisting - seller is different: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (goods == null || goods.isDelisted()) {
-          throw new BurstException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
+          throw new AmzException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
                   "not yet listed or already delisted");
         }
       }
@@ -1399,15 +1399,15 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsPriceChange attachment = (Attachment.DigitalGoodsPriceChange) transaction.getAttachment();
         DigitalGoodsStore.Goods goods = dgsGoodsStoreService.getGoods(attachment.getGoodsId());
         if (attachment.getPriceNQT() <= 0 || attachment.getPriceNQT() > Constants.MAX_BALANCE_NQT
                 || (goods != null && transaction.getSenderId() != goods.getSellerId())) {
-          throw new BurstException.NotValidException("Invalid digital goods price change: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods price change: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (goods == null || goods.isDelisted()) {
-          throw new BurstException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
+          throw new AmzException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
                   "not yet listed or already delisted");
         }
       }
@@ -1455,16 +1455,16 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsQuantityChange attachment = (Attachment.DigitalGoodsQuantityChange) transaction.getAttachment();
         DigitalGoodsStore.Goods goods = dgsGoodsStoreService.getGoods(attachment.getGoodsId());
         if (attachment.getDeltaQuantity() < -Constants.MAX_DGS_LISTING_QUANTITY
                 || attachment.getDeltaQuantity() > Constants.MAX_DGS_LISTING_QUANTITY
                 || (goods != null && transaction.getSenderId() != goods.getSellerId())) {
-          throw new BurstException.NotValidException("Invalid digital goods quantity change: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods quantity change: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (goods == null || goods.isDelisted()) {
-          throw new BurstException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
+          throw new AmzException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
                   "not yet listed or already delisted");
         }
       }
@@ -1534,26 +1534,26 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsPurchase attachment = (Attachment.DigitalGoodsPurchase) transaction.getAttachment();
         DigitalGoodsStore.Goods goods = dgsGoodsStoreService.getGoods(attachment.getGoodsId());
         if (attachment.getQuantity() <= 0 || attachment.getQuantity() > Constants.MAX_DGS_LISTING_QUANTITY
                 || attachment.getPriceNQT() <= 0 || attachment.getPriceNQT() > Constants.MAX_BALANCE_NQT
                 || (goods != null && goods.getSellerId() != transaction.getRecipientId())) {
-          throw new BurstException.NotValidException("Invalid digital goods purchase: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods purchase: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (transaction.getEncryptedMessage() != null && ! transaction.getEncryptedMessage().isText()) {
-          throw new BurstException.NotValidException("Only text encrypted messages allowed");
+          throw new AmzException.NotValidException("Only text encrypted messages allowed");
         }
         if (goods == null || goods.isDelisted()) {
-          throw new BurstException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
+          throw new AmzException.NotCurrentlyValidException("Goods " + Convert.toUnsignedLong(attachment.getGoodsId()) +
                   "not yet listed or already delisted");
         }
         if (attachment.getQuantity() > goods.getQuantity() || attachment.getPriceNQT() != goods.getPriceNQT()) {
-          throw new BurstException.NotCurrentlyValidException("Goods price or quantity changed: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotCurrentlyValidException("Goods price or quantity changed: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (attachment.getDeliveryDeadlineTimestamp() <= blockchain.getLastBlock().getTimestamp()) {
-          throw new BurstException.NotCurrentlyValidException("Delivery deadline has already expired: " + attachment.getDeliveryDeadlineTimestamp());
+          throw new AmzException.NotCurrentlyValidException("Delivery deadline has already expired: " + attachment.getDeliveryDeadlineTimestamp());
         }
       }
 
@@ -1577,7 +1577,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.DigitalGoodsDelivery parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.DigitalGoodsDelivery parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.DigitalGoodsDelivery(buffer, transactionVersion);
       }
 
@@ -1593,7 +1593,7 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsDelivery attachment = (Attachment.DigitalGoodsDelivery) transaction.getAttachment();
         DigitalGoodsStore.Purchase purchase = dgsGoodsStoreService.getPendingPurchase(attachment.getPurchaseId());
         if (attachment.getGoods().getData().length > Constants.MAX_DGS_GOODS_LENGTH
@@ -1604,10 +1604,10 @@ public abstract class TransactionType {
                 (purchase.getBuyerId() != transaction.getRecipientId()
                         || transaction.getSenderId() != purchase.getSellerId()
                         || attachment.getDiscountNQT() > Convert.safeMultiply(purchase.getPriceNQT(), purchase.getQuantity())))) {
-          throw new BurstException.NotValidException("Invalid digital goods delivery: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods delivery: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (purchase == null || purchase.getEncryptedGoods() != null) {
-          throw new BurstException.NotCurrentlyValidException("Purchase does not exist yet, or already delivered: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotCurrentlyValidException("Purchase does not exist yet, or already delivered: " + JSON.toJsonString(attachment.getJsonObject()));
         }
       }
 
@@ -1653,25 +1653,25 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsFeedback attachment = (Attachment.DigitalGoodsFeedback) transaction.getAttachment();
         DigitalGoodsStore.Purchase purchase = dgsGoodsStoreService.getPurchase(attachment.getPurchaseId());
         if (purchase != null &&
                 (purchase.getSellerId() != transaction.getRecipientId()
                         || transaction.getSenderId() != purchase.getBuyerId())) {
-          throw new BurstException.NotValidException("Invalid digital goods feedback: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods feedback: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (transaction.getEncryptedMessage() == null && transaction.getMessage() == null) {
-          throw new BurstException.NotValidException("Missing feedback message");
+          throw new AmzException.NotValidException("Missing feedback message");
         }
         if (transaction.getEncryptedMessage() != null && ! transaction.getEncryptedMessage().isText()) {
-          throw new BurstException.NotValidException("Only text encrypted messages allowed");
+          throw new AmzException.NotValidException("Only text encrypted messages allowed");
         }
         if (transaction.getMessage() != null && ! transaction.getMessage().isText()) {
-          throw new BurstException.NotValidException("Only text public messages allowed");
+          throw new AmzException.NotValidException("Only text public messages allowed");
         }
         if (purchase == null || purchase.getEncryptedGoods() == null) {
-          throw new BurstException.NotCurrentlyValidException("Purchase does not exist yet or not yet delivered");
+          throw new AmzException.NotCurrentlyValidException("Purchase does not exist yet or not yet delivered");
         }
       }
 
@@ -1740,20 +1740,20 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.DigitalGoodsRefund attachment = (Attachment.DigitalGoodsRefund) transaction.getAttachment();
         DigitalGoodsStore.Purchase purchase = dgsGoodsStoreService.getPurchase(attachment.getPurchaseId());
         if (attachment.getRefundNQT() < 0 || attachment.getRefundNQT() > Constants.MAX_BALANCE_NQT
                 || (purchase != null &&
                 (purchase.getBuyerId() != transaction.getRecipientId()
                         || transaction.getSenderId() != purchase.getSellerId()))) {
-          throw new BurstException.NotValidException("Invalid digital goods refund: " + JSON.toJsonString(attachment.getJsonObject()));
+          throw new AmzException.NotValidException("Invalid digital goods refund: " + JSON.toJsonString(attachment.getJsonObject()));
         }
         if (transaction.getEncryptedMessage() != null && ! transaction.getEncryptedMessage().isText()) {
-          throw new BurstException.NotValidException("Only text encrypted messages allowed");
+          throw new AmzException.NotValidException("Only text encrypted messages allowed");
         }
         if (purchase == null || purchase.getEncryptedGoods() == null || purchase.getRefundNQT() != 0) {
-          throw new BurstException.NotCurrentlyValidException("Purchase does not exist or is not delivered or is already refunded");
+          throw new AmzException.NotCurrentlyValidException("Purchase does not exist or is not delivered or is already refunded");
         }
       }
 
@@ -1819,19 +1819,17 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        if (Burst.getFluxCapacitor().getValue(FluxValues.SODIUM)) throw new BurstException.NotCurrentlyValidException("Effective Balance Leasing disabled after Sodium HF");
-
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.AccountControlEffectiveBalanceLeasing attachment = (Attachment.AccountControlEffectiveBalanceLeasing)transaction.getAttachment();
         Account recipientAccount = accountService.getAccount(transaction.getRecipientId());
         if (transaction.getSenderId() == transaction.getRecipientId()
                 || transaction.getAmountNQT() != 0
                 || attachment.getPeriod() < 1440) {
-          throw new BurstException.NotValidException("Invalid effective balance leasing: " + JSON.toJsonString(transaction.getJsonObject()) + " transaction " + transaction.getStringId());
+          throw new AmzException.NotValidException("Invalid effective balance leasing: " + JSON.toJsonString(transaction.getJsonObject()) + " transaction " + transaction.getStringId());
         }
         if (recipientAccount == null
                 || (recipientAccount.getPublicKey() == null && ! transaction.getStringId().equals("5081403377391821646"))) {
-          throw new BurstException.NotCurrentlyValidException("Invalid effective balance leasing: "
+          throw new AmzException.NotCurrentlyValidException("Invalid effective balance leasing: "
                   + " recipient account " + transaction.getRecipientId() + " not found or no public key published");
         }
       }
@@ -1845,13 +1843,13 @@ public abstract class TransactionType {
 
   }
 
-  public abstract static class BurstMining extends TransactionType {
+  public abstract static class AmzMining extends TransactionType {
 
-    private BurstMining() {}
+    private AmzMining() {}
 
     @Override
     public final byte getType() {
-      return TransactionType.TYPE_BURST_MINING;
+      return TransactionType.TYPE_AMZ_MINING;
     }
 
     @Override
@@ -1862,11 +1860,11 @@ public abstract class TransactionType {
     @Override
     final void undoAttachmentUnconfirmed(Transaction transaction, Account senderAccount) {}
 
-    public static final TransactionType REWARD_RECIPIENT_ASSIGNMENT = new BurstMining() {
+    public static final TransactionType REWARD_RECIPIENT_ASSIGNMENT = new AmzMining() {
 
       @Override
       public final byte getSubtype() {
-        return TransactionType.SUBTYPE_BURST_MINING_REWARD_RECIPIENT_ASSIGNMENT;
+        return TransactionType.SUBTYPE_AMZ_MINING_REWARD_RECIPIENT_ASSIGNMENT;
       }
 
       @Override
@@ -1875,14 +1873,14 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.BurstMiningRewardRecipientAssignment
+      public Attachment.AmzMiningRewardRecipientAssignment
       parseAttachment(ByteBuffer buffer, byte transactionVersion) {
-        return new Attachment.BurstMiningRewardRecipientAssignment(buffer, transactionVersion);
+        return new Attachment.AmzMiningRewardRecipientAssignment(buffer, transactionVersion);
       }
 
       @Override
-      Attachment.BurstMiningRewardRecipientAssignment parseAttachment(JsonObject attachmentData) {
-        return new Attachment.BurstMiningRewardRecipientAssignment(attachmentData);
+      Attachment.AmzMiningRewardRecipientAssignment parseAttachment(JsonObject attachmentData) {
+        return new Attachment.AmzMiningRewardRecipientAssignment(attachmentData);
       }
 
       @Override
@@ -1896,39 +1894,39 @@ public abstract class TransactionType {
           return TransactionDuplicationKey.IS_NEVER_DUPLICATE; // sync fails after 7007 without this
         }
 
-        return new TransactionDuplicationKey(BurstMining.REWARD_RECIPIENT_ASSIGNMENT, Convert.toUnsignedLong(transaction.getSenderId()));
+        return new TransactionDuplicationKey(AmzMining.REWARD_RECIPIENT_ASSIGNMENT, Convert.toUnsignedLong(transaction.getSenderId()));
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         int height = blockchain.getLastBlock().getHeight() + 1;
         Account sender = accountService.getAccount(transaction.getSenderId());
 
         if (sender == null) {
-          throw new BurstException.NotCurrentlyValidException("Sender not yet known ?!");
+          throw new AmzException.NotCurrentlyValidException("Sender not yet known ?!");
         }
 
         Account.RewardRecipientAssignment rewardAssignment = accountService.getRewardRecipientAssignment(sender);
         if (rewardAssignment != null && rewardAssignment.getFromHeight() >= height) {
-          throw new BurstException.NotCurrentlyValidException("Cannot reassign reward recipient before previous goes into effect: " + JSON.toJsonString(transaction.getJsonObject()));
+          throw new AmzException.NotCurrentlyValidException("Cannot reassign reward recipient before previous goes into effect: " + JSON.toJsonString(transaction.getJsonObject()));
         }
         Account recip = accountService.getAccount(transaction.getRecipientId());
         if (recip == null || recip.getPublicKey() == null) {
-          throw new BurstException.NotValidException("Reward recipient must have public key saved in blockchain: " + JSON.toJsonString(transaction.getJsonObject()));
+          throw new AmzException.NotValidException("Reward recipient must have public key saved in blockchain: " + JSON.toJsonString(transaction.getJsonObject()));
         }
 
-        if (fluxCapacitor.getValue(FluxValues.PRE_POC2)) {
+        if (fluxCapacitor.getValue(FluxValues.PRE_DYMAXION)) {
           if (transaction.getAmountNQT() != 0 || transaction.getFeeNQT() < FEE_QUANT) {
-            throw new BurstException.NotValidException("Reward recipient assignment transaction must have 0 send amount and at least minimum fee: " + JSON.toJsonString(transaction.getJsonObject()));
+            throw new AmzException.NotValidException("Reward recipient assignment transaction must have 0 send amount and at least minimum fee: " + JSON.toJsonString(transaction.getJsonObject()));
           }
         } else {
-          if (transaction.getAmountNQT() != 0 || transaction.getFeeNQT() != Constants.ONE_BURST) {
-            throw new BurstException.NotValidException("Reward recipient assignment transaction must have 0 send amount and 1 fee: " + JSON.toJsonString(transaction.getJsonObject()));
+          if (transaction.getAmountNQT() != 0 || transaction.getFeeNQT() != Constants.ONE_AMZ) {
+            throw new AmzException.NotValidException("Reward recipient assignment transaction must have 0 send amount and 1 fee: " + JSON.toJsonString(transaction.getJsonObject()));
           }
         }
 
-        if (!Burst.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE, height)) {
-          throw new BurstException.NotCurrentlyValidException("Reward recipient assignment not allowed before block " + Burst.getFluxCapacitor().getStartingHeight(FluxValues.REWARD_RECIPIENT_ENABLE));
+        if (!Amz.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE, height)) {
+          throw new AmzException.NotCurrentlyValidException("Reward recipient assignment not allowed before block " + Amz.getFluxCapacitor().getStartingHeight(FluxValues.REWARD_RECIPIENT_ENABLE));
         }
       }
 
@@ -1961,12 +1959,12 @@ public abstract class TransactionType {
       }
 
       @Override
-      public Attachment.AdvancedPaymentEscrowCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws BurstException.NotValidException {
+      public Attachment.AdvancedPaymentEscrowCreation parseAttachment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
         return new Attachment.AdvancedPaymentEscrowCreation(buffer, transactionVersion);
       }
 
       @Override
-      Attachment.AdvancedPaymentEscrowCreation parseAttachment(JsonObject attachmentData) throws BurstException.NotValidException {
+      Attachment.AdvancedPaymentEscrowCreation parseAttachment(JsonObject attachmentData) throws AmzException.NotValidException {
         return new Attachment.AdvancedPaymentEscrowCreation(attachmentData);
       }
 
@@ -1984,7 +1982,7 @@ public abstract class TransactionType {
       @Override
       public Long calculateAttachmentTotalAmountNQT(Transaction transaction) {
         Attachment.AdvancedPaymentEscrowCreation attachment = (Attachment.AdvancedPaymentEscrowCreation) transaction.getAttachment();
-        return Convert.safeAdd(attachment.getAmountNQT(), Convert.safeMultiply(attachment.getTotalSigners(), Constants.ONE_BURST));
+        return Convert.safeAdd(attachment.getAmountNQT(), Convert.safeMultiply(attachment.getTotalSigners(), Constants.ONE_AMZ));
       }
 
       @Override
@@ -1993,7 +1991,7 @@ public abstract class TransactionType {
         Long totalAmountNQT = calculateAttachmentTotalAmountNQT(transaction);
         accountService.addToBalanceNQT(senderAccount, -totalAmountNQT);
         Collection<Long> signers = attachment.getSigners();
-        signers.forEach(signer -> accountService.addToBalanceAndUnconfirmedBalanceNQT(accountService.getOrAddAccount(signer), Constants.ONE_BURST));
+        signers.forEach(signer -> accountService.addToBalanceAndUnconfirmedBalanceNQT(accountService.getOrAddAccount(signer), Constants.ONE_AMZ));
         escrowService.addEscrowTransaction(senderAccount,
                 recipientAccount,
                 transaction.getId(),
@@ -2015,45 +2013,45 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.AdvancedPaymentEscrowCreation attachment = (Attachment.AdvancedPaymentEscrowCreation) transaction.getAttachment();
         Long totalAmountNQT = Convert.safeAdd(attachment.getAmountNQT(), transaction.getFeeNQT());
         if (transaction.getSenderId() == transaction.getRecipientId()) {
-          throw new BurstException.NotValidException("Escrow must have different sender and recipient");
+          throw new AmzException.NotValidException("Escrow must have different sender and recipient");
         }
-        totalAmountNQT = Convert.safeAdd(totalAmountNQT, attachment.getTotalSigners() * Constants.ONE_BURST);
+        totalAmountNQT = Convert.safeAdd(totalAmountNQT, attachment.getTotalSigners() * Constants.ONE_AMZ);
         if (transaction.getAmountNQT() != 0) {
-          throw new BurstException.NotValidException("Transaction sent amount must be 0 for escrow");
+          throw new AmzException.NotValidException("Transaction sent amount must be 0 for escrow");
         }
         if (totalAmountNQT.compareTo(0L) < 0 ||
                 totalAmountNQT.compareTo(Constants.MAX_BALANCE_NQT) > 0)
         {
-          throw new BurstException.NotValidException("Invalid escrow creation amount");
+          throw new AmzException.NotValidException("Invalid escrow creation amount");
         }
-        if (transaction.getFeeNQT() < Constants.ONE_BURST) {
-          throw new BurstException.NotValidException("Escrow transaction must have a fee at least 1 burst");
+        if (transaction.getFeeNQT() < Constants.ONE_AMZ) {
+          throw new AmzException.NotValidException("Escrow transaction must have a fee at least 1 amz");
         }
         if (attachment.getRequiredSigners() < 1 || attachment.getRequiredSigners() > 10) {
-          throw new BurstException.NotValidException("Escrow required signers much be 1 - 10");
+          throw new AmzException.NotValidException("Escrow required signers much be 1 - 10");
         }
         if (attachment.getRequiredSigners() > attachment.getTotalSigners()) {
-          throw new BurstException.NotValidException("Cannot have more required than signers on escrow");
+          throw new AmzException.NotValidException("Cannot have more required than signers on escrow");
         }
         if (attachment.getTotalSigners() < 1 || attachment.getTotalSigners() > 10) {
-          throw new BurstException.NotValidException("Escrow transaction requires 1 - 10 signers");
+          throw new AmzException.NotValidException("Escrow transaction requires 1 - 10 signers");
         }
         if (attachment.getDeadline() < 1 || attachment.getDeadline() > 7776000) { // max deadline 3 months
-          throw new BurstException.NotValidException("Escrow deadline must be 1 - 7776000 seconds");
+          throw new AmzException.NotValidException("Escrow deadline must be 1 - 7776000 seconds");
         }
         if (attachment.getDeadlineAction() == null || attachment.getDeadlineAction() == Escrow.DecisionType.UNDECIDED) {
-          throw new BurstException.NotValidException("Invalid deadline action for escrow");
+          throw new AmzException.NotValidException("Invalid deadline action for escrow");
         }
         if (attachment.getSigners().contains(transaction.getSenderId()) ||
                 attachment.getSigners().contains(transaction.getRecipientId())) {
-          throw new BurstException.NotValidException("Escrow sender and recipient cannot be signers");
+          throw new AmzException.NotValidException("Escrow sender and recipient cannot be signers");
         }
         if (!escrowService.isEnabled()) {
-          throw new BurstException.NotYetEnabledException("Escrow not yet enabled");
+          throw new AmzException.NotYetEnabledException("Escrow not yet enabled");
         }
       }
 
@@ -2111,31 +2109,31 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.AdvancedPaymentEscrowSign attachment = (Attachment.AdvancedPaymentEscrowSign) transaction.getAttachment();
-        if (transaction.getAmountNQT() != 0 || transaction.getFeeNQT() != Constants.ONE_BURST) {
-          throw new BurstException.NotValidException("Escrow signing must have amount 0 and fee of 1");
+        if (transaction.getAmountNQT() != 0 || transaction.getFeeNQT() != Constants.ONE_AMZ) {
+          throw new AmzException.NotValidException("Escrow signing must have amount 0 and fee of 1");
         }
         if (attachment.getEscrowId() == null || attachment.getDecision() == null) {
-          throw new BurstException.NotValidException("Escrow signing requires escrow id and decision set");
+          throw new AmzException.NotValidException("Escrow signing requires escrow id and decision set");
         }
         Escrow escrow = escrowService.getEscrowTransaction(attachment.getEscrowId());
         if (escrow == null) {
-          throw new BurstException.NotValidException("Escrow transaction not found");
+          throw new AmzException.NotValidException("Escrow transaction not found");
         }
         if (!escrowService.isIdSigner(transaction.getSenderId(), escrow) &&
                 !escrow.getSenderId().equals(transaction.getSenderId()) &&
                 !escrow.getRecipientId().equals(transaction.getSenderId())) {
-          throw new BurstException.NotValidException("Sender is not a participant in specified escrow");
+          throw new AmzException.NotValidException("Sender is not a participant in specified escrow");
         }
         if (escrow.getSenderId().equals(transaction.getSenderId()) && attachment.getDecision() != Escrow.DecisionType.RELEASE) {
-          throw new BurstException.NotValidException("Escrow sender can only release");
+          throw new AmzException.NotValidException("Escrow sender can only release");
         }
         if (escrow.getRecipientId().equals(transaction.getSenderId()) && attachment.getDecision() != Escrow.DecisionType.REFUND) {
-          throw new BurstException.NotValidException("Escrow recipient can only refund");
+          throw new AmzException.NotValidException("Escrow recipient can only refund");
         }
         if (!escrowService.isEnabled()) {
-          throw new BurstException.NotYetEnabledException("Escrow not yet enabled");
+          throw new AmzException.NotYetEnabledException("Escrow not yet enabled");
         }
       }
 
@@ -2188,8 +2186,8 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        throw new BurstException.NotValidException("Escrow result never validates");
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
+        throw new AmzException.NotValidException("Escrow result never validates");
       }
 
       @Override
@@ -2247,21 +2245,21 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.AdvancedPaymentSubscriptionSubscribe attachment = (Attachment.AdvancedPaymentSubscriptionSubscribe) transaction.getAttachment();
         if (attachment.getFrequency() == null ||
-                attachment.getFrequency() < Constants.BURST_SUBSCRIPTION_MIN_FREQ ||
-                attachment.getFrequency() > Constants.BURST_SUBSCRIPTION_MAX_FREQ) {
-          throw new BurstException.NotValidException("Invalid subscription frequency");
+                attachment.getFrequency() < Constants.AMZ_SUBSCRIPTION_MIN_FREQ ||
+                attachment.getFrequency() > Constants.AMZ_SUBSCRIPTION_MAX_FREQ) {
+          throw new AmzException.NotValidException("Invalid subscription frequency");
         }
-        if (transaction.getAmountNQT() < Constants.ONE_BURST || transaction.getAmountNQT() > Constants.MAX_BALANCE_NQT) {
-          throw new BurstException.NotValidException("Subscriptions must be at least one burst");
+        if (transaction.getAmountNQT() < Constants.ONE_AMZ || transaction.getAmountNQT() > Constants.MAX_BALANCE_NQT) {
+          throw new AmzException.NotValidException("Subscriptions must be at least one amz");
         }
         if (transaction.getSenderId() == transaction.getRecipientId()) {
-          throw new BurstException.NotValidException("Cannot create subscription to same address");
+          throw new AmzException.NotValidException("Cannot create subscription to same address");
         }
         if (!subscriptionService.isEnabled()) {
-          throw new BurstException.NotYetEnabledException("Subscriptions not yet enabled");
+          throw new AmzException.NotYetEnabledException("Subscriptions not yet enabled");
         }
       }
 
@@ -2319,24 +2317,24 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
         Attachment.AdvancedPaymentSubscriptionCancel attachment = (Attachment.AdvancedPaymentSubscriptionCancel) transaction.getAttachment();
         if (attachment.getSubscriptionId() == null) {
-          throw new BurstException.NotValidException("Subscription cancel must include subscription id");
+          throw new AmzException.NotValidException("Subscription cancel must include subscription id");
         }
 
         Subscription subscription = subscriptionService.getSubscription(attachment.getSubscriptionId());
         if (subscription == null) {
-          throw new BurstException.NotValidException("Subscription cancel must contain current subscription id");
+          throw new AmzException.NotValidException("Subscription cancel must contain current subscription id");
         }
 
         if (!subscription.getSenderId().equals(transaction.getSenderId()) &&
                 !subscription.getRecipientId().equals(transaction.getSenderId())) {
-          throw new BurstException.NotValidException("Subscription cancel can only be done by participants");
+          throw new AmzException.NotValidException("Subscription cancel can only be done by participants");
         }
 
         if (!subscriptionService.isEnabled()) {
-          throw new BurstException.NotYetEnabledException("Subscription cancel not yet enabled");
+          throw new AmzException.NotYetEnabledException("Subscription cancel not yet enabled");
         }
       }
 
@@ -2389,8 +2387,8 @@ public abstract class TransactionType {
       }
 
       @Override
-      void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        throw new BurstException.NotValidException("Subscription payment never validates");
+      void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
+        throw new AmzException.NotValidException("Subscription payment never validates");
       }
 
       @Override
@@ -2426,14 +2424,14 @@ public abstract class TransactionType {
     }
 
     @Override
-    final void validateAttachment(Transaction transaction) throws BurstException.ValidationException {
+    final void validateAttachment(Transaction transaction) throws AmzException.ValidationException {
       if (transaction.getAmountNQT() != 0) {
-        throw new BurstException.NotValidException("Invalid automated transaction transaction");
+        throw new AmzException.NotValidException("Invalid automated transaction transaction");
       }
       doValidateAttachment(transaction);
     }
 
-    abstract void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException;
+    abstract void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException;
 
 
     public static final TransactionType AUTOMATED_TRANSACTION_CREATION = new AutomatedTransactions(){
@@ -2463,12 +2461,12 @@ public abstract class TransactionType {
       void doValidateAttachment(Transaction transaction)
               throws ValidationException {
         if (! fluxCapacitor.getValue(FluxValues.AUTOMATED_TRANSACTION_BLOCK, blockchain.getLastBlock().getHeight())) {
-          throw new BurstException.NotYetEnabledException("Automated Transactions not yet enabled at height " + blockchain.getLastBlock().getHeight());
+          throw new AmzException.NotYetEnabledException("Automated Transactions not yet enabled at height " + blockchain.getLastBlock().getHeight());
         }
         if (transaction.getSignature() != null && accountService.getAccount(transaction.getId()) != null) {
           Account existingAccount = accountService.getAccount(transaction.getId());
           if (existingAccount.getPublicKey() != null && !Arrays.equals(existingAccount.getPublicKey(), new byte[32]))
-            throw new BurstException.NotValidException("Account with id already exists");
+            throw new AmzException.NotValidException("Account with id already exists");
         }
         Attachment.AutomatedTransactionsCreation attachment = (Attachment.AutomatedTransactionsCreation) transaction.getAttachment();
         long totalPages;
@@ -2476,18 +2474,18 @@ public abstract class TransactionType {
           totalPages = AtController.checkCreationBytes(attachment.getCreationBytes(), blockchain.getHeight());
         }
         catch (AtException e) {
-          throw new BurstException.NotCurrentlyValidException("Invalid AT creation bytes", e);
+          throw new AmzException.NotCurrentlyValidException("Invalid AT creation bytes", e);
         }
         long requiredFee = totalPages * AtConstants.getInstance().costPerPage( transaction.getHeight() );
         if (transaction.getFeeNQT() <  requiredFee){
-          throw new BurstException.NotValidException("Insufficient fee for AT creation. Minimum: " + Convert.toUnsignedLong(requiredFee / Constants.ONE_BURST));
+          throw new AmzException.NotValidException("Insufficient fee for AT creation. Minimum: " + Convert.toUnsignedLong(requiredFee / Constants.ONE_AMZ));
         }
         if (fluxCapacitor.getValue(FluxValues.AT_FIX_BLOCK_3)) {
           if (attachment.getName().length() > Constants.MAX_AUTOMATED_TRANSACTION_NAME_LENGTH) {
-            throw new BurstException.NotValidException("Name of automated transaction over size limit");
+            throw new AmzException.NotValidException("Name of automated transaction over size limit");
           }
           if (attachment.getDescription().length() > Constants.MAX_AUTOMATED_TRANSACTION_DESCRIPTION_LENGTH) {
-            throw new BurstException.NotValidException("Description of automated transaction over size limit");
+            throw new AmzException.NotValidException("Description of automated transaction over size limit");
           }
         }
       }
@@ -2527,8 +2525,8 @@ public abstract class TransactionType {
       }
 
       @Override
-      void doValidateAttachment(Transaction transaction) throws BurstException.ValidationException {
-        throw new BurstException.NotValidException("AT payment never validates");
+      void doValidateAttachment(Transaction transaction) throws AmzException.ValidationException {
+        throw new AmzException.NotValidException("AT payment never validates");
       }
 
       @Override
@@ -2560,7 +2558,7 @@ public abstract class TransactionType {
   }
 
   protected Fee getBaselineFee(int height) {
-    return new Fee((fluxCapacitor.getValue(FluxValues.PRE_POC2, height) ? FEE_QUANT : ONE_BURST), 0);
+    return new Fee((fluxCapacitor.getValue(FluxValues.PRE_DYMAXION, height) ? FEE_QUANT : ONE_AMZ), 0);
   }
 
   public static final class Fee {

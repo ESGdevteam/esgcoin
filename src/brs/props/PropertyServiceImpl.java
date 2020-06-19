@@ -1,6 +1,6 @@
 package brs.props;
 
-import brs.Burst;
+import brs.Amz;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,8 +8,8 @@ import java.util.*;
 
 public class PropertyServiceImpl implements PropertyService {
 
-  private final Logger logger = LoggerFactory.getLogger(Burst.class);
-  private static final String LOG_UNDEF_NAME_DEFAULT = "{} using default: >{}<";
+  private final Logger logger = LoggerFactory.getLogger(Amz.class);
+  private static final String LOG_UNDEF_NAME_DEFAULT = "{} undefined. Default: >{}<";
 
   private final Properties properties;
 

@@ -2,25 +2,25 @@ package brs.db;
 
 import org.jooq.Record;
 
-public interface BurstKey {
+public interface AmzKey {
 
   interface Factory<T> {
-    BurstKey newKey(T t);
+    AmzKey newKey(T t);
 
-    BurstKey newKey(Record rs);
+    AmzKey newKey(Record rs);
   }
 
   long[] getPKValues();
 
   interface LongKeyFactory<T> extends Factory<T> {
     @Override
-    BurstKey newKey(Record rs);
+    AmzKey newKey(Record rs);
 
-    BurstKey newKey(long id);
+    AmzKey newKey(long id);
 
   }
 
   interface LinkKeyFactory<T> extends Factory<T> {
-    BurstKey newKey(long idA, long idB);
+    AmzKey newKey(long idA, long idB);
   }
 }

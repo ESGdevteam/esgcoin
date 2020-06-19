@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Blockchain;
-import brs.BurstException;
+import brs.AmzException;
 import brs.services.ParameterService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -30,7 +30,7 @@ public final class GetAccountLessors extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
 
     Account account = parameterService.getAccount(req);
     int height = parameterService.getHeight(req);

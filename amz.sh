@@ -25,7 +25,7 @@ configurations files. If you have
   conf/brs.properties.MainNet
   conf/brs.properties.TestNet
   conf/brs.properties.LocalDev
-you can activate your MainNet config with "burst.sh switch MainNet" 
+you can activate your MainNet config with "amz.sh switch MainNet" 
 
 EOF
 }
@@ -48,8 +48,8 @@ function upgrade_conf () {
         BRS="${BRS//nxt\.peerServerPort/P2P.Port}"
         BRS="${BRS//nxt\.myPlatform/P2P.myPlatform}"
         BRS="${BRS//nxt\.wellKnownPeers/P2P.BootstrapPeers}"
-        BRS="${BRS//burst\.rebroadcastPeers/P2P.rebroadcastTo}"
-        BRS="${BRS//burst\.connectWellKnownFirst/P2P.NumBootstrapConnections}"
+        BRS="${BRS//amz\.rebroadcastPeers/P2P.rebroadcastTo}"
+        BRS="${BRS//amz\.connectWellKnownFirst/P2P.NumBootstrapConnections}"
         BRS="${BRS//nxt\.knownBlacklistedPeers/P2P.BlacklistedPeers}"
         BRS="${BRS//nxt\.maxNumberOfConnectedPublicPeers/P2P.MaxConnections}"
         BRS="${BRS//nxt\.connectTimeout/P2P.TimeoutConnect_ms}"
@@ -60,8 +60,8 @@ function upgrade_conf () {
         BRS="${BRS//nxt\.savePeers/P2P.savePeers}"
         BRS="${BRS//nxt\.getMorePeers/P2P.getMorePeers}"
         BRS="${BRS//nxt\.enableTransactionRebroadcasting/P2P.enableTxRebroadcast}"
-        BRS="${BRS//burst\.rebroadcastAfter/P2P.rebroadcastTxAfter}"
-        BRS="${BRS//burst\.rebroadcastEvery/P2P.rebroadcastTxEvery}"
+        BRS="${BRS//amz\.rebroadcastAfter/P2P.rebroadcastTxAfter}"
+        BRS="${BRS//amz\.rebroadcastEvery/P2P.rebroadcastTxEvery}"
         BRS="${BRS//nxt\.enablePeerServerGZIPFilter/JETTY.P2P.GZIPFilter}"
 
         ### JETTY pass-through params
@@ -75,7 +75,7 @@ function upgrade_conf () {
         BRS="${BRS//nxt\.testnetPeers/DEV.TestNet.Peers}"
         BRS="${BRS//nxt\.isOffline/DEV.Offline}"
         BRS="${BRS//nxt\.time.Multiplier/DEV.TimeWarp}"
-        BRS="${BRS//burst\.mockMining/DEV.mockMining}"
+        BRS="${BRS//amz\.mockMining/DEV.mockMining}"
         BRS="${BRS//nxt\.testDbUrl/DEV.DB.Url}"
         # that bug may be in
         BRS="${BRS//nxt\.testDUsername/DEV.DB.Username}"
@@ -120,12 +120,12 @@ function upgrade_conf () {
         BRS="${BRS//nxt\.dbDefaultLockTimeout/DB.LockTimeout}"
 
         # GPU-related params
-        BRS="${BRS//burst\.oclVerify/GPU.Acceleration}"
-        BRS="${BRS//burst\.oclAuto/GPU.AutoDetect}"
-        BRS="${BRS//burst\.oclPlatform/GPU.PlatformIdx}"
-        BRS="${BRS//burst\.oclDevice/GPU.DeviceIdx}"
-        BRS="${BRS//burst\.oclMemPercent/GPU.MemPercent}"
-        BRS="${BRS//burst\.oclHashesPerEnqueue/GPU.HashesPerBatch}"
+        BRS="${BRS//amz\.oclVerify/GPU.Acceleration}"
+        BRS="${BRS//amz\.oclAuto/GPU.AutoDetect}"
+        BRS="${BRS//amz\.oclPlatform/GPU.PlatformIdx}"
+        BRS="${BRS//amz\.oclDevice/GPU.DeviceIdx}"
+        BRS="${BRS//amz\.oclMemPercent/GPU.MemPercent}"
+        BRS="${BRS//amz\.oclHashesPerEnqueue/GPU.HashesPerBatch}"
 
         # CPU-related params
         BRS="${BRS//Nxt\.cpuCores/CPU.NumCores}"
@@ -149,7 +149,7 @@ function create_brs_db {
     [ -z $P_PASS ] || P_PASS="$P_PASS"
     echo
 
-    echo "[+] Creating burst wallet db ($P_DATA)..."
+    echo "[+] Creating amz wallet db ($P_DATA)..."
     mysql -uroot -h$P_HOST << EOF
 CREATE DATABASE $P_DATA CHARACTER SET = 'utf8mb4' COLLATE = 'utf8mb4_unicode_ci';
 CREATE USER '$P_USER'@'$P_HOST' IDENTIFIED BY '$P_PASS'; 
@@ -246,7 +246,7 @@ function exists_or_get {
             echo "[!] Please install wget"
             exit 99
         fi
-        wget https://download.cryptoguru.org/burst/wallet/$1
+        wget https://download.cryptoguru.org/amz/wallet/$1
     fi
 }
 
@@ -269,13 +269,13 @@ if [[ $# -gt 0 ]] ; then
 
             ## check if command exists
             if hash mvn 2>/dev/null; then
-                ./burst.sh clean
+                ./amz.sh clean
                 mvn -DskipTests=true package
                 mvn javadoc:javadoc-no-fork
                 cp -r target/site/apidocs/* html/ui/doc
-                cp dist/tmp/burst.jar .
+                cp dist/tmp/amz.jar .
                 echo a .zip file has been built for distribution in dist/, its contents are in dist/tmp
-                echo Nevertheless, now you can start the wallet with ./burst.sh
+                echo Nevertheless, now you can start the wallet with ./amz.sh
             else
                 echo This build method is no longer supported. Please install maven.
                 echo https://maven.apache.org/install.html
@@ -296,7 +296,7 @@ if [[ $# -gt 0 ]] ; then
             exit 0
             ;;
         "h2shell")
-            java -cp burst.jar org.h2.tools.Shell
+            java -cp amz.jar org.h2.tools.Shell
             ;;
         "import")
             if ! hash unzip 2>/dev/null; then
@@ -379,10 +379,10 @@ if [[ $# -gt 0 ]] ; then
                     fi
                 elif [[ $MY_ARG == "h2" ]]; then
                     if exists_or_get brs.h2.zip ; then
-                        mkdir -p "$MY_DIR/burst_db"
-                        rm -f burst_db/burst.trace.db
+                        mkdir -p "$MY_DIR/amz_db"
+                        rm -f amz_db/amz.trace.db
                         if unzip brs.h2.zip ; then
-                            if mv burst.mv.db "$MY_DIR/burst_db"; then
+                            if mv amz.mv.db "$MY_DIR/amz_db"; then
                                 echo "[+] Import successful - please remove brs.h2.zip"
                                 exit
                             fi
@@ -426,5 +426,5 @@ else
             macos_dependency_install
         fi
     fi
-    java $BRS_DEVSTART -cp burst.jar:conf brs.Burst
+    java $BRS_DEVSTART -cp amz.jar:conf brs.Amz
 fi

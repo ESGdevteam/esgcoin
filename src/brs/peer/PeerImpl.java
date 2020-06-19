@@ -2,7 +2,6 @@ package brs.peer;
 
 import brs.*;
 import brs.crypto.Crypto;
-import brs.fluxcapacitor.FluxValues;
 import brs.props.Props;
 import brs.util.Convert;
 import brs.util.CountingInputStream;
@@ -134,16 +133,16 @@ final class PeerImpl implements Peer {
   }
 
   public boolean isAtLeastMyVersion() {
-    return isHigherOrEqualVersionThan(Burst.VERSION);
+    return isHigherOrEqualVersionThan(Amz.VERSION);
   }
   
   void setVersion(String version) {
     this.version.set(Version.EMPTY);
     isOldVersion.set(false);
-    if (Burst.APPLICATION.equals(getApplication()) && version != null) {
+    if (Amz.APPLICATION.equals(getApplication()) && version != null) {
       try {
         this.version.set(Version.parse(version));
-        isOldVersion.set(Burst.getFluxCapacitor().getValue(FluxValues.MIN_PEER_VERSION).isGreaterThan(this.version.get()));
+        isOldVersion.set(Constants.MIN_VERSION.isGreaterThan(this.version.get()));
       } catch (IllegalArgumentException e) {
         isOldVersion.set(true);
       }
@@ -222,7 +221,7 @@ final class PeerImpl implements Peer {
 
   @Override
   public void blacklist(Exception cause, String description) {
-    if (cause instanceof BurstException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
+    if (cause instanceof AmzException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
         || cause instanceof SQLException || cause.getCause() instanceof SQLException) {
       // don't blacklist peers just because a feature is not yet enabled, or because of database timeouts
       // prevents erroneous blacklisting during loading of blockchain from scratch
@@ -309,9 +308,9 @@ final class PeerImpl implements Peer {
       buf.append(address);
       if (port.get() <= 0) {
         buf.append(':');
-        buf.append(Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Peers.TESTNET_PEER_PORT : Peers.DEFAULT_PEER_PORT);
+        buf.append(Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Peers.TESTNET_PEER_PORT : Peers.DEFAULT_PEER_PORT);
       }
-      buf.append("/burst");
+      buf.append("/amz");
       URL url = new URL(buf.toString());
 
       if (Peers.communicationLoggingMask != 0) {
@@ -325,7 +324,7 @@ final class PeerImpl implements Peer {
       connection.setDoOutput(true);
       connection.setConnectTimeout(Peers.connectTimeout);
       connection.setReadTimeout(Peers.readTimeout);
-      connection.addRequestProperty("User-Agent", "BRS/" + Burst.VERSION.toString());
+      connection.addRequestProperty("User-Agent", "BRS/" + Amz.VERSION.toString());
       connection.setRequestProperty("Accept-Encoding", "gzip");
       connection.setRequestProperty("Connection", "close");
 
@@ -419,7 +418,7 @@ final class PeerImpl implements Peer {
   @Override
   public void connect(int currentTime) {
     JsonObject response = send(Peers.myPeerInfoRequest);
-    if (response != null) {
+    if (response != null && JSON.getAsString(response.get("error")) == null) {
       application.set(JSON.getAsString(response.get("application")));
       setVersion(JSON.getAsString(response.get("version")));
       platform.set(JSON.getAsString(response.get("platform")));

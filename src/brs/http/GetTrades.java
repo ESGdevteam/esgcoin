@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Asset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.Trade;
 import brs.assetexchange.AssetExchange;
 import brs.http.common.Parameters;
@@ -30,7 +30,7 @@ public final class GetTrades extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
 
     String assetId = Convert.emptyToNull(req.getParameter(ASSET_PARAMETER));
     String accountId = Convert.emptyToNull(req.getParameter(ACCOUNT_PARAMETER));

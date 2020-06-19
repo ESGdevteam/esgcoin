@@ -4,7 +4,7 @@ import brs.Alias;
 import brs.Alias.Offer;
 import brs.Attachment;
 import brs.Transaction;
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.AliasStore;
 import brs.services.AliasService;
@@ -15,9 +15,9 @@ public class AliasServiceImpl implements AliasService {
 
   private final AliasStore aliasStore;
   private final VersionedEntityTable<Alias> aliasTable;
-  private final BurstKey.LongKeyFactory<Alias> aliasDbKeyFactory;
+  private final AmzKey.LongKeyFactory<Alias> aliasDbKeyFactory;
   private final VersionedEntityTable<Offer> offerTable;
-  private final BurstKey.LongKeyFactory<Offer> offerDbKeyFactory;
+  private final AmzKey.LongKeyFactory<Offer> offerDbKeyFactory;
 
   public AliasServiceImpl(AliasStore aliasStore) {
     this.aliasStore = aliasStore;
@@ -54,7 +54,7 @@ public class AliasServiceImpl implements AliasService {
   public void addOrUpdateAlias(Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
     Alias alias = getAlias(attachment.getAliasName());
     if (alias == null) {
-      BurstKey aliasDBId = aliasDbKeyFactory.newKey(transaction.getId());
+      AmzKey aliasDBId = aliasDbKeyFactory.newKey(transaction.getId());
       alias = new Alias(transaction.getId(), aliasDBId, transaction, attachment);
     } else {
       alias.setAccountId(transaction.getSenderId());
@@ -73,7 +73,7 @@ public class AliasServiceImpl implements AliasService {
       Alias alias = getAlias(aliasName);
       Offer offer = getOffer(alias);
       if (offer == null) {
-        BurstKey dbKey = offerDbKeyFactory.newKey(alias.getId());
+        AmzKey dbKey = offerDbKeyFactory.newKey(alias.getId());
         offerTable.insert(new Offer(dbKey, alias.getId(), priceNQT, buyerId));
       } else {
         offer.setPriceNQT(priceNQT);

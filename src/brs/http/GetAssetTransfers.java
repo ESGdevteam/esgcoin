@@ -3,7 +3,7 @@ package brs.http;
 import brs.Account;
 import brs.Asset;
 import brs.AssetTransfer;
-import brs.BurstException;
+import brs.AmzException;
 import brs.assetexchange.AssetExchange;
 import brs.http.common.Parameters;
 import brs.services.AccountService;
@@ -33,7 +33,7 @@ public final class GetAssetTransfers extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     String assetId = Convert.emptyToNull(req.getParameter(ASSET_PARAMETER));
     String accountId = Convert.emptyToNull(req.getParameter(ACCOUNT_PARAMETER));
 

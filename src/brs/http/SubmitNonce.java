@@ -10,8 +10,8 @@ import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.AccountService;
 import brs.util.Convert;
-import burst.kit.crypto.BurstCrypto;
-import burst.kit.entity.BurstAddress;
+import amz.kit.crypto.AmzCrypto;
+import amz.kit.entity.AmzAddress;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -31,18 +31,14 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
   private final AccountService accountService;
   private final Blockchain blockchain;
   private final Generator generator;
-  private final int checkPointHeight;
-
 
   SubmitNonce(PropertyService propertyService, AccountService accountService, Blockchain blockchain, Generator generator) {
     super(new APITag[] {APITag.MINING}, SECRET_PHRASE_PARAMETER, NONCE_PARAMETER, ACCOUNT_ID_PARAMETER, BLOCK_HEIGHT_PARAMETER);
-    BurstCrypto burstCrypto = BurstCrypto.getInstance();
+    AmzCrypto amzCrypto = AmzCrypto.getInstance();
     this.passphrases = propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES)
             .stream()
-            .collect(Collectors.toMap(passphrase -> burstCrypto.getBurstAddressFromPassphrase(passphrase).getBurstID().getSignedLongId(), Function.identity()));
+            .collect(Collectors.toMap(passphrase -> amzCrypto.getAmzAddressFromPassphrase(passphrase).getAmzID().getSignedLongId(), Function.identity()));
     this.allowOtherSoloMiners = propertyService.getBoolean(Props.ALLOW_OTHER_SOLO_MINERS);
-    this.checkPointHeight = propertyService.getInt(propertyService.getBoolean(Props.DEV_TESTNET) ?
-    				Props.DEV_CHECKPOINT_HEIGHT : Props.BRS_CHECKPOINT_HEIGHT);
 
     this.accountService = accountService;
     this.blockchain = blockchain;
@@ -63,10 +59,6 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
     if (submissionHeight != null) {
       try {
         int height = Integer.parseInt(submissionHeight);
-        if (height < checkPointHeight) {
-            response.addProperty("result", "Given block height smaller than the check point height");
-            return response;
-        }
         if (height != blockchain.getHeight() + 1) {
           response.addProperty("result", "Given block height does not match current blockchain height");
           return response;
@@ -80,7 +72,7 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
     if (secret == null || Objects.equals(secret, "")) {
       long accountIdLong;
       try {
-        accountIdLong = BurstAddress.fromEither(accountId).getBurstID().getSignedLongId();
+        accountIdLong = AmzAddress.fromEither(accountId).getAmzID().getSignedLongId();
       } catch (Exception e) {
         response.addProperty("result", "Missing Passphrase and Account ID is malformed");
         return response;
@@ -130,7 +122,7 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
     }
 
     response.addProperty("result", "success");
-    response.addProperty("deadline", generatorState.getDeadlineLegacy());
+    response.addProperty("deadline", generatorState.getDeadline());
 
     return response;
   }

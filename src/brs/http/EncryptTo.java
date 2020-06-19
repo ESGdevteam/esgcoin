@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.crypto.EncryptedData;
 import brs.services.AccountService;
 import brs.services.ParameterService;
@@ -24,7 +24,7 @@ final class EncryptTo extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
 
     long recipientId = ParameterParser.getRecipientId(req);
     Account recipientAccount = accountService.getAccount(recipientId);

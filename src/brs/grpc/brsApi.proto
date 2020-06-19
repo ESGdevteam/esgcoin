@@ -46,7 +46,7 @@ service BrsApiService {
     rpc GetConstants(google.protobuf.Empty) returns (Constants) {}
     // Get the counts of different blockchain entities
     rpc GetCounts(google.protobuf.Empty) returns (Counts) {}
-    // Get the current Burst time (number of seconds since Burst epoch)
+    // Get the current Amz time (number of seconds since Amz epoch)
     rpc GetCurrentTime(google.protobuf.Empty) returns (Time) {}
     rpc GetDgsGood(GetByIdRequest) returns (DgsGood) {}
     rpc GetDgsGoods(GetDgsGoodsRequest) returns (DgsGoods) {}
@@ -468,7 +468,7 @@ message Alias {
 }
 
 message Time {
-    // Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+    // Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
     uint32 time = 1;
 }
 

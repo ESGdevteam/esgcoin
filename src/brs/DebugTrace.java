@@ -185,8 +185,8 @@ public final class DebugTrace {
     map.put("account", Convert.toUnsignedLong(account.getId()));
     map.put("lessor guaranteed balance", String.valueOf(account.getBalanceNQT()));
     map.put("lessee", Convert.toUnsignedLong(lesseeId));
-    map.put("timestamp", String.valueOf(Burst.getBlockchain().getLastBlock().getTimestamp()));
-    map.put("height", String.valueOf(Burst.getBlockchain().getHeight()));
+    map.put("timestamp", String.valueOf(Amz.getBlockchain().getLastBlock().getTimestamp()));
+    map.put("height", String.valueOf(Amz.getBlockchain().getHeight()));
     map.put("event", "lessor guaranteed balance");
     return map;
   }
@@ -197,8 +197,8 @@ public final class DebugTrace {
     Account account = Account.getAccount(accountId);
     map.put("balance", String.valueOf(account != null ? account.getBalanceNQT() : 0));
     map.put("unconfirmed balance", String.valueOf(account != null ? account.getUnconfirmedBalanceNQT() : 0));
-    map.put("timestamp", String.valueOf(Burst.getBlockchain().getLastBlock().getTimestamp()));
-    map.put("height", String.valueOf(Burst.getBlockchain().getHeight()));
+    map.put("timestamp", String.valueOf(Amz.getBlockchain().getLastBlock().getTimestamp()));
+    map.put("height", String.valueOf(Amz.getBlockchain().getHeight()));
     map.put("event", unconfirmed ? "unconfirmed balance" : "balance");
     return map;
   }
@@ -263,8 +263,8 @@ public final class DebugTrace {
     } else {
       map.put("asset balance", String.valueOf(accountAsset.getQuantityQNT()));
     }
-    map.put("timestamp", String.valueOf(Burst.getBlockchain().getLastBlock().getTimestamp()));
-    map.put("height", String.valueOf(Burst.getBlockchain().getHeight()));
+    map.put("timestamp", String.valueOf(Amz.getBlockchain().getLastBlock().getTimestamp()));
+    map.put("height", String.valueOf(Amz.getBlockchain().getHeight()));
     map.put("event", "asset balance");
     return map;
   }
@@ -362,8 +362,8 @@ public final class DebugTrace {
     else if (attachment == Attachment.ARBITRARY_MESSAGE) {
       map = new HashMap<>();
       map.put("account", Convert.toUnsignedLong(accountId));
-      map.put("timestamp", String.valueOf(Burst.getBlockchain().getLastBlock().getTimestamp()));
-      map.put("height", String.valueOf(Burst.getBlockchain().getHeight()));
+      map.put("timestamp", String.valueOf(Amz.getBlockchain().getLastBlock().getTimestamp()));
+      map.put("height", String.valueOf(Amz.getBlockchain().getHeight()));
       map.put("event", "message");
       if (isRecipient) {
         map.put("sender", Convert.toUnsignedLong(transaction.getSenderId()));

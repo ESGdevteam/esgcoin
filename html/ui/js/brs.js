@@ -28,7 +28,7 @@ var BRS = (function(BRS, $, undefined) {
     BRS.state = {};
     BRS.blocks = [];
     BRS.genesis = "0";
-    BRS.genesisRS = "BURST-2222-2222-2222-22222";
+    BRS.genesisRS = "AMZ-2222-2222-2222-22222";
 
     BRS.account = "";
     BRS.accountRS = "";
@@ -93,7 +93,7 @@ var BRS = (function(BRS, $, undefined) {
             $("#remember_password").prop("checked", true);
             if ( BRS.hasLocalStorage ) {
                 $("#remember_password_container").show();
-                var passphrase = localStorage.getItem("burst.passphrase");
+                var passphrase = localStorage.getItem("amz.passphrase");
                 if ( passphrase !== null && passphrase.length) {
                     $("#login_password").val(passphrase);
                 }
@@ -165,7 +165,7 @@ var BRS = (function(BRS, $, undefined) {
 
         $(".sidebar .treeview").tree();
 
-        $("#dgs_search_account_top, #dgs_search_account_center").mask("BURST-****-****-****-*****", {
+        $("#dgs_search_account_top, #dgs_search_account_center").mask("AMZ-****-****-****-*****", {
             "unmask": false
         });
 
@@ -897,7 +897,7 @@ var BRS = (function(BRS, $, undefined) {
                             if (fee_id === undefined)
                             $(input_fee_field_id).trigger("change"); //// --> for modals with Total field trigger BRS.sendMoneyCalculateTotal
                             else
-                            $(fee_id).html($(this).text()+ " BURST"); /// --> for modals without Total field set Fee field
+                            $(fee_id).html($(this).text()+ " AMZ"); /// --> for modals without Total field set Fee field
 
                      });
               }
@@ -913,7 +913,7 @@ var BRS = (function(BRS, $, undefined) {
 
         var id = $.trim($("#id_search input[name=q]").val());
 
-        if (/BURST\-/i.test(id)) {
+        if (/AMZ\-/i.test(id)) {
             BRS.sendRequest("getAccount", {
                 "account": id
             }, function(response, input) {

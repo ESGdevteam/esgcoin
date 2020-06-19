@@ -1,7 +1,7 @@
 package brs.db.sql;
 
-import brs.Burst;
-import brs.db.BurstKey;
+import brs.Amz;
+import brs.db.AmzKey;
 import brs.db.cache.DBCacheManagerImpl;
 import brs.db.store.Dbs;
 import brs.props.PropertyService;
@@ -38,8 +38,8 @@ public final class Db {
   private static HikariDataSource cp;
   private static SQLDialect dialect;
   private static final ThreadLocal<Connection> localConnection = new ThreadLocal<>();
-  private static final ThreadLocal<Map<String, Map<BurstKey, Object>>> transactionCaches = new ThreadLocal<>();
-  private static final ThreadLocal<Map<String, Map<BurstKey, Object>>> transactionBatches = new ThreadLocal<>();
+  private static final ThreadLocal<Map<String, Map<AmzKey, Object>>> transactionCaches = new ThreadLocal<>();
+  private static final ThreadLocal<Map<String, Map<AmzKey, Object>>> transactionBatches = new ThreadLocal<>();
 
   private static DBCacheManagerImpl dbCacheManager;
 
@@ -50,7 +50,7 @@ public final class Db {
     String dbUsername;
     String dbPassword;
 
-    if (Burst.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+    if (Amz.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
       dbUrl = propertyService.getString(Props.DEV_DB_URL);
       dbUsername = propertyService.getString(Props.DEV_DB_USERNAME);
       dbPassword = propertyService.getString(Props.DEV_DB_PASSWORD);
@@ -168,7 +168,7 @@ public final class Db {
     if (dialect == SQLDialect.H2) {
       try ( Connection con = cp.getConnection(); Statement stmt = con.createStatement() ) {
         // COMPACT is not giving good result.
-        if(Burst.getPropertyService().getBoolean(Props.DB_H2_DEFRAG_ON_SHUTDOWN)) {
+        if(Amz.getPropertyService().getBoolean(Props.DB_H2_DEFRAG_ON_SHUTDOWN)) {
           stmt.execute("SHUTDOWN DEFRAG");
         } else {
           stmt.execute("SHUTDOWN");
@@ -232,20 +232,20 @@ public final class Db {
     }
   }
 
-  static <V> Map<BurstKey, V> getCache(String tableName) {
+  static <V> Map<AmzKey, V> getCache(String tableName) {
     if (!isInTransaction()) {
       throw new IllegalStateException("Not in transaction");
     }
     //noinspection unchecked
-    return (Map<BurstKey, V>) transactionCaches.get().computeIfAbsent(tableName, k -> new HashMap<>());
+    return (Map<AmzKey, V>) transactionCaches.get().computeIfAbsent(tableName, k -> new HashMap<>());
   }
 
-  static <V> Map<BurstKey, V> getBatch(String tableName) {
+  static <V> Map<AmzKey, V> getBatch(String tableName) {
     if (!isInTransaction()) {
       throw new IllegalStateException("Not in transaction");
     }
     //noinspection unchecked
-    return (Map<BurstKey, V>) transactionBatches.get().computeIfAbsent(tableName, k -> new HashMap<>());
+    return (Map<AmzKey, V>) transactionBatches.get().computeIfAbsent(tableName, k -> new HashMap<>());
   }
 
   public static boolean isInTransaction() {

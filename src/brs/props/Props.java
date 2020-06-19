@@ -27,9 +27,8 @@ public class Props {
   public static final Prop<Integer> DEV_AT_FIX_BLOCK_2_BLOCK_HEIGHT = new Prop<>("DEV.atFixBlock2.startBlock", -1);
   public static final Prop<Integer> DEV_AT_FIX_BLOCK_3_BLOCK_HEIGHT = new Prop<>("DEV.atFixBlock3.startBlock", -1);
   public static final Prop<Integer> DEV_AT_FIX_BLOCK_4_BLOCK_HEIGHT = new Prop<>("DEV.atFixBlock4.startBlock", -1);
-  public static final Prop<Integer> DEV_PRE_POC2_BLOCK_HEIGHT = new Prop<>("DEV.prePoc2.startBlock", -1);
+  public static final Prop<Integer> DEV_PRE_DYMAXION_BLOCK_HEIGHT = new Prop<>("DEV.preDymaxion.startBlock", -1);
   public static final Prop<Integer> DEV_POC2_BLOCK_HEIGHT = new Prop<>("DEV.poc2.startBlock", -1);
-  public static final Prop<Integer> DEV_SODIUM_BLOCK_HEIGHT = new Prop<>("DEV.sodium.startBlock", -1);
   public static final Prop<Integer> DEV_NEXT_FORK_BLOCK_HEIGHT = new Prop<>("DEV.nextFork.startBlock", -1);
 
   public static final Prop<Boolean> BRS_DEBUG_TRACE_ENABLED = new Prop<>("brs.debugTraceEnable", false);
@@ -42,12 +41,6 @@ public class Props {
   public static final Prop<Integer> BRS_COMMUNICATION_LOGGING_MASK = new Prop<>("brs.communicationLoggingMask", 0);
 
   public static final Prop<Integer> BRS_SHUTDOWN_TIMEOUT = new Prop<>("brs.ShutdownTimeout", 180);
-
-  // Checkpoint block for faster sync from empty database
-  public static final Prop<Integer> BRS_CHECKPOINT_HEIGHT = new Prop<>("brs.checkPointHeight", 730_000);
-  public static final Prop<String> BRS_CHECKPOINT_HASH = new Prop<>("brs.checkPointPrevHash", "7c9f8eb553ae1c47cb8960847f6ae672a9923d9c0c4c13a2e23a430e1099a5bc");
-  public static final Prop<Integer> DEV_CHECKPOINT_HEIGHT = new Prop<>("DEV.checkPointHeight", 158_000);
-  public static final Prop<String> DEV_CHECKPOINT_HASH = new Prop<>("DEV.checkPointPrevHash", "38e70cdb7367502d9d3a97c1cb71a765ebfca4f8a0c9d81dccf32b9a8bc55012");
 
   // GPU options
   public static final Prop<Boolean> GPU_ACCELERATION     = new Prop<>("GPU.Acceleration", false);
@@ -63,7 +56,7 @@ public class Props {
 
 
   // DB options
-  public static final Prop<String> DB_URL          = new Prop<>("DB.Url", "jdbc:mariadb://localhost:3306/burstwallet");
+  public static final Prop<String> DB_URL          = new Prop<>("DB.Url", "jdbc:mariadb://localhost:3306/amzwallet");
   public static final Prop<String> DB_USERNAME     = new Prop<>("DB.Username", "");
   public static final Prop<String> DB_PASSWORD     = new Prop<>("DB.Password", "");
   public static final Prop<Integer> DB_CONNECTIONS  = new Prop<>("DB.Connections", 30);
@@ -84,7 +77,7 @@ public class Props {
   public static final Prop<String> P2P_MY_PLATFORM = new Prop<>("P2P.myPlatform", "PC");
   public static final Prop<String> P2P_MY_ADDRESS  = new Prop<>("P2P.myAddress", "");
   public static final Prop<String> P2P_LISTEN      = new Prop<>("P2P.Listen", "0.0.0.0");
-  public static final Prop<Integer> P2P_PORT        = new Prop<>("P2P.Port", 8123);
+  public static final Prop<Integer> P2P_PORT        = new Prop<>("P2P.Port", 8131);
   public static final Prop<Boolean> P2P_UPNP        = new Prop<>("P2P.UPnP", true);
   public static final Prop<Boolean> P2P_SHARE_MY_ADDRESS = new Prop<>("P2P.shareMyAddress", true);
   public static final Prop<Boolean> P2P_ENABLE_TX_REBROADCAST = new Prop<>("P2P.enableTxRebroadcast", true);
@@ -121,7 +114,7 @@ public class Props {
   public static final Prop<Boolean> API_ACCEPT_SURPLUS_PARAMS = new Prop<>("API.AcceptSurplusParams", false);
 
   public static final Prop<String> API_LISTEN  = new Prop<>("API.Listen", "127.0.0.1");
-  public static final Prop<Integer> API_PORT    = new Prop<>("API.Port", 8125);
+  public static final Prop<Integer> API_PORT    = new Prop<>("API.Port", 8132);
   public static final Prop<String> API_V2_LISTEN  = new Prop<>("API.V2.Listen", "0.0.0.0");
   public static final Prop<Integer> API_V2_PORT    = new Prop<>("API.V2.Port", 8121);
 

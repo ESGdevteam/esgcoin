@@ -23,9 +23,9 @@ public class DeeplinkQRCodeGenerator {
     hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
   }
 
-  public BufferedImage generateRequestBurstDeepLinkQRCode(String receiverId, long amountNQT, FeeSuggestionType feeSuggestionType, Long feeNQT, String message, boolean immutable)
+  public BufferedImage generateRequestAmzDeepLinkQRCode(String receiverId, long amountNQT, FeeSuggestionType feeSuggestionType, Long feeNQT, String message, boolean immutable)
       throws WriterException {
-    final StringBuilder deeplinkBuilder = new StringBuilder("burst://requestBurst");
+    final StringBuilder deeplinkBuilder = new StringBuilder("amz://requestAmz");
 
     deeplinkBuilder.append("&receiver=").append(receiverId);
     deeplinkBuilder.append("&amountNQT=").append(amountNQT);
@@ -42,10 +42,10 @@ public class DeeplinkQRCodeGenerator {
 
     deeplinkBuilder.append("&immutable=").append(immutable);
 
-    return generateBurstQRCode(deeplinkBuilder.toString());
+    return generateAmzQRCode(deeplinkBuilder.toString());
   }
 
-  private BufferedImage generateBurstQRCode(String url) throws WriterException {
+  private BufferedImage generateAmzQRCode(String url) throws WriterException {
     return MatrixToImageWriter.toBufferedImage(qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, 350, 350, hints), new MatrixToImageConfig());
   }
 }

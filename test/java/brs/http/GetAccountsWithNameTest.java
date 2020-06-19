@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.services.AccountService;
@@ -36,7 +36,7 @@ public class GetAccountsWithNameTest extends AbstractUnitTest {
     }
 
     @Test
-    public void processRequest() throws BurstException {
+    public void processRequest() throws AmzException {
         final long targetAccountId = 4L;
         final String targetAccountName = "exampleAccountName";
 
@@ -61,7 +61,7 @@ public class GetAccountsWithNameTest extends AbstractUnitTest {
     }
 
     @Test
-    public void processRequest_noAccountFound() throws BurstException {
+    public void processRequest_noAccountFound() throws AmzException {
         final String targetAccountName = "exampleAccountName";
 
         final HttpServletRequest req = QuickMocker.httpServletRequest(

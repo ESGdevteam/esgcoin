@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class DGSListingTest extends AbstractTransactionTest {
 
   private DGSListing t;
@@ -44,7 +44,7 @@ public class DGSListingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final Account mockAccount = mock(Account.class);
 
     final String dgsName = "dgsName";
@@ -63,9 +63,9 @@ public class DGSListingTest extends AbstractTransactionTest {
 
     when(mockParameterService.getSenderAccount(eq(req))).thenReturn(mockAccount);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsListing attachment = (Attachment.DigitalGoodsListing) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -79,7 +79,7 @@ public class DGSListingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingName() throws BurstException {
+  public void processRequest_missingName() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(PRICE_NQT_PARAMETER, 123),
         new MockParam(QUANTITY_PARAMETER, 1)
@@ -89,7 +89,7 @@ public class DGSListingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDGSListingName() throws BurstException {
+  public void processRequest_incorrectDGSListingName() throws AmzException {
     String tooLongName = "";
 
     for (int i = 0; i < 101; i++) {
@@ -106,7 +106,7 @@ public class DGSListingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDgsListingDescription() throws BurstException {
+  public void processRequest_incorrectDgsListingDescription() throws AmzException {
     String tooLongDescription = "";
 
     for (int i = 0; i < 1001; i++) {
@@ -124,7 +124,7 @@ public class DGSListingTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDgsListingTags() throws BurstException {
+  public void processRequest_incorrectDgsListingTags() throws AmzException {
     String tooLongTags = "";
 
     for (int i = 0; i < 101; i++) {

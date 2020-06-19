@@ -43,7 +43,7 @@ public class APITransactionManagerImpl implements APITransactionManager {
   }
 
   @Override
-  public JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment, long minimumFeeNQT) throws BurstException {
+  public JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment, long minimumFeeNQT) throws AmzException {
     int blockchainHeight = blockchain.getHeight();
     String deadlineValue = req.getParameter(DEADLINE_PARAMETER);
     String referencedTransactionFullHash = Convert.emptyToNull(req.getParameter(REFERENCED_TRANSACTION_FULL_HASH_PARAMETER));
@@ -70,24 +70,24 @@ public class APITransactionManagerImpl implements APITransactionManager {
     Message message = null;
     String messageValue = Convert.emptyToNull(req.getParameter(MESSAGE_PARAMETER));
     if (messageValue != null) {
-      boolean messageIsText = Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)
+      boolean messageIsText = Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)
           && !Parameters.isFalse(req.getParameter(MESSAGE_IS_TEXT_PARAMETER));
       try {
         message = messageIsText ? new Message(messageValue, blockchainHeight) : new Message(Convert.parseHexString(messageValue), blockchainHeight);
       } catch (RuntimeException e) {
         throw new ParameterException(INCORRECT_ARBITRARY_MESSAGE);
       }
-    } else if (attachment instanceof Attachment.ColoredCoinsAssetTransfer && Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
+    } else if (attachment instanceof Attachment.ColoredCoinsAssetTransfer && Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
       String commentValue = Convert.emptyToNull(req.getParameter(COMMENT_PARAMETER));
       if (commentValue != null) {
         message = new Message(commentValue, blockchainHeight);
       }
-    } else if (attachment == Attachment.ARBITRARY_MESSAGE && ! Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
+    } else if (attachment == Attachment.ARBITRARY_MESSAGE && ! Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
       message = new Message(new byte[0], blockchainHeight);
     }
     PublicKeyAnnouncement publicKeyAnnouncement = null;
     String recipientPublicKey = Convert.emptyToNull(req.getParameter(RECIPIENT_PUBLIC_KEY_PARAMETER));
-    if (recipientPublicKey != null && Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
+    if (recipientPublicKey != null && Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE, blockchainHeight)) {
       publicKeyAnnouncement = new PublicKeyAnnouncement(Convert.parseHexString(recipientPublicKey), blockchainHeight);
     }
 
@@ -168,9 +168,9 @@ public class APITransactionManagerImpl implements APITransactionManager {
       response.addProperty(UNSIGNED_TRANSACTION_BYTES_RESPONSE, Convert.toHexString(transaction.getUnsignedBytes()));
       response.add(TRANSACTION_JSON_RESPONSE, JSONData.unconfirmedTransaction(transaction));
 
-    } catch (BurstException.NotYetEnabledException e) {
+    } catch (AmzException.NotYetEnabledException e) {
       return FEATURE_NOT_AVAILABLE;
-    } catch (BurstException.ValidationException e) {
+    } catch (AmzException.ValidationException e) {
       response.addProperty(ERROR_RESPONSE, e.getMessage());
     }
     return response;

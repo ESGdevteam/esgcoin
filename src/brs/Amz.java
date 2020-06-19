@@ -31,11 +31,6 @@ import brs.util.LoggerConfigurator;
 import brs.util.ThreadPool;
 import brs.util.Time;
 import io.grpc.Server;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,34 +39,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Burst {
+public final class Amz {
 
-  public static final Version VERSION = Version.parse("v2.5.1");
-
+  public static final Version VERSION = Version.parse("v2.4.2");
   public static final String APPLICATION = "BRS";
 
-  public static final String CONF_FOLDER = "./conf";
-  public static final String DEFAULT_PROPERTIES_NAME = "brs-default.properties";
-  public static final String PROPERTIES_NAME = "brs.properties";
+  private static final String DEFAULT_PROPERTIES_NAME = "brs-default.properties";
 
-  public static final Option CONF_FOLDER_OPTION = Option.builder("c")
-		  .longOpt("config")
-		  .argName("conf folder")
-		  .numberOfArgs(1)
-		  .desc("The configuration folder to use")
-		  .build();
-
-  public static final Options CLI_OPTIONS = new Options()
-		  .addOption(CONF_FOLDER_OPTION)
-		  .addOption(Option.builder("l")
-	        		.longOpt("headless")
-	        		.desc("Run in headless mode")
-	        		.build())
-		  .addOption(Option.builder("h")
-	        		.longOpt("help")
-	        		.build());
-
-  private static final Logger logger = LoggerFactory.getLogger(Burst.class);
+  private static final Logger logger = LoggerFactory.getLogger(Amz.class);
 
   private static Stores stores;
   private static Dbs dbs;
@@ -90,30 +65,44 @@ public final class Burst {
   private static API api;
   private static Server apiV2Server;
 
-  private static PropertyService loadProperties(String confFolder) {
-    logger.info("Initializing Burst Reference Software (BRS) version {}", VERSION);
-    
-    logger.info("Configurations from folder {}", confFolder);
-    Properties defaultProperties = new Properties();
-    try (InputStream is = new FileInputStream(new File(confFolder, DEFAULT_PROPERTIES_NAME))) {
-       defaultProperties.load(is);
+  private static PropertyService loadProperties() {
+    final Properties defaultProperties = new Properties();
+
+    logger.info("Initializing Amz Reference Software (BRS) version {}", VERSION);
+    try (InputStream is = ClassLoader.getSystemResourceAsStream(DEFAULT_PROPERTIES_NAME)) {
+      if (is != null) {
+        defaultProperties.load(is);
+      } else {
+        String configFile = System.getProperty(DEFAULT_PROPERTIES_NAME);
+
+        if (configFile != null) {
+          try (InputStream fis = new FileInputStream(configFile)) {
+            defaultProperties.load(fis);
+          } catch (IOException e) {
+            throw new RuntimeException("Error loading " + DEFAULT_PROPERTIES_NAME + " from " + configFile);
+          }
+        } else {
+          throw new RuntimeException(DEFAULT_PROPERTIES_NAME + " not in classpath and system property " + DEFAULT_PROPERTIES_NAME + " not defined either");
+        }
+      }
     } catch (IOException e) {
       throw new RuntimeException("Error loading " + DEFAULT_PROPERTIES_NAME, e);
     }
 
-    Properties properties = new Properties(defaultProperties);
-    try (InputStream is = new FileInputStream(new File(confFolder, PROPERTIES_NAME))) {
+    Properties properties;
+    try (InputStream is = ClassLoader.getSystemResourceAsStream("brs.properties")) {
+      properties = new Properties(defaultProperties);
       if (is != null) { // parse if brs.properties was loaded
         properties.load(is);
       }
     } catch (IOException e) {
-      logger.info("Custom user properties file {} not loaded", PROPERTIES_NAME);
+      throw new RuntimeException("Error loading brs.properties", e);
     }
 
     return new PropertyServiceImpl(properties);
   }
 
-  private Burst() {
+  private Amz() {
   } // never
 
   public static Blockchain getBlockchain() {
@@ -136,42 +125,29 @@ public final class Burst {
     return dbs;
   }
 
-  public static void main(String []args) {
-    Runtime.getRuntime().addShutdownHook(new Thread(Burst::shutdown));
-    String confFolder = CONF_FOLDER;
-    try {
-      CommandLine cmd = new DefaultParser().parse(CLI_OPTIONS, args);
-      if(cmd.hasOption(CONF_FOLDER_OPTION.getOpt()))
-    	  confFolder = cmd.getOptionValue(CONF_FOLDER_OPTION.getOpt());
-    }
-    catch (Exception e) {
-    	logger.error("Exception parsing command line arguments", e);
-	}
-    init(confFolder);
+  public static void main(String[] args) {
+    Runtime.getRuntime().addShutdownHook(new Thread(Amz::shutdown));
+    init();
   }
 
-  private static boolean validateVersionNotDev(PropertyService propertyService) {
+  private static void validateVersionNotDev(PropertyService propertyService) {
     if(VERSION.isPrelease() && !propertyService.getBoolean(Props.DEV_TESTNET)) {
-      logger.error("THIS IS A DEVELOPMENT VERSION, PLEASE DO NOT USE THIS ON MAINNET");
-      return false;
+      logger.error("THIS IS A DEVELOPMENT WALLET, PLEASE DO NOT USE THIS");
+      System.exit(0);
     }
-    return true;
   }
-  
+
   public static void init(Properties customProperties) {
     loadWallet(new PropertyServiceImpl(customProperties));
   }
 
-  private static void init(String confFolder) {
-    loadWallet(loadProperties(confFolder));
+  private static void init() {
+    loadWallet(loadProperties());
   }
 
   private static void loadWallet(PropertyService propertyService) {
-    LoggerConfigurator.init();
-
-    Burst.propertyService = propertyService;
-	if(!validateVersionNotDev(propertyService))
-		return;
+    validateVersionNotDev(propertyService);
+    Amz.propertyService = propertyService;
 
     try {
       long startTime = System.currentTimeMillis();
@@ -184,6 +160,8 @@ public final class Burst {
       dbCacheManager = new DBCacheManagerImpl(statisticsManager);
 
       threadPool = new ThreadPool(propertyService);
+
+      LoggerConfigurator.init();
 
       Db.init(propertyService, dbCacheManager);
       dbs = Db.getDbsByDatabaseType();
@@ -279,7 +257,7 @@ public final class Burst {
       logger.error(e.getMessage(), e);
       System.exit(1);
     }
-    (new Thread(Burst::commandHandler)).start();
+    (new Thread(Amz::commandHandler)).start();
   }
 
   private static void addBlockchainListeners(BlockchainProcessor blockchainProcessor, AccountService accountService, DGSGoodsStoreService goodsService, Blockchain blockchain,
@@ -327,15 +305,12 @@ public final class Burst {
       api.shutdown();
     if (apiV2Server != null)
       apiV2Server.shutdownNow();
-    if (threadPool != null) {
-      Peers.shutdown(threadPool);
-      threadPool.shutdown();
-    }
+    Peers.shutdown(threadPool);
+    threadPool.shutdown();
     if(! ignoreDBShutdown) {
       Db.shutdown();
     }
-    if (dbCacheManager != null)
-      dbCacheManager.close();
+    dbCacheManager.close();
     if (blockchainProcessor != null && blockchainProcessor.getOclVerify()) {
       OCLPoC.destroy();
     }

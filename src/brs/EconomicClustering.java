@@ -44,7 +44,7 @@ public final class EconomicClustering {
 
   public boolean verifyFork(Transaction transaction) {
     try {
-      if (!Burst.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE)) {
+      if (!Amz.getFluxCapacitor().getValue(FluxValues.DIGITAL_GOODS_STORE)) {
         return true;
       }
       if (transaction.getReferencedTransactionFullHash() != null) {

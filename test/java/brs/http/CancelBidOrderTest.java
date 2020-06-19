@@ -27,7 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class CancelBidOrderTest extends AbstractTransactionTest {
 
   private CancelBidOrder t;
@@ -48,7 +48,7 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final int orderId = 123;
     final long orderAccountId = 1;
     final long senderAccountId = orderAccountId;
@@ -65,9 +65,9 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
     when(mockAccount.getId()).thenReturn(senderAccountId);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockAccount);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.ColoredCoinsBidOrderCancellation attachment = (brs.Attachment.ColoredCoinsBidOrderCancellation) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -77,12 +77,12 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void processRequest_orderParameterMissing() throws BurstException {
+  public void processRequest_orderParameterMissing() throws AmzException {
     t.processRequest(QuickMocker.httpServletRequest());
   }
 
   @Test
-  public void processRequest_orderDataMissingUnkownOrder() throws BurstException {
+  public void processRequest_orderDataMissingUnkownOrder() throws AmzException {
     final int orderId = 123;
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(ORDER_PARAMETER, orderId)
@@ -94,7 +94,7 @@ public class CancelBidOrderTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_accountIdNotSameAsOrder() throws BurstException {
+  public void processRequest_accountIdNotSameAsOrder() throws AmzException {
     final int orderId = 123;
     final long orderAccountId = 1;
     final long senderAccountId = 2;

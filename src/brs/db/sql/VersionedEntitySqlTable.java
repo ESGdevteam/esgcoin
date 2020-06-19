@@ -1,7 +1,7 @@
 package brs.db.sql;
 
-import brs.Burst;
-import brs.db.BurstKey;
+import brs.Amz;
+import brs.db.AmzKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.DerivedTableManager;
 import org.jooq.*;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public abstract class VersionedEntitySqlTable<T> extends EntitySqlTable<T> implements VersionedEntityTable<T> {
 
-  VersionedEntitySqlTable(String table, TableImpl<?> tableClass, BurstKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
+  VersionedEntitySqlTable(String table, TableImpl<?> tableClass, AmzKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
     super(table, tableClass, dbKeyFactory, true, derivedTableManager);
   }
 
@@ -127,7 +127,7 @@ public abstract class VersionedEntitySqlTable<T> extends EntitySqlTable<T> imple
         SelectQuery<Record> countQuery = ctx.selectQuery();
         countQuery.addFrom(tableClass);
         countQuery.addConditions(dbKey.getPKConditions(tableClass));
-        countQuery.addConditions(heightField.lt(Burst.getBlockchain().getHeight()));
+        countQuery.addConditions(heightField.lt(Amz.getBlockchain().getHeight()));
         if (ctx.fetchCount(countQuery) > 0) {
           UpdateQuery updateQuery = ctx.updateQuery(tableClass);
           updateQuery.addValue(

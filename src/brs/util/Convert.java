@@ -1,10 +1,10 @@
 package brs.util;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Constants;
 import brs.crypto.Crypto;
-import burst.kit.crypto.BurstCrypto;
-import burst.kit.entity.BurstAddress;
+import amz.kit.crypto.AmzCrypto;
+import amz.kit.entity.AmzAddress;
 import org.bouncycastle.util.encoders.DecoderException;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -15,7 +15,7 @@ import java.util.Date;
 
 public final class Convert {
 
-  private static final BurstCrypto burstCrypto = BurstCrypto.getInstance();
+  private static final AmzCrypto amzCrypto = AmzCrypto.getInstance();
 
   private static final long[] multipliers = {1, 10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000};
 
@@ -52,16 +52,16 @@ public final class Convert {
   }
 
   public static long parseAccountId(String account) {
-    BurstAddress address = BurstAddress.fromEither(account);
-    return address == null ? 0 : address.getBurstID().getSignedLongId();
+    AmzAddress address = AmzAddress.fromEither(account);
+    return address == null ? 0 : address.getAmzID().getSignedLongId();
   }
 
   public static String rsAccount(long accountId) {
-    return "BURST-" + Crypto.rsEncode(accountId);
+    return "AMZ-" + Crypto.rsEncode(accountId);
   }
 
   public static long fullHashToId(byte[] hash) {
-    return burstCrypto.hashToId(hash).getSignedLongId();
+    return amzCrypto.hashToId(hash).getSignedLongId();
   }
 
   public static long fullHashToId(String hash) {
@@ -107,9 +107,9 @@ public final class Convert {
     return new String(bytes, StandardCharsets.UTF_8);
   }
 
-  public static String readString(ByteBuffer buffer, int numBytes, int maxLength) throws BurstException.NotValidException {
+  public static String readString(ByteBuffer buffer, int numBytes, int maxLength) throws AmzException.NotValidException {
     if (numBytes > 3 * maxLength) {
-      throw new BurstException.NotValidException("Max parameter length exceeded");
+      throw new AmzException.NotValidException("Max parameter length exceeded");
     }
     byte[] bytes = new byte[numBytes];
     buffer.get(bytes);
@@ -121,7 +121,7 @@ public final class Convert {
   }
 
   public static long parseNXT(String nxt) {
-    return parseStringFraction(nxt, 8, Constants.MAX_BALANCE_BURST);
+    return parseStringFraction(nxt, 8, Constants.MAX_BALANCE_AMZ);
   }
 
   private static long parseStringFraction(String value, int decimals, long maxValue) {

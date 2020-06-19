@@ -4,15 +4,12 @@ import brs.*;
 import brs.BlockchainProcessor.BlockOutOfOrderException;
 import brs.crypto.Crypto;
 import brs.fluxcapacitor.FluxValues;
-import brs.props.Props;
 import brs.services.AccountService;
 import brs.services.BlockService;
 import brs.services.TransactionService;
 import brs.util.Convert;
 import brs.util.DownloadCacheImpl;
 import brs.util.ThreadPool;
-
-import org.bouncycastle.util.encoders.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +51,7 @@ public class BlockServiceImpl implements BlockService {
       Account genAccount = accountService.getAccount(block.getGeneratorPublicKey());
       Account.RewardRecipientAssignment rewardAssignment;
       rewardAssignment = genAccount == null ? null : accountService.getRewardRecipientAssignment(genAccount);
-      if (genAccount == null || rewardAssignment == null || !Burst.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
+      if (genAccount == null || rewardAssignment == null || !Amz.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
         publicKey = block.getGeneratorPublicKey();
       } else {
         if (previousBlock.getHeight() + 1 >= rewardAssignment.getFromHeight()) {
@@ -91,8 +88,7 @@ public class BlockServiceImpl implements BlockService {
         return false;
       }
       int elapsedTime = block.getTimestamp() - previousBlock.getTimestamp();
-      BigInteger hit = block.getPocTime();
-      BigInteger pTime = generator.calculateDeadline(hit, previousBlock.getBaseTarget(), block.getHeight());
+      BigInteger pTime = block.getPocTime().divide(BigInteger.valueOf(previousBlock.getBaseTarget()));
       return BigInteger.valueOf(elapsedTime).compareTo(pTime) > 0;
     } catch (RuntimeException e) {
       logger.info("Error verifying block generation signature", e);
@@ -111,34 +107,13 @@ public class BlockServiceImpl implements BlockService {
     if (block.isVerified()) {
       return;
     }
-    
-    int checkPointHeight = Burst.getPropertyService().getInt(
-    		Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ?
-    				Props.DEV_CHECKPOINT_HEIGHT : Props.BRS_CHECKPOINT_HEIGHT);
-    try {
-      if(block.getHeight() < checkPointHeight) {
-        // do not verify the nonce up to the checkpoint block
-        block.setPocTime(BigInteger.valueOf(0L));
-      }
-      else {
-    	if(block.getHeight() == checkPointHeight) {
-       	    String checkPointHash = Burst.getPropertyService().getString(
-    	    		Burst.getPropertyService().getBoolean(Props.DEV_TESTNET) ?
-    	    				Props.DEV_CHECKPOINT_HASH : Props.BRS_CHECKPOINT_HASH);
 
-       	    String receivedHash = Hex.toHexString(block.getPreviousBlockHash()); 
-    		if(!receivedHash.equals(checkPointHash)) {
-    			logger.error("Error pre-verifying checkpoint block {}", block.getHeight());
-    			return;
-    		}
-    		logger.info("Checkpoint block {} with previous block hash {} verified", block.getHeight(), Hex.toHexString(block.getPreviousBlockHash()));
-    	}
-        // Pre-verify poc:
-        if (scoopData == null) {
-          block.setPocTime(generator.calculateHit(block.getGeneratorId(), block.getNonce(), block.getGenerationSignature(), getScoopNum(block), block.getHeight()));
-        } else {
-          block.setPocTime(generator.calculateHit(block.getGeneratorId(), block.getNonce(), block.getGenerationSignature(), scoopData));
-        }
+    try {
+      // Pre-verify poc:
+      if (scoopData == null) {
+        block.setPocTime(generator.calculateHit(block.getGeneratorId(), block.getNonce(), block.getGenerationSignature(), getScoopNum(block), block.getHeight()));
+      } else {
+        block.setPocTime(generator.calculateHit(block.getGeneratorId(), block.getNonce(), block.getGenerationSignature(), scoopData));
       }
     } catch (RuntimeException e) {
       logger.info("Error pre-verifying block generation signature", e);
@@ -163,7 +138,7 @@ public class BlockServiceImpl implements BlockService {
   public void apply(Block block) {
     Account generatorAccount = accountService.getOrAddAccount(block.getGeneratorId());
     generatorAccount.apply(block.getGeneratorPublicKey(), block.getHeight());
-    if (!Burst.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
+    if (!Amz.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
       accountService.addToBalanceAndUnconfirmedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
       accountService.addToForgedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
     } else {
@@ -192,7 +167,7 @@ public class BlockServiceImpl implements BlockService {
     }
     int month = block.getHeight() / 10800;
     return BigInteger.valueOf(10000).multiply(BigInteger.valueOf(95).pow(month))
-        .divide(BigInteger.valueOf(100).pow(month)).longValue() * Constants.ONE_BURST;
+        .divide(BigInteger.valueOf(100).pow(month)).longValue() * Constants.ONE_AMZ;
   }
 
   @Override
@@ -224,7 +199,7 @@ public class BlockServiceImpl implements BlockService {
     } else if (block.getHeight() < 4) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);
       block.setCumulativeDifficulty(previousBlock.getCumulativeDifficulty().add(Convert.two64.divide(BigInteger.valueOf(Constants.INITIAL_BASE_TARGET))));
-    } else if (block.getHeight() < Constants.BURST_DIFF_ADJUST_CHANGE_BLOCK) {
+    } else if (block.getHeight() < Constants.AMZ_DIFF_ADJUST_CHANGE_BLOCK) {
       Block itBlock = previousBlock;
       BigInteger avgBaseTarget = BigInteger.valueOf(itBlock.getBaseTarget());
       do {
@@ -236,7 +211,7 @@ public class BlockServiceImpl implements BlockService {
 
       long curBaseTarget = avgBaseTarget.longValue();
       long newBaseTarget = BigInteger.valueOf(curBaseTarget).multiply(BigInteger.valueOf(difTime))
-          .divide(BigInteger.valueOf(Constants.BURST_BLOCK_TIME * 4)).longValue();
+          .divide(BigInteger.valueOf(240L * 4)).longValue();
       if (newBaseTarget < 0 || newBaseTarget > Constants.MAX_BASE_TARGET) {
         newBaseTarget = Constants.MAX_BASE_TARGET;
       }
@@ -271,7 +246,7 @@ public class BlockServiceImpl implements BlockService {
             .divide(BigInteger.valueOf(blockCounter + 1L));
       } while (blockCounter < 24);
       long difTime = (long) block.getTimestamp() - itBlock.getTimestamp();
-      long targetTimespan = 24L * Constants.BURST_BLOCK_TIME;
+      long targetTimespan = 24L * 4 * 60;
 
       if (difTime < targetTimespan / 2) {
         difTime = targetTimespan / 2;

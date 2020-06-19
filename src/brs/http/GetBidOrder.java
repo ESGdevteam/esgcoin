@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Order;
 import brs.assetexchange.AssetExchange;
 import com.google.gson.JsonElement;
@@ -20,7 +20,7 @@ public final class GetBidOrder extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     long orderId = ParameterParser.getOrderId(req);
     Order.Bid bidOrder = assetExchange.getBidOrder(orderId);
 

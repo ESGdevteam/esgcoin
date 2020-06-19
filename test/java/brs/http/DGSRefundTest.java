@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class DGSRefundTest extends AbstractTransactionTest {
 
   private DGSRefund t;
@@ -49,7 +49,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final long refundNQTParameter = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -74,9 +74,9 @@ public class DGSRefundTest extends AbstractTransactionTest {
 
     when(mockAccountService.getAccount(eq(mockPurchase.getBuyerId()))).thenReturn(mockBuyerAccount);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsRefund attachment = (Attachment.DigitalGoodsRefund) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -87,7 +87,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectPurchase() throws BurstException {
+  public void processRequest_incorrectPurchase() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -103,7 +103,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_duplicateRefund() throws BurstException {
+  public void processRequest_duplicateRefund() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -120,7 +120,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsNotDelivered() throws BurstException {
+  public void processRequest_goodsNotDelivered() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -138,7 +138,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDgsRefundWrongFormat() throws BurstException {
+  public void processRequest_incorrectDgsRefundWrongFormat() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(REFUND_NQT_PARAMETER, "Bob")
     );
@@ -158,7 +158,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_negativeIncorrectDGSRefund() throws BurstException {
+  public void processRequest_negativeIncorrectDGSRefund() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(REFUND_NQT_PARAMETER, -5)
     );
@@ -178,7 +178,7 @@ public class DGSRefundTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_overMaxBalanceNQTIncorrectDGSRefund() throws BurstException {
+  public void processRequest_overMaxBalanceNQTIncorrectDGSRefund() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(REFUND_NQT_PARAMETER, Constants.MAX_BALANCE_NQT + 1)
     );

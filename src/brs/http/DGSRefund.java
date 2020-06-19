@@ -26,7 +26,7 @@ public final class DGSRefund extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     Account sellerAccount = parameterService.getSenderAccount(req);
     DigitalGoodsStore.Purchase purchase = parameterService.getPurchase(req);
 

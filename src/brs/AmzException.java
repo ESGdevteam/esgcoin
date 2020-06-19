@@ -1,24 +1,24 @@
 package brs;
 
-public abstract class BurstException extends Exception {
+public abstract class AmzException extends Exception {
 
-  protected BurstException() {
+  protected AmzException() {
     super();
   }
 
-  BurstException(String message) {
+  AmzException(String message) {
     super(message);
   }
 
-  BurstException(String message, Throwable cause) {
+  AmzException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  protected BurstException(Throwable cause) {
+  protected AmzException(Throwable cause) {
     super(cause);
   }
 
-  public abstract static class ValidationException extends BurstException {
+  public abstract static class ValidationException extends AmzException {
 
     private ValidationException(String message) {
       super(message);

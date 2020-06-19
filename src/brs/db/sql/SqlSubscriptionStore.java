@@ -1,8 +1,8 @@
 package brs.db.sql;
 
-import brs.Burst;
+import brs.Amz;
 import brs.Subscription;
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.DerivedTableManager;
 import brs.db.store.SubscriptionStore;
@@ -19,9 +19,9 @@ import static brs.schema.Tables.SUBSCRIPTION;
 
 public class SqlSubscriptionStore implements SubscriptionStore {
 
-  private final BurstKey.LongKeyFactory<Subscription> subscriptionDbKeyFactory = new DbKey.LongKeyFactory<Subscription>(SUBSCRIPTION.ID) {
+  private final AmzKey.LongKeyFactory<Subscription> subscriptionDbKeyFactory = new DbKey.LongKeyFactory<Subscription>(SUBSCRIPTION.ID) {
       @Override
-      public BurstKey newKey(Subscription subscription) {
+      public AmzKey newKey(Subscription subscription) {
         return subscription.dbKey;
       }
     };
@@ -59,7 +59,7 @@ public class SqlSubscriptionStore implements SubscriptionStore {
   }
 
   @Override
-  public BurstKey.LongKeyFactory<Subscription> getSubscriptionDbKeyFactory() {
+  public AmzKey.LongKeyFactory<Subscription> getSubscriptionDbKeyFactory() {
     return subscriptionDbKeyFactory;
   }
 
@@ -91,7 +91,7 @@ public class SqlSubscriptionStore implements SubscriptionStore {
   private void saveSubscription(DSLContext ctx, Subscription subscription) {
     ctx.mergeInto(SUBSCRIPTION, SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
             .key(SUBSCRIPTION.ID, SUBSCRIPTION.SENDER_ID, SUBSCRIPTION.RECIPIENT_ID, SUBSCRIPTION.AMOUNT, SUBSCRIPTION.FREQUENCY, SUBSCRIPTION.TIME_NEXT, SUBSCRIPTION.HEIGHT, SUBSCRIPTION.LATEST)
-            .values(subscription.id, subscription.senderId, subscription.recipientId, subscription.amountNQT, subscription.frequency, subscription.getTimeNext(), Burst.getBlockchain().getHeight(), true)
+            .values(subscription.id, subscription.senderId, subscription.recipientId, subscription.amountNQT, subscription.frequency, subscription.getTimeNext(), Amz.getBlockchain().getHeight(), true)
             .execute();
   }
 

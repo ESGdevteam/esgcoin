@@ -11,7 +11,7 @@ use Time::HiRes                    qw(gettimeofday
                                       sleep
                                       tv_interval);              # sub-second time taking
 
-use BURST::API::RequestTypes qw(loop_reqtypes
+use AMZ::API::RequestTypes qw(loop_reqtypes
                            );
 
 my $tests = 0;

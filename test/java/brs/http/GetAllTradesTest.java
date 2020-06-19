@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Asset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.Trade;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
@@ -38,7 +38,7 @@ public class GetAllTradesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withAssetsInformation() throws BurstException {
+  public void processRequest_withAssetsInformation() throws AmzException {
     final int timestamp = 1;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -83,7 +83,7 @@ public class GetAllTradesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withoutAssetsInformation() throws BurstException {
+  public void processRequest_withoutAssetsInformation() throws AmzException {
     final int timestamp = 1;
     final int firstIndex = 0;
     final int lastIndex = 1;

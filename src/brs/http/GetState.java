@@ -47,45 +47,44 @@ final class GetState extends APIServlet.JsonRequestHandler {
 
     JsonObject response = new JsonObject();
 
-    response.addProperty("application", Burst.APPLICATION);
-    response.addProperty("version", Burst.VERSION.toString());
+    response.addProperty("application", Amz.APPLICATION);
+    response.addProperty("version", Amz.VERSION.toString());
     response.addProperty(TIME_RESPONSE, timeService.getEpochTime());
     response.addProperty("lastBlock", blockchain.getLastBlock().getStringId());
     response.addProperty("cumulativeDifficulty", blockchain.getLastBlock().getCumulativeDifficulty().toString());
 
-    if ("true".equalsIgnoreCase(req.getParameter(INCLUDE_COUNTS_PARAMETER))) {
+    if (!"false".equalsIgnoreCase(req.getParameter("includeCounts"))) {
       long totalEffectiveBalance = 0;
       for (Account account : accountService.getAllAccounts(0, -1)) {
-        long effectiveBalanceBURST = account.getBalanceNQT();
-        if (effectiveBalanceBURST > 0) {
-          totalEffectiveBalance += effectiveBalanceBURST;
+        long effectiveBalanceAMZ = account.getBalanceNQT();
+        if (effectiveBalanceAMZ > 0) {
+          totalEffectiveBalance += effectiveBalanceAMZ;
         }
       }
       for (Escrow escrow : escrowService.getAllEscrowTransactions()) {
         totalEffectiveBalance += escrow.getAmountNQT();
       }
-      response.addProperty("totalEffectiveBalanceNXT", totalEffectiveBalance / Constants.ONE_BURST);
-    }
+      response.addProperty("totalEffectiveBalanceNXT", totalEffectiveBalance / Constants.ONE_AMZ);
 
-    response.addProperty("numberOfBlocks", blockchain.getHeight() + 1);
-    response.addProperty("numberOfTransactions", blockchain.getTransactionCount());
-    response.addProperty("numberOfAccounts", accountService.getCount());
-    response.addProperty("numberOfAssets", assetExchange.getAssetsCount());
-    int askCount = assetExchange.getAskCount();
-    int bidCount = assetExchange.getBidCount();
-    response.addProperty("numberOfOrders", askCount + bidCount);
-    response.addProperty("numberOfAskOrders", askCount);
-    response.addProperty("numberOfBidOrders", bidCount);
-    response.addProperty("numberOfTrades", assetExchange.getTradesCount());
-    response.addProperty("numberOfTransfers", assetExchange.getAssetTransferCount());
-    response.addProperty("numberOfAliases", aliasService.getAliasCount());
-    
+      response.addProperty("numberOfBlocks", blockchain.getHeight() + 1);
+      response.addProperty("numberOfTransactions", blockchain.getTransactionCount());
+      response.addProperty("numberOfAccounts", accountService.getCount());
+      response.addProperty("numberOfAssets", assetExchange.getAssetsCount());
+      int askCount = assetExchange.getAskCount();
+      int bidCount = assetExchange.getBidCount();
+      response.addProperty("numberOfOrders", askCount + bidCount);
+      response.addProperty("numberOfAskOrders", askCount);
+      response.addProperty("numberOfBidOrders", bidCount);
+      response.addProperty("numberOfTrades", assetExchange.getTradesCount());
+      response.addProperty("numberOfTransfers", assetExchange.getAssetTransferCount());
+      response.addProperty("numberOfAliases", aliasService.getAliasCount());
+    }
     response.addProperty("numberOfPeers", Peers.getAllPeers().size());
     response.addProperty("numberOfUnlockedAccounts", generator.getAllGenerators().size());
-    Peer lastBlockchainFeeder = Burst.getBlockchainProcessor().getLastBlockchainFeeder();
+    Peer lastBlockchainFeeder = Amz.getBlockchainProcessor().getLastBlockchainFeeder();
     response.addProperty("lastBlockchainFeeder", lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
-    response.addProperty("lastBlockchainFeederHeight", Burst.getBlockchainProcessor().getLastBlockchainFeederHeight());
-    response.addProperty("isScanning", Burst.getBlockchainProcessor().isScanning());
+    response.addProperty("lastBlockchainFeederHeight", Amz.getBlockchainProcessor().getLastBlockchainFeederHeight());
+    response.addProperty("isScanning", Amz.getBlockchainProcessor().isScanning());
     response.addProperty("availableProcessors", Runtime.getRuntime().availableProcessors());
     response.addProperty("maxMemory", Runtime.getRuntime().maxMemory());
     response.addProperty("totalMemory", Runtime.getRuntime().totalMemory());

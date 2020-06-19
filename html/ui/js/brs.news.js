@@ -39,14 +39,14 @@ var BRS = (function(BRS, $, undefined) {
 		    }
 		},
 		"filter": function(entry, tokens) {
-		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("BURST tipping bot has arrived") == -1;
+		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("AMZ tipping bot has arrived") == -1;
 		}
 	    };
 
-	    $("#burstforum_news").rss("https://forums.getburst.net/c/burst-community-announcements", settings, BRS.newsLoaded);
-	    $("#burstforum2_news").rss("https://burstforum.net/category/1/announcements", settings, BRS.newsLoaded);		
-	    $("#reddit_news").rss("http://www.reddit.com/r/burstcoin/.rss", settingsReddit, BRS.newsLoaded);
-	    $("#burstcoinist_news").rss("https://www.burstcoin.ist/category/articles/", settings, BRS.newsLoaded);
+	    $("#amzforum_news").rss("https://forums.getamz.net/c/amz-community-announcements", settings, BRS.newsLoaded);
+	    $("#amzforum2_news").rss("https://amzforum.net/category/1/announcements", settings, BRS.newsLoaded);		
+	    $("#reddit_news").rss("http://www.reddit.com/r/amazonascoin/.rss", settingsReddit, BRS.newsLoaded);
+	    $("#amazonascoinist_news").rss("https://www.amazonascoin.ist/category/articles/", settings, BRS.newsLoaded);
 	}
 
 	BRS.pageLoaded();

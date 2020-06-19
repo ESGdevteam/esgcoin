@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.Order.Bid;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
@@ -44,7 +44,7 @@ public class GetAccountCurrentBidOrdersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_byAccount() throws BurstException {
+  public void processRequest_byAccount() throws AmzException {
     final long accountId = 123L;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -80,7 +80,7 @@ public class GetAccountCurrentBidOrdersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_byAccountAsset() throws BurstException {
+  public void processRequest_byAccountAsset() throws AmzException {
     final long accountId = 123L;
     final long assetId = 234L;
     final int firstIndex = 0;

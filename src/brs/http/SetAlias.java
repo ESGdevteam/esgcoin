@@ -30,7 +30,7 @@ public final class SetAlias extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     String aliasName = Convert.emptyToNull(req.getParameter(ALIAS_NAME_PARAMETER));
     String aliasURI = Convert.nullToEmpty(req.getParameter(ALIAS_URI_PARAMETER));
 

@@ -234,7 +234,7 @@ var BRS = (function(BRS, $, undefined) {
 		    }
                     else if (extra == "decrypted") {
 			if (type == "payment") {
-			    decoded = "<strong>+" + BRS.formatAmount(messages[i].amountNQT) + " BURST</strong><br />" + decoded;
+			    decoded = "<strong>+" + BRS.formatAmount(messages[i].amountNQT) + " AMZ</strong><br />" + decoded;
 			}
 
 			decoded = "<i class='fas fa-lock'></i> " + decoded;
@@ -338,7 +338,7 @@ var BRS = (function(BRS, $, undefined) {
 	    $("#add_contact_account_id").val(account).trigger("blur");
 	    $("#add_contact_modal").modal("show");
 	}
-        else if (option == "send_burst") {
+        else if (option == "send_amz") {
 	    $("#send_money_recipient").val(account).trigger("blur");
 	    $("#send_money_modal").modal("show");
 	}
@@ -358,7 +358,7 @@ var BRS = (function(BRS, $, undefined) {
 	if (option == "update_contact") {
 	    $("#update_contact_modal").modal("show");
 	}
-        else if (option == "send_burst") {
+        else if (option == "send_amz") {
 	    $("#send_money_recipient").val(BRS.selectedContext.data("contact")).trigger("blur");
 	    $("#send_money_modal").modal("show");
 	}

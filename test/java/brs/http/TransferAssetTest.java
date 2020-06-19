@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class TransferAssetTest extends AbstractTransactionTest {
 
   private TransferAsset t;
@@ -50,7 +50,7 @@ public class TransferAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final long recipientParameter = 34L;
     final long assetIdParameter = 456L;
     final long quantityQNTParameter = 56L;
@@ -71,9 +71,9 @@ public class TransferAssetTest extends AbstractTransactionTest {
 
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockSenderAccount);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.ColoredCoinsAssetTransfer attachment = (Attachment.ColoredCoinsAssetTransfer) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -84,7 +84,7 @@ public class TransferAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_assetBalanceLowerThanQuantityNQTParameter() throws BurstException {
+  public void processRequest_assetBalanceLowerThanQuantityNQTParameter() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(RECIPIENT_PARAMETER, "123"),
         new MockParam(ASSET_PARAMETER, "456"),

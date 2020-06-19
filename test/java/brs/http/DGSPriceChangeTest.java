@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class DGSPriceChangeTest extends AbstractTransactionTest {
 
   private DGSPriceChange t;
@@ -45,7 +45,7 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final int priceNQTParameter = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -64,9 +64,9 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockAccount);
     when(parameterServiceMock.getGoods(eq(req))).thenReturn(mockGoods);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsPriceChange attachment = (Attachment.DigitalGoodsPriceChange) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -77,7 +77,7 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsDelistedUnknownGoods() throws BurstException {
+  public void processRequest_goodsDelistedUnknownGoods() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(PRICE_NQT_PARAMETER, 123L)
     );
@@ -94,7 +94,7 @@ public class DGSPriceChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsWrongSellerIdUnknownGoods() throws BurstException {
+  public void processRequest_goodsWrongSellerIdUnknownGoods() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(PRICE_NQT_PARAMETER, 123L)
     );

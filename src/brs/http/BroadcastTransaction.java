@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Transaction;
 import brs.TransactionProcessor;
 import brs.services.ParameterService;
@@ -34,7 +34,7 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
 
     String transactionBytes = Convert.emptyToNull(req.getParameter(TRANSACTION_BYTES_PARAMETER));
     String transactionJSON = Convert.emptyToNull(req.getParameter(TRANSACTION_JSON_PARAMETER));
@@ -45,7 +45,7 @@ public final class BroadcastTransaction extends APIServlet.JsonRequestHandler {
       response.addProperty(NUMBER_PEERS_SENT_TO_RESPONSE, transactionProcessor.broadcast(transaction));
       response.addProperty(TRANSACTION_RESPONSE, transaction.getStringId());
       response.addProperty(FULL_HASH_RESPONSE, transaction.getFullHash());
-    } catch (BurstException.ValidationException | RuntimeException e) {
+    } catch (AmzException.ValidationException | RuntimeException e) {
       logger.log(Level.INFO, e.getMessage(), e);
       response.addProperty(ERROR_CODE_RESPONSE, 4);
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Incorrect transaction: " + e.toString());

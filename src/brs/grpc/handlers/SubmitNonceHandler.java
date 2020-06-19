@@ -10,7 +10,7 @@ import brs.grpc.proto.BrsApi;
 import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.AccountService;
-import burst.kit.crypto.BurstCrypto;
+import amz.kit.crypto.AmzCrypto;
 
 import java.util.Map;
 import java.util.Objects;
@@ -31,7 +31,7 @@ public class SubmitNonceHandler implements GrpcApiHandler<BrsApi.SubmitNonceRequ
 
         this.passphrases = propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES)
                 .stream()
-                .collect(Collectors.toMap(passphrase -> BurstCrypto.getInstance().getBurstAddressFromPassphrase(passphrase).getBurstID().getSignedLongId(), Function.identity()));
+                .collect(Collectors.toMap(passphrase -> AmzCrypto.getInstance().getAmzAddressFromPassphrase(passphrase).getAmzID().getSignedLongId(), Function.identity()));
         this.allowOtherSoloMiners = propertyService.getBoolean(Props.ALLOW_OTHER_SOLO_MINERS);
     }
 

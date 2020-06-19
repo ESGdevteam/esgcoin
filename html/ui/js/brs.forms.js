@@ -304,9 +304,9 @@ var BRS = (function(BRS, $, undefined) {
 
         if (data.recipient) {
             data.recipient = $.trim(data.recipient);
-            if (/^\d+$/.test(data.recipient)) {} else if (!/^BURST\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(data.recipient)) {
+            if (/^\d+$/.test(data.recipient)) {} else if (!/^AMZ\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(data.recipient)) {
                 var convertedAccountId = $modal.find("input[name=converted_account_id]").val();
-                if (!convertedAccountId || (!/^\d+$/.test(convertedAccountId) && !/^BURST\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(convertedAccountId))) {
+                if (!convertedAccountId || (!/^\d+$/.test(convertedAccountId) && !/^AMZ\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(convertedAccountId))) {
                     $form.find(".error_message").html($.t("error_account_id")).show();
                     if (formErrorFunction) {
                         formErrorFunction(false, data);
@@ -457,7 +457,7 @@ var BRS = (function(BRS, $, undefined) {
                 if (new BigInteger(BRS.convertToNQT(data.amountNXT)).compareTo(new BigInteger(BRS.settings.amount_warning)) > 0) {
                     BRS.showedFormWarning = true;
                     $form.find(".error_message").html($.t("error_max_amount_warning", {
-                        "burst": BRS.formatAmount(BRS.settings.amount_warning)
+                        "amz": BRS.formatAmount(BRS.settings.amount_warning)
                     })).show();
                     if (formErrorFunction) {
                         formErrorFunction(false, data);
@@ -471,7 +471,7 @@ var BRS = (function(BRS, $, undefined) {
                 if (new BigInteger(BRS.convertToNQT(data.feeNXT)).compareTo(new BigInteger(BRS.settings.fee_warning)) > 0) {
                     BRS.showedFormWarning = true;
                     $form.find(".error_message").html($.t("error_max_fee_warning", {
-                        "burst": BRS.formatAmount(BRS.settings.fee_warning)
+                        "amz": BRS.formatAmount(BRS.settings.fee_warning)
                     })).show();
                     if (formErrorFunction) {
                         formErrorFunction(false, data);

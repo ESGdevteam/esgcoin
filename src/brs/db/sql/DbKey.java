@@ -1,15 +1,15 @@
 package brs.db.sql;
 
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.util.StringUtils;
 import org.jooq.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public interface DbKey extends BurstKey {
+public interface DbKey extends AmzKey {
 
-  abstract class Factory<T> implements BurstKey.Factory<T> {
+  abstract class Factory<T> implements AmzKey.Factory<T> {
 
     private final String pkClause;
     private final String[] pkColumns;
@@ -48,7 +48,7 @@ public interface DbKey extends BurstKey {
 
   long[] getPKValues();
 
-  abstract class LongKeyFactory<T> extends Factory<T> implements BurstKey.LongKeyFactory<T> {
+  abstract class LongKeyFactory<T> extends Factory<T> implements AmzKey.LongKeyFactory<T> {
 
     private final Field<Long> idColumn;
 
@@ -60,12 +60,12 @@ public interface DbKey extends BurstKey {
     }
 
     @Override
-    public BurstKey newKey(Record record) {
+    public AmzKey newKey(Record record) {
       Long result = record.get(idColumn);
       return new LongKey(result, idColumn.getName());
     }
 
-    public BurstKey newKey(long id) {
+    public AmzKey newKey(long id) {
       return new LongKey(id, idColumn.getName());
     }
 
@@ -79,7 +79,7 @@ public interface DbKey extends BurstKey {
     }
   }
 
-  abstract class LinkKeyFactory<T> extends Factory<T> implements BurstKey.LinkKeyFactory<T> {
+  abstract class LinkKeyFactory<T> extends Factory<T> implements AmzKey.LinkKeyFactory<T> {
 
     private final String idColumnA;
     private final String idColumnB;

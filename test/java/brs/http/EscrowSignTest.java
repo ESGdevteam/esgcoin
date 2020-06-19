@@ -30,7 +30,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Burst.class)
+@PrepareForTest(Amz.class)
 public class EscrowSignTest extends AbstractTransactionTest {
 
   private ParameterService parameterServiceMock;
@@ -51,7 +51,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_positiveAsEscrowSender() throws BurstException {
+  public void processRequest_positiveAsEscrowSender() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 
@@ -67,9 +67,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final Account sender = mock(Account.class);
     when(sender.getId()).thenReturn(senderId);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     when(escrowServiceMock.getEscrowTransaction(eq(escrowId))).thenReturn(escrow);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sender);
@@ -83,7 +83,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_positiveAsEscrowRecipient() throws BurstException {
+  public void processRequest_positiveAsEscrowRecipient() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 
@@ -102,9 +102,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     when(escrowServiceMock.getEscrowTransaction(eq(escrowId))).thenReturn(escrow);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sender);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.AdvancedPaymentEscrowSign attachment = (brs.Attachment.AdvancedPaymentEscrowSign) attachmentCreatedTransaction(() -> t.processRequest(req),
         apiTransactionManagerMock);
@@ -115,7 +115,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_positiveAsEscrowSigner() throws BurstException {
+  public void processRequest_positiveAsEscrowSigner() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 
@@ -131,9 +131,9 @@ public class EscrowSignTest extends AbstractTransactionTest {
     final Account sender = mock(Account.class);
     when(sender.getId()).thenReturn(senderId);
 
-    mockStatic(Burst.class);
+    mockStatic(Amz.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Burst.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     when(escrowServiceMock.isIdSigner(eq(senderId), eq(escrow))).thenReturn(true);
 
@@ -149,7 +149,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_invalidEscrowId() throws BurstException {
+  public void processRequest_invalidEscrowId() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(ESCROW_PARAMETER, "NotANumber")
     );
@@ -160,7 +160,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_escrowNotFound() throws BurstException {
+  public void processRequest_escrowNotFound() throws AmzException {
     final long escrowId = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -175,7 +175,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_invalidDecisionType() throws BurstException {
+  public void processRequest_invalidDecisionType() throws AmzException {
     final long escrowId = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -193,7 +193,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_invalidSender() throws BurstException {
+  public void processRequest_invalidSender() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 
@@ -220,7 +220,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_senderCanOnlyRelease() throws BurstException {
+  public void processRequest_senderCanOnlyRelease() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 
@@ -244,7 +244,7 @@ public class EscrowSignTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_recipientCanOnlyRefund() throws BurstException {
+  public void processRequest_recipientCanOnlyRefund() throws AmzException {
     final long escrowId = 5;
     final long senderId = 6;
 

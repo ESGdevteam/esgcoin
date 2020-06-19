@@ -7,7 +7,7 @@
 
 package brs.at;
 
-import brs.Burst;
+import brs.Amz;
 import brs.fluxcapacitor.FluxValues;
 
 import java.nio.ByteBuffer;
@@ -489,7 +489,7 @@ public class AtMachineState {
             ByteBuffer bytes = ByteBuffer.allocate(getSize());
             bytes.order(ByteOrder.LITTLE_ENDIAN);
 
-            if (Burst.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2)) {
+            if (Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2)) {
                 flags[0] = (byte) ((running ? 1 : 0)
                         | (stopped ? 1 : 0) << 1
                         | (finished ? 1 : 0) << 2

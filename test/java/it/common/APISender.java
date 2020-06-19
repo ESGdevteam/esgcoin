@@ -30,7 +30,7 @@ public class APISender {
   }
 
   public JsonObject retrieve(String requestType, List<BasicNameValuePair> extraParams) throws IOException {
-    final HttpPost post = new HttpPost("/burst");
+    final HttpPost post = new HttpPost("/amz");
 
     final List<NameValuePair> urlParameters = new ArrayList<>();
     urlParameters.add(new BasicNameValuePair("requestType", requestType));

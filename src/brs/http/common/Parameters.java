@@ -93,8 +93,8 @@ public final class Parameters {
   public static final String MESSAGE_IS_TEXT_PARAMETER = "messageIsText";
   public static final String MESSAGE_PARAMETER = "message";
   public static final String UNSIGNED_TRANSACTION_JSON_PARAMETER = "unsignedTransactionJSON";
-  public static final String AMOUNT_BURST_PARAMETER = "amountNXT";
-  public static final String FEE_BURST_PARAMETER = "feeNXT";
+  public static final String AMOUNT_AMZ_PARAMETER = "amountNXT";
+  public static final String FEE_AMZ_PARAMETER = "feeNXT";
   public static final String IN_STOCK_ONLY_PARAMETER = "inStockOnly";
   public static final String COMPLETED_PARAMETER = "completed";
   public static final String PEER_PARAMETER = "peer";
@@ -123,9 +123,6 @@ public final class Parameters {
   public static final String IMMUTABLE_PARAMETER = "immutable";
   public static final String FEE_SUGGESTION_RESPONSE = "feeSuggestion";
   public static final String INCLUDE_INDIRECT_PARAMETER = "includeIndirect";
-  public static final String DOMAIN_PARAMETER = "domain";
-  public static final String ACTION_PARAMETER = "action";
-  public static final String PAYLOAD_PARAMETER = "payload";
 
   public static boolean isFalse(String text) {
     return "false".equalsIgnoreCase(text);

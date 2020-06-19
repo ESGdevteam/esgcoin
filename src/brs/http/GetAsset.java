@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Asset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.assetexchange.AssetExchange;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
@@ -22,7 +22,7 @@ public final class GetAsset extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     final Asset asset = parameterService.getAsset(req);
 
     int tradeCount = assetExchange.getTradeCount(asset.getId());

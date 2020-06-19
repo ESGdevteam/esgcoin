@@ -1,7 +1,7 @@
 package brs.at;
 
 import brs.Appendix;
-import brs.Burst;
+import brs.Amz;
 import brs.Transaction;
 import brs.crypto.Crypto;
 import brs.fluxcapacitor.FluxValues;
@@ -28,11 +28,11 @@ public class AtApiPlatformImpl extends AtApiImpl {
     }
 
     private static Long findTransaction(int startHeight, int endHeight, Long atID, int numOfTx, long minAmount) {
-        return Burst.getStores().getAtStore().findTransaction(startHeight, endHeight, atID, numOfTx, minAmount);
+        return Amz.getStores().getAtStore().findTransaction(startHeight, endHeight, atID, numOfTx, minAmount);
     }
 
     private static int findTransactionHeight(Long transactionId, int height, Long atID, long minAmount) {
-        return Burst.getStores().getAtStore().findTransactionHeight(transactionId, height, atID, minAmount);
+        return Amz.getStores().getAtStore().findTransactionHeight(transactionId, height, atID, minAmount);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
         ByteBuffer b = ByteBuffer.allocate(state.getA1().length * 4);
         b.order(ByteOrder.LITTLE_ENDIAN);
 
-        b.put(Burst.getBlockchain().getBlockAtHeight(state.getHeight() - 1).getBlockHash());
+        b.put(Amz.getBlockchain().getBlockAtHeight(state.getHeight() - 1).getBlockHash());
 
         b.clear();
 
@@ -95,7 +95,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
     public long getTypeForTxInA(AtMachineState state) {
         long txid = AtApiHelper.getLong(state.getA1());
 
-        Transaction tx = Burst.getBlockchain().getTransaction(txid);
+        Transaction tx = Amz.getBlockchain().getTransaction(txid);
 
         if (tx == null || (tx.getHeight() >= state.getHeight())) {
             return -1;
@@ -112,13 +112,13 @@ public class AtApiPlatformImpl extends AtApiImpl {
     public long getAmountForTxInA(AtMachineState state) {
         long txId = AtApiHelper.getLong(state.getA1());
 
-        Transaction tx = Burst.getBlockchain().getTransaction(txId);
+        Transaction tx = Amz.getBlockchain().getTransaction(txId);
 
         if (tx == null || (tx.getHeight() >= state.getHeight())) {
             return -1;
         }
 
-        if ((tx.getMessage() == null || Burst.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) && state.minActivationAmount() <= tx.getAmountNQT()) {
+        if ((tx.getMessage() == null || Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) && state.minActivationAmount() <= tx.getAmountNQT()) {
             return tx.getAmountNQT() - state.minActivationAmount();
         }
 
@@ -129,7 +129,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
     public long getTimestampForTxInA(AtMachineState state) {
         long txId = AtApiHelper.getLong(state.getA1());
         logger.debug("get timestamp for tx with id {} found", txId);
-        Transaction tx = Burst.getBlockchain().getTransaction(txId);
+        Transaction tx = Amz.getBlockchain().getTransaction(txId);
 
         if (tx == null || (tx.getHeight() >= state.getHeight())) {
             return -1;
@@ -146,7 +146,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
     public long getRandomIdForTxInA(AtMachineState state) {
         long txId = AtApiHelper.getLong(state.getA1());
 
-        Transaction tx = Burst.getBlockchain().getTransaction(txId);
+        Transaction tx = Amz.getBlockchain().getTransaction(txId);
 
         if (tx == null || (tx.getHeight() >= state.getHeight())) {
             return -1;
@@ -166,11 +166,9 @@ public class AtApiPlatformImpl extends AtApiImpl {
 
         byte[] senderPublicKey = tx.getSenderPublicKey();
 
-        ByteBuffer bf = ByteBuffer.allocate((Burst.getFluxCapacitor().getValue(FluxValues.SODIUM)) ?
-        		32 + 8 + senderPublicKey.length :
-        		32 + Long.SIZE + senderPublicKey.length);
+        ByteBuffer bf = ByteBuffer.allocate(32 + Long.SIZE + senderPublicKey.length);
         bf.order(ByteOrder.LITTLE_ENDIAN);
-        bf.put(Burst.getBlockchain().getBlockAtHeight(blockHeight - 1).getGenerationSignature());
+        bf.put(Amz.getBlockchain().getBlockAtHeight(blockHeight - 1).getGenerationSignature());
         bf.putLong(tx.getId());
         bf.put(senderPublicKey);
 
@@ -184,7 +182,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
     public void messageFromTxInAToB(AtMachineState state) {
         long txid = AtApiHelper.getLong(state.getA1());
 
-        Transaction tx = Burst.getBlockchain().getTransaction(txid);
+        Transaction tx = Amz.getBlockchain().getTransaction(txid);
         if (tx != null && tx.getHeight() >= state.getHeight()) {
             tx = null;
         }
@@ -225,7 +223,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
 
         clearB(state);
 
-        Transaction tx = Burst.getBlockchain().getTransaction(txId);
+        Transaction tx = Amz.getBlockchain().getTransaction(txId);
         if (tx != null && tx.getHeight() >= state.getHeight()) {
             tx = null;
         }
@@ -250,9 +248,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
         ByteBuffer b = ByteBuffer.allocate(state.getA1().length * 4);
         b.order(ByteOrder.LITTLE_ENDIAN);
 
-        b.put(Burst.getBlockchain().getBlockAtHeight(state.getHeight() - 1).getGenerationSignature());
-
-        b.clear();
+        b.put(Amz.getBlockchain().getBlockAtHeight(state.getHeight() - 1).getGenerationSignature());
 
         byte[] temp = new byte[8];
 
@@ -271,7 +267,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
 
     @Override
     public long getCurrentBalance(AtMachineState state) {
-        if (!Burst.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) {
+        if (!Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) {
             return 0;
         }
 
@@ -280,7 +276,7 @@ public class AtApiPlatformImpl extends AtApiImpl {
 
     @Override
     public long getPreviousBalance(AtMachineState state) {
-        if (!Burst.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) {
+        if (!Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_2, state.getHeight())) {
             return 0;
         }
 

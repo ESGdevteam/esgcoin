@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.BurstException;
+import brs.AmzException;
 import brs.Order;
 import brs.assetexchange.AssetExchange;
 import brs.services.ParameterService;
@@ -27,7 +27,7 @@ public final class GetAccountCurrentAskOrderIds extends APIServlet.JsonRequestHa
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     long accountId = parameterService.getAccount(req).getId();
     long assetId = 0;
     try {

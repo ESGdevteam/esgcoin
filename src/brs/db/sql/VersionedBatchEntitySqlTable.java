@@ -1,6 +1,6 @@
 package brs.db.sql;
 
-import brs.db.BurstKey;
+import brs.db.AmzKey;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.cache.DBCacheManagerImpl;
 import brs.db.store.DerivedTableManager;
@@ -45,7 +45,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   }
 
   @Override
-  public T get(BurstKey dbKey) {
+  public T get(AmzKey dbKey) {
     if (getCache().containsKey(dbKey)) {
       return getCache().get(dbKey);
     }
@@ -62,7 +62,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   @Override
   public void insert(T t) {
     assertNotInTransaction();
-    BurstKey key = dbKeyFactory.newKey(t);
+    AmzKey key = dbKeyFactory.newKey(t);
     getBatch().put(key, t);
     getCache().put(key, t);
   }
@@ -70,7 +70,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   @Override
   public void finish() {
     assertNotInTransaction();
-    Set<BurstKey> keySet = getBatch().keySet();
+    Set<AmzKey> keySet = getBatch().keySet();
     if (keySet.isEmpty()) {
       return;
     }
@@ -84,7 +84,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
       updateQuery.addConditions(latestField.isTrue());
 
       BatchBindStep updateBatch = ctx.batch(updateQuery);
-      for (BurstKey dbKey : keySet) {
+      for (AmzKey dbKey : keySet) {
         List<Object> bindArgs = new ArrayList<>();
         bindArgs.add(false);
         for (long pkValue : dbKey.getPKValues()) {
@@ -100,7 +100,7 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   }
 
   @Override
-  public T get(BurstKey dbKey, int height) {
+  public T get(AmzKey dbKey, int height) {
     assertInTransaction();
     return super.get(dbKey, height);
   }
@@ -196,12 +196,12 @@ public abstract class VersionedBatchEntitySqlTable<T> extends VersionedEntitySql
   }
 
   @Override
-  public Map<BurstKey, T> getBatch() {
+  public Map<AmzKey, T> getBatch() {
     return Db.getBatch(table);
   }
 
   @Override
-  public Cache<BurstKey, T> getCache() {
+  public Cache<AmzKey, T> getCache() {
     return dbCacheManager.getCache(table, tClass);
   }
 

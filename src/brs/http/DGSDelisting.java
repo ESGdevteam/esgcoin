@@ -21,7 +21,7 @@ public final class DGSDelisting extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     Account account = parameterService.getSenderAccount(req);
     DigitalGoodsStore.Goods goods = parameterService.getGoods(req);
     if (goods.isDelisted() || goods.getSellerId() != account.getId()) {

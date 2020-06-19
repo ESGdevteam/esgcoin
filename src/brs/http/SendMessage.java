@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Attachment;
-import brs.BurstException;
+import brs.AmzException;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
 
@@ -20,7 +20,7 @@ final class SendMessage extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
     long recipient = ParameterParser.getRecipientId(req);
     Account account = parameterService.getSenderAccount(req);
     return createTransaction(req, account, recipient, 0, Attachment.ARBITRARY_MESSAGE);

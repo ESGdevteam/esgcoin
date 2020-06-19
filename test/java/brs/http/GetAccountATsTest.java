@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.at.AT;
 import brs.at.AtConstants;
 import brs.at.AtMachineState;
@@ -45,7 +45,7 @@ public class GetAccountATsTest {
   }
 
   @Test
-  public void processRequest() throws BurstException {
+  public void processRequest() throws AmzException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final long mockAccountId = 123L;

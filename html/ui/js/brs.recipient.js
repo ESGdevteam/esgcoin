@@ -13,7 +13,7 @@ var BRS = (function(BRS, $, undefined) {
             var value = $(this).val();
             var modal = $(this).closest(".modal");
 
-            if (value && value != "BURST-____-____-____-_____") {
+            if (value && value != "AMZ-____-____-____-_____") {
                 BRS.checkRecipient(value, modal);
             } else {
                 modal.find(".account_info").hide();
@@ -32,7 +32,7 @@ var BRS = (function(BRS, $, undefined) {
         $("#send_money_amount").val(amount.toFixed(8));
         $("#send_money_fee").val(fee.toFixed(8));
 
-        $(element).closest(".modal").find(".total_amount_ordinary").html(BRS.formatAmount(BRS.convertToNQT(amount + fee)) + " BURST");
+        $(element).closest(".modal").find(".total_amount_ordinary").html(BRS.formatAmount(BRS.convertToNQT(amount + fee)) + " AMZ");
     };
 
     $("#send_message_modal, #send_money_modal, #add_contact_modal").on("show.bs.modal", function(e) {
@@ -47,7 +47,7 @@ var BRS = (function(BRS, $, undefined) {
         if (account) {
             var $inputField = $(this).find("input[name=recipient], input[name=account_id]").not("[type=hidden]");
 
-            if (!/BURST\-/i.test(account)) {
+            if (!/AMZ\-/i.test(account)) {
                 $inputField.addClass("noMask");
             }
 
@@ -160,7 +160,7 @@ var BRS = (function(BRS, $, undefined) {
                 callback({
                     "type": "info",
                     "message": $.t("recipient_info", {
-                        "burst": BRS.formatAmount(response.unconfirmedBalanceNQT, false, true)
+                        "amz": BRS.formatAmount(response.unconfirmedBalanceNQT, false, true)
                     }),
                     "account": response
                 });
@@ -169,7 +169,7 @@ var BRS = (function(BRS, $, undefined) {
                     if (response.errorCode === 4) {
                         callback({
                             "type": "danger",
-                            "message": $.t("recipient_malformed") + (!/^(BURST\-)/i.test(accountId) ? " " + $.t("recipient_alias_suggestion") : ""),
+                            "message": $.t("recipient_malformed") + (!/^(AMZ\-)/i.test(accountId) ? " " + $.t("recipient_alias_suggestion") : ""),
                             "account": null
                         });
                     } else if (response.errorCode === 5) {
@@ -190,7 +190,7 @@ var BRS = (function(BRS, $, undefined) {
                     callback({
                         "type": "warning",
                         "message": $.t("recipient_no_public_key", {
-                            "burst": BRS.formatAmount(response.unconfirmedBalanceNQT, false, true)
+                            "amz": BRS.formatAmount(response.unconfirmedBalanceNQT, false, true)
                         }),
                         "account": response,
                         "noPublicKey": true
@@ -218,7 +218,7 @@ var BRS = (function(BRS, $, undefined) {
         account = $.trim(account);
 
         //solomon reed. Btw, this regex can be shortened..
-        if (/^(BURST\-)?[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(account)) {
+        if (/^(AMZ\-)?[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+\-[A-Z0-9]+/i.test(account)) {
             var address = new NxtAddress();
 
             if (address.set(account)) {
@@ -311,7 +311,7 @@ var BRS = (function(BRS, $, undefined) {
                     var alias = String(response.aliasURI);
                     var timestamp = response.timestamp;
 
-                    var regex_1 = /acct:(.*)@burst/;
+                    var regex_1 = /acct:(.*)@amz/;
                     var regex_2 = /nacc:(.*)/;
 
                     var match = alias.match(regex_1);

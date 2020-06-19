@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.BurstException;
+import brs.AmzException;
 import brs.services.AccountService;
 import brs.services.ParameterService;
 import brs.util.Convert;
@@ -18,7 +18,6 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
 
   private final ParameterService parameterService;
   private final AccountService accountService;
-  private final String deprecationMessage = "For account assets use getAccountAssets. This will be removed in V3.0";
 
   GetAccount(ParameterService parameterService, AccountService accountService) {
     super(new APITag[] {APITag.ACCOUNTS}, ACCOUNT_PARAMETER);
@@ -27,7 +26,7 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws BurstException {
+  JsonElement processRequest(HttpServletRequest req) throws AmzException {
 
     Account account = parameterService.getAccount(req);
 
@@ -44,7 +43,6 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
       response.addProperty(DESCRIPTION_RESPONSE, account.getDescription());
     }
 
-    //Assets logic moved to GetAccountAssets. Remove this in V3
     JsonArray assetBalances = new JsonArray();
     JsonArray unconfirmedAssetBalances = new JsonArray();
 
@@ -57,10 +55,6 @@ public final class GetAccount extends APIServlet.JsonRequestHandler {
       unconfirmedAssetBalance.addProperty(ASSET_RESPONSE, Convert.toUnsignedLong(accountAsset.getAssetId()));
       unconfirmedAssetBalance.addProperty(UNCONFIRMED_BALANCE_QNT_RESPONSE, String.valueOf(accountAsset.getUnconfirmedQuantityQNT()));
       unconfirmedAssetBalances.add(unconfirmedAssetBalance);
-    }
-
-    if (assetBalances.size() > 0 || unconfirmedAssetBalances.size() > 0) {
-      response.addProperty(DEPRECATION_RESPONSE, deprecationMessage);
     }
 
     if (assetBalances.size() > 0) {

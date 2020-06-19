@@ -45421,7 +45421,7 @@ public final class BrsApi {
 
     /**
      * <pre>
-     * Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+     * Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
      * </pre>
      *
      * <code>uint32 time = 1;</code>
@@ -45508,7 +45508,7 @@ public final class BrsApi {
     private int time_;
     /**
      * <pre>
-     * Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+     * Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
      * </pre>
      *
      * <code>uint32 time = 1;</code>
@@ -45822,7 +45822,7 @@ public final class BrsApi {
       private int time_ ;
       /**
        * <pre>
-       * Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+       * Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
        * </pre>
        *
        * <code>uint32 time = 1;</code>
@@ -45832,7 +45832,7 @@ public final class BrsApi {
       }
       /**
        * <pre>
-       * Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+       * Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
        * </pre>
        *
        * <code>uint32 time = 1;</code>
@@ -45845,7 +45845,7 @@ public final class BrsApi {
       }
       /**
        * <pre>
-       * Number of seconds since the Burst epoch (2014-08-11 02:00:00 UTC)
+       * Number of seconds since the Amz epoch (2014-08-11 02:00:00 UTC)
        * </pre>
        *
        * <code>uint32 time = 1;</code>

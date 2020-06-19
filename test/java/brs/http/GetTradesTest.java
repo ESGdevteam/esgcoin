@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Asset;
-import brs.BurstException;
+import brs.AmzException;
 import brs.Trade;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
@@ -41,7 +41,7 @@ public class GetTradesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withAssetId() throws BurstException {
+  public void processRequest_withAssetId() throws AmzException {
     final long assetId = 123L;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -75,7 +75,7 @@ public class GetTradesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withAccountId() throws BurstException {
+  public void processRequest_withAccountId() throws AmzException {
     final long accountId = 321L;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -109,7 +109,7 @@ public class GetTradesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withAssetIdAndAccountId() throws BurstException {
+  public void processRequest_withAssetIdAndAccountId() throws AmzException {
     final long assetId = 123L;
     final long accountId = 321L;
     final int firstIndex = 0;
