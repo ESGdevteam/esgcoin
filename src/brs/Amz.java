@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 
 public final class Amz {
 
-  public static final Version VERSION = Version.parse("v2.4.2");
+  public static final Version VERSION = Version.parse("v2.5.3");
   public static final String APPLICATION = "BRS";
 
   private static final String DEFAULT_PROPERTIES_NAME = "brs-default.properties";
