@@ -1,9 +1,9 @@
-# Amazonascoin Reference Software (Amazonascoin Wallet)
+# Esgcoin Reference Software (Esgcoin Wallet)
 
 HDD-mined cryptocurrency using an energy efficient
 and fair Proof-of-Capacity (PoC) consensus algorithm (BURST based).
 
-This wallet version is developed and maintained by the Amz Development Team (ADT). The two supported database servers are:
+This wallet version is developed and maintained by the Esg Development Team (ADT). The two supported database servers are:
 
 - MariaDB (recommended)
 - H2 (embedded, easier install)
@@ -18,7 +18,7 @@ This wallet version is developed and maintained by the Amz Development Team (ADT
 ## Network Specification
 
 - 4 minute block time
-- Total Supply: [2,158,812,800 AMZ](https://amzwiki.org/en/block-reward/)
+- Total Supply: [2,158,812,800 ESG](https://esgwiki.org/en/block-reward/)
 - Block reward starts at 10,000/block
 - Block Reward Decreases at 5% each month
 
@@ -33,7 +33,7 @@ This wallet version is developed and maintained by the Amz Development Team (ADT
 
 ## Prerequisites (All Platforms)
 
-**NOTE: `amz.sh` is now deprecated and will not be included with the next release.**
+**NOTE: `esg.sh` is now deprecated and will not be included with the next release.**
 
 ### Java 8 (Required)
 
@@ -90,7 +90,7 @@ Once you have done this, look through the existing properties if there is anythi
 
 ### Testnet
 
-Please see the [Wiki article](https://amzwiki.org/en/testnet/) for details on how to setup a testnet node.
+Please see the [Wiki article](https://esgwiki.org/en/testnet/) for details on how to setup a testnet node.
 
 ### Private Chains
 
@@ -135,7 +135,7 @@ git checkout origin/master
 mvn package
 ```
 
-Your packaged release will now be available in `dist/amazonascoin-2.4.0.zip`
+Your packaged release will now be available in `dist/esgcoin-2.4.0.zip`
 
 ## Building the latest development version
 
@@ -147,6 +147,6 @@ git checkout origin/develop
 mvn package
 ```
 
-Your packaged release will now be available in `dist/amazonascoin-2.4.0.zip`.
+Your packaged release will now be available in `dist/esgcoin-2.4.0.zip`.
 
 **Please note that development builds will refuse to run outside of testnet or a private chain**

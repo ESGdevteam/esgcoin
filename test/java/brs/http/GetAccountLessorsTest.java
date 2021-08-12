@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.services.ParameterService;
@@ -40,7 +40,7 @@ public class GetAccountLessorsTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final Account mockAccount = mock(Account.class);
     when(mockAccount.getId()).thenReturn(123L);
 

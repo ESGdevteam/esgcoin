@@ -1,5 +1,5 @@
 # For Emacs: -*- mode:cperl; eval: (folding-mode 1); coding:utf-8; -*-
-package AMZ::API::RequestTypes;
+package ESG::API::RequestTypes;
 
 # {{{ use block
 
@@ -42,14 +42,14 @@ my $API_URL = $config{protocol}
             . $config{server}
             . ':'
             . $config{port}
-            . '/amz'
+            . '/esg'
             ;
 
 # }}}
 # {{{ Data::Rx definitions
 
 
-my $CGPX = 'tag:amz.cryptoguru.org,2018:rx'; # own CG prefix
+my $CGPX = 'tag:esg.cryptoguru.org,2018:rx'; # own CG prefix
 
 my $rx = Data::Rx->new({
     type_plugins => [ 'Data::Rx::Type::PCRE' ]
@@ -65,7 +65,7 @@ $rx->add_prefix(
 );
 
 $rx->learn_type(
-    "$CGPX/balanceAMZ" => {
+    "$CGPX/balanceESG" => {
         type  => '//int',
         range => {
             min => 0,
@@ -159,7 +159,7 @@ our $reqtypes = [ # we want to define a sequence of tests
          required => {
              accountRS => {
                  type => '//str',
-                 value => 'AMZ-DPQM-9X88-LEU3-CNSST',
+                 value => 'ESG-DPQM-9X88-LEU3-CNSST',
              },
              account => {
                  type => '//int',
@@ -184,7 +184,7 @@ our $reqtypes = [ # we want to define a sequence of tests
              requestProcessingTime => '//int',
          },
          args => {
-             account => 'AMZ-DPQM-9X88-LEU3-CNSST'
+             account => 'ESG-DPQM-9X88-LEU3-CNSST'
          },
      },
     # }}}
@@ -448,7 +448,7 @@ our $reqtypes = [ # we want to define a sequence of tests
             numberOfAssets => '//int',
             freeMemory => '//int',
             availableProcessors => '//int',
-            totalEffectiveBalanceNXT => '/brs/balanceAMZ',
+            totalEffectiveBalanceNXT => '/brs/balanceESG',
             numberOfAccounts => '//int',
             numberOfBlocks => '//int',
             version => '//str',
@@ -538,7 +538,7 @@ our $reqtypes = [ # we want to define a sequence of tests
         required => {
             accountRS => {
                 type => '//str',
-                value => "AMZ-EMXC-3PFB-J8HQ-GJ9HZ",
+                value => "ESG-EMXC-3PFB-J8HQ-GJ9HZ",
             },
             account => {
                     type => '//int',

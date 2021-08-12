@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.DigitalGoodsStore.Purchase;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
@@ -39,7 +39,7 @@ public class GetDGSPendingPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long sellerId = 123L;
     final int firstIndex = 1;
     final int lastIndex = 2;
@@ -65,7 +65,7 @@ public class GetDGSPendingPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_missingSeller() throws AmzException {
+  public void processRequest_missingSeller() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(SELLER_PARAMETER, 0)
     );

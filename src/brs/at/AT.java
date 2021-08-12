@@ -8,7 +8,7 @@ package brs.at;
 
 
 import brs.*;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.TransactionDb;
 import brs.db.VersionedEntityTable;
 import brs.services.AccountService;
@@ -30,7 +30,7 @@ public class AT extends AtMachineState {
 
     private static final LinkedHashMap<Long, Long> pendingFees = new LinkedHashMap<>();
     private static final List<AtTransaction> pendingTransactions = new ArrayList<>();
-    public final AmzKey dbKey;
+    public final EsgKey dbKey;
     private final String name;
     private final String description;
     private final int nextHeight;
@@ -40,7 +40,7 @@ public class AT extends AtMachineState {
         this.name = name;
         this.description = description;
         dbKey = atDbKeyFactory().newKey(AtApiHelper.getLong(atId));
-        this.nextHeight = Amz.getBlockchain().getHeight();
+        this.nextHeight = Esg.getBlockchain().getHeight();
     }
 
     public AT(byte[] atId, byte[] creator, String name, String description, short version,
@@ -86,20 +86,20 @@ public class AT extends AtMachineState {
         return false;
     }
 
-    private static AmzKey.LongKeyFactory<AT> atDbKeyFactory() {
-        return Amz.getStores().getAtStore().getAtDbKeyFactory();
+    private static EsgKey.LongKeyFactory<AT> atDbKeyFactory() {
+        return Esg.getStores().getAtStore().getAtDbKeyFactory();
     }
 
     private static VersionedEntityTable<AT> atTable() {
-        return Amz.getStores().getAtStore().getAtTable();
+        return Esg.getStores().getAtStore().getAtTable();
     }
 
-    private static AmzKey.LongKeyFactory<ATState> atStateDbKeyFactory() {
-        return Amz.getStores().getAtStore().getAtStateDbKeyFactory();
+    private static EsgKey.LongKeyFactory<ATState> atStateDbKeyFactory() {
+        return Esg.getStores().getAtStore().getAtStateDbKeyFactory();
     }
 
     private static VersionedEntityTable<ATState> atStateTable() {
-        return Amz.getStores().getAtStore().getAtStateTable();
+        return Esg.getStores().getAtStore().getAtStateTable();
     }
 
     public static AT getAT(byte[] id) {
@@ -107,7 +107,7 @@ public class AT extends AtMachineState {
     }
 
     public static AT getAT(Long id) {
-        return Amz.getStores().getAtStore().getAT(id);
+        return Esg.getStores().getAtStore().getAT(id);
     }
 
     public static void addAT(Long atId, Long senderAccountId, String name, String description, byte[] creationBytes, int height) {
@@ -138,7 +138,7 @@ public class AT extends AtMachineState {
     }
 
     public static List<Long> getOrderedATs() {
-        return Amz.getStores().getAtStore().getOrderedATs();
+        return Esg.getStores().getAtStore().getOrderedATs();
     }
 
     public static byte[] compressState(byte[] stateBytes) {
@@ -179,7 +179,7 @@ public class AT extends AtMachineState {
 
     public void saveState() {
         ATState state = atStateTable().get(atStateDbKeyFactory().newKey(AtApiHelper.getLong(this.getId())));
-        int prevHeight = Amz.getBlockchain().getHeight();
+        int prevHeight = Esg.getBlockchain().getHeight();
         int newNextHeight = prevHeight + getWaitForNumberOfBlocks();
         if (state != null) {
             state.setState(getState());
@@ -253,7 +253,7 @@ public class AT extends AtMachineState {
                     if (!transactionDb.hasTransaction(transaction.getId())) {
                         transactions.add(transaction);
                     }
-                } catch (AmzException.NotValidException e) {
+                } catch (EsgException.NotValidException e) {
                     throw new RuntimeException("Failed to construct AT payment transaction", e);
                 }
             }
@@ -267,7 +267,7 @@ public class AT extends AtMachineState {
 
     public static class ATState {
 
-        public final AmzKey dbKey;
+        public final EsgKey dbKey;
         private final long atId;
         private byte[] state;
         private int prevHeight;

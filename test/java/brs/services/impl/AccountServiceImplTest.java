@@ -2,8 +2,8 @@ package brs.services.impl;
 
 import brs.Account;
 import brs.Account.RewardRecipientAssignment;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.store.AccountStore;
 import brs.db.store.AssetTransferStore;
@@ -21,7 +21,7 @@ public class AccountServiceImplTest {
 
   private AccountStore accountStoreMock;
   private VersionedBatchEntityTable<Account> accountTableMock;
-  private LongKeyFactory<Account> accountAmzKeyFactoryMock;
+  private LongKeyFactory<Account> accountEsgKeyFactoryMock;
   private AssetTransferStore assetTransferStoreMock;
 
   private AccountServiceImpl t;
@@ -30,11 +30,11 @@ public class AccountServiceImplTest {
   public void setUp() {
     accountStoreMock = mock(AccountStore.class);
     accountTableMock = mock(VersionedBatchEntityTable.class);
-    accountAmzKeyFactoryMock = mock(LongKeyFactory.class);
+    accountEsgKeyFactoryMock = mock(LongKeyFactory.class);
     assetTransferStoreMock = mock(AssetTransferStore.class);
 
     when(accountStoreMock.getAccountTable()).thenReturn(accountTableMock);
-    when(accountStoreMock.getAccountKeyFactory()).thenReturn(accountAmzKeyFactoryMock);
+    when(accountStoreMock.getAccountKeyFactory()).thenReturn(accountEsgKeyFactoryMock);
 
     t = new AccountServiceImpl(accountStoreMock, assetTransferStoreMock);
   }
@@ -42,10 +42,10 @@ public class AccountServiceImplTest {
   @Test
   public void getAccount() {
     final long mockId = 123l;
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockResultAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(eq(mockId))).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(eq(mockId))).thenReturn(mockKey);
     when(accountTableMock.get(eq((mockKey)))).thenReturn(mockResultAccount);
 
     assertEquals(mockResultAccount, t.getAccount(mockId));
@@ -60,10 +60,10 @@ public class AccountServiceImplTest {
   public void getAccount_withHeight() {
     final long id = 123l;
     final int height = 2;
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockResultAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(eq(id))).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(eq(id))).thenReturn(mockKey);
     when(accountTableMock.get(eq(mockKey), eq(height))).thenReturn(mockResultAccount);
 
     assertEquals(mockResultAccount, t.getAccount(id, height));
@@ -79,10 +79,10 @@ public class AccountServiceImplTest {
     byte[] publicKey = new byte[1];
     publicKey[0] = (byte) 1;
 
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
     when(accountTableMock.get(mockKey)).thenReturn(mockAccount);
 
     when(mockAccount.getPublicKey()).thenReturn(publicKey);
@@ -95,10 +95,10 @@ public class AccountServiceImplTest {
     byte[] publicKey = new byte[1];
     publicKey[0] = (byte) 1;
 
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
     when(accountTableMock.get(mockKey)).thenReturn(mockAccount);
 
     when(mockAccount.getPublicKey()).thenReturn(null);
@@ -109,9 +109,9 @@ public class AccountServiceImplTest {
   @Test
   public void getAccount_withPublicKey_notFoundReturnsNull() {
     final byte[] publicKey = new byte[0];
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
 
-    when(accountAmzKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
     when(accountTableMock.get(mockKey)).thenReturn(null);
 
     assertNull(t.getAccount(publicKey));
@@ -124,10 +124,10 @@ public class AccountServiceImplTest {
     byte[] otherPublicKey = new byte[1];
     otherPublicKey[0] = (byte) 2;
 
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(anyLong())).thenReturn(mockKey);
     when(accountTableMock.get(mockKey)).thenReturn(mockAccount);
 
     when(mockAccount.getPublicKey()).thenReturn(otherPublicKey);
@@ -189,9 +189,9 @@ public class AccountServiceImplTest {
   public void getOrAddAccount_addAccount() {
     long accountId = 123L;
 
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
 
-    when(accountAmzKeyFactoryMock.newKey(eq(accountId))).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(eq(accountId))).thenReturn(mockKey);
     when(accountTableMock.get(eq(mockKey))).thenReturn(null);
 
     final Account createdAccount = t.getOrAddAccount(accountId);
@@ -206,10 +206,10 @@ public class AccountServiceImplTest {
   public void getOrAddAccount_getAccount() {
     long accountId = 123L;
 
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Account mockAccount = mock(Account.class);
 
-    when(accountAmzKeyFactoryMock.newKey(eq(accountId))).thenReturn(mockKey);
+    when(accountEsgKeyFactoryMock.newKey(eq(accountId))).thenReturn(mockKey);
     when(accountTableMock.get(eq(mockKey))).thenReturn(mockAccount);
 
     final Account retrievedAccount = t.getOrAddAccount(accountId);

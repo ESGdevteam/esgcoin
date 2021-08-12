@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.ATService;
 import brs.services.AccountService;
 import brs.services.ParameterService;
@@ -29,7 +29,7 @@ public final class GetAccountATs extends APIServlet.JsonRequestHandler {
   }
 	
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     Account account = parameterService.getAccount(req); // TODO this is super redundant
 		
     List<Long> atIds = atService.getATsIssuedBy(account.getId());

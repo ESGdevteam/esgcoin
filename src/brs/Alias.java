@@ -1,17 +1,17 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 
 public class Alias {
 
   private long accountId;
   private final long id;
-  public final AmzKey dbKey;
+  public final EsgKey dbKey;
   private final String aliasName;
   private String aliasURI;
   private int timestamp;
 
-  private Alias(AmzKey dbKey, long id, long accountId, String aliasName, String aliasURI, int timestamp) {
+  private Alias(EsgKey dbKey, long id, long accountId, String aliasName, String aliasURI, int timestamp) {
     this.id = id;
     this.dbKey = dbKey;
     this.accountId = accountId;
@@ -20,7 +20,7 @@ public class Alias {
     this.timestamp = timestamp;
   }
 
-  protected Alias(long id, long accountId, String aliasName, String aliasURI, int timestamp, AmzKey dbKey) {
+  protected Alias(long id, long accountId, String aliasName, String aliasURI, int timestamp, EsgKey dbKey) {
     this.id = id;
     this.dbKey = dbKey;
     this.accountId = accountId;
@@ -29,7 +29,7 @@ public class Alias {
     this.timestamp = timestamp;
   }
 
-  public Alias(long aliasId, AmzKey dbKey, Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
+  public Alias(long aliasId, EsgKey dbKey, Transaction transaction, Attachment.MessagingAliasAssignment attachment) {
     this(dbKey, aliasId, transaction.getSenderId(), attachment.getAliasName(), attachment.getAliasURI(),
         transaction.getBlockTimestamp());
   }
@@ -71,16 +71,16 @@ public class Alias {
     private long priceNQT;
     private long buyerId;
     private final long aliasId;
-    public final AmzKey dbKey;
+    public final EsgKey dbKey;
 
-    public Offer(AmzKey dbKey, long aliasId, long priceNQT, long buyerId) {
+    public Offer(EsgKey dbKey, long aliasId, long priceNQT, long buyerId) {
       this.dbKey = dbKey;
       this.priceNQT = priceNQT;
       this.buyerId = buyerId;
       this.aliasId = aliasId;
     }
 
-    protected Offer(long aliasId, long priceNQT, long buyerId, AmzKey nxtKey) {
+    protected Offer(long aliasId, long priceNQT, long buyerId, EsgKey nxtKey) {
       this.priceNQT = priceNQT;
       this.buyerId = buyerId;
       this.aliasId = aliasId;

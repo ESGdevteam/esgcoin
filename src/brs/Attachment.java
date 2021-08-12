@@ -45,7 +45,7 @@ public interface Attachment extends Appendix {
     }
 
     @Override
-    public final void validate(Transaction transaction) throws AmzException.ValidationException {
+    public final void validate(Transaction transaction) throws EsgException.ValidationException {
       getTransactionType().validateAttachment(transaction);
     }
 
@@ -54,7 +54,7 @@ public interface Attachment extends Appendix {
       getTransactionType().apply(transaction, senderAccount, recipientAccount);
     }
 
-    public static AbstractAttachment parseProtobufMessage(Any attachment) throws InvalidProtocolBufferException, AmzException.NotValidException {
+    public static AbstractAttachment parseProtobufMessage(Any attachment) throws InvalidProtocolBufferException, EsgException.NotValidException {
       // Yes, this is fairly horrible. I wish there was a better way to do this but any does not let us switch on its contained class.
       if (attachment.is(BrsApi.OrdinaryPaymentAttachment.class)) {
         return ORDINARY_PAYMENT;
@@ -111,7 +111,7 @@ public interface Attachment extends Appendix {
       } else if (attachment.is(BrsApi.EffectiveBalanceLeasingAttachment.class)) {
         return new AccountControlEffectiveBalanceLeasing(attachment.unpack(BrsApi.EffectiveBalanceLeasingAttachment.class));
       } else if (attachment.is(BrsApi.RewardRecipientAssignmentAttachment.class)) {
-        return new AmzMiningRewardRecipientAssignment(attachment.unpack(BrsApi.RewardRecipientAssignmentAttachment.class));
+        return new EsgMiningRewardRecipientAssignment(attachment.unpack(BrsApi.RewardRecipientAssignmentAttachment.class));
       } else if (attachment.is(BrsApi.EscrowCreationAttachment.class)) {
         return new AdvancedPaymentEscrowCreation(attachment.unpack(BrsApi.EscrowCreationAttachment.class));
       } else if (attachment.is(BrsApi.EscrowSignAttachment.class)) {
@@ -181,7 +181,7 @@ public interface Attachment extends Appendix {
 
     private final ArrayList<ArrayList<Long>> recipients = new ArrayList<>();
 
-    PaymentMultiOutCreation(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    PaymentMultiOutCreation(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
 
       int numberOfRecipients = Byte.toUnsignedInt(buffer.get());
@@ -192,21 +192,21 @@ public interface Attachment extends Appendix {
         long amountNQT = buffer.getLong();
 
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi out transaction");
 
         if (amountNQT <= 0)
-          throw new AmzException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new EsgException.NotValidException("Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (recipients.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException(
+        throw new EsgException.NotValidException(
             "Invalid number of recipients listed on multi out transaction");
       }
     }
 
-    PaymentMultiOutCreation(JsonObject attachmentData) throws AmzException.NotValidException {
+    PaymentMultiOutCreation(JsonObject attachmentData) throws EsgException.NotValidException {
       super(attachmentData);
 
       JsonArray receipientsJson = JSON.getAsJsonArray(attachmentData.get(RECIPIENTS_PARAMETER));
@@ -218,20 +218,20 @@ public interface Attachment extends Appendix {
         long recipientId = new BigInteger(JSON.getAsString(recipient.get(0))).longValue();
         long amountNQT = JSON.getAsLong(recipient.get(1));
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi out transaction");
 
         if (amountNQT  <=0)
-          throw new AmzException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new EsgException.NotValidException("Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (receipientsJson.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || receipientsJson.size() <= 1) {
-        throw new AmzException.NotValidException("Invalid number of recipients listed on multi out transaction");
+        throw new EsgException.NotValidException("Invalid number of recipients listed on multi out transaction");
       }
     }
 
-    public PaymentMultiOutCreation(Collection<Entry<String, Long>> recipients, int blockchainHeight) throws AmzException.NotValidException {
+    public PaymentMultiOutCreation(Collection<Entry<String, Long>> recipients, int blockchainHeight) throws EsgException.NotValidException {
       super(blockchainHeight);
 
       HashMap<Long,Boolean> recipientOf = new HashMap<>();
@@ -239,36 +239,36 @@ public interface Attachment extends Appendix {
         long recipientId = (new BigInteger(recipient.getKey())).longValue();
         long amountNQT   = recipient.getValue();
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi out transaction");
 
         if (amountNQT <= 0)
-          throw new AmzException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new EsgException.NotValidException("Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (recipients.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException("Invalid number of recipients listed on multi out transaction");
+        throw new EsgException.NotValidException("Invalid number of recipients listed on multi out transaction");
       }
     }
 
-    PaymentMultiOutCreation(BrsApi.MultiOutAttachment attachment) throws AmzException.NotValidException {
+    PaymentMultiOutCreation(BrsApi.MultiOutAttachment attachment) throws EsgException.NotValidException {
       super(((byte) attachment.getVersion()));
       HashMap<Long,Boolean> recipientOf = new HashMap<>();
       for (BrsApi.MultiOutAttachment.MultiOutRecipient recipient : attachment.getRecipientsList()) {
         long recipientId = recipient.getRecipient();
         long amountNQT = recipient.getAmount();
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi out transaction");
 
         if (amountNQT  <=0)
-          throw new AmzException.NotValidException("Insufficient amountNQT on multi out transaction");
+          throw new EsgException.NotValidException("Insufficient amountNQT on multi out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(new ArrayList<>(Arrays.asList(recipientId, amountNQT)));
       }
       if (recipients.size() > Constants.MAX_MULTI_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException("Invalid number of recipients listed on multi out transaction");
+        throw new EsgException.NotValidException("Invalid number of recipients listed on multi out transaction");
       }
     }
 
@@ -337,7 +337,7 @@ public interface Attachment extends Appendix {
 
     private final ArrayList<Long> recipients = new ArrayList<>();
 
-    PaymentMultiSameOutCreation(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    PaymentMultiSameOutCreation(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
 
       int numberOfRecipients = Byte.toUnsignedInt(buffer.get());
@@ -347,18 +347,18 @@ public interface Attachment extends Appendix {
         long recipientId = buffer.getLong();
 
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
       if (recipients.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException(
+        throw new EsgException.NotValidException(
             "Invalid number of recipients listed on multi same out transaction");
       }
     }
 
-    PaymentMultiSameOutCreation(JsonObject attachmentData) throws AmzException.NotValidException {
+    PaymentMultiSameOutCreation(JsonObject attachmentData) throws EsgException.NotValidException {
       super(attachmentData);
 
       JsonArray recipientsJson = JSON.getAsJsonArray(attachmentData.get(RECIPIENTS_PARAMETER));
@@ -367,46 +367,46 @@ public interface Attachment extends Appendix {
       for (JsonElement recipient : recipientsJson) {
         long recipientId = new BigInteger(JSON.getAsString(recipient)).longValue();
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
       if (recipientsJson.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipientsJson.size() <= 1) {
-        throw new AmzException.NotValidException(
+        throw new EsgException.NotValidException(
             "Invalid number of recipients listed on multi same out transaction");
       }
     }
 
-    public PaymentMultiSameOutCreation(Collection<Long> recipients, int blockchainHeight) throws AmzException.NotValidException {
+    public PaymentMultiSameOutCreation(Collection<Long> recipients, int blockchainHeight) throws EsgException.NotValidException {
       super(blockchainHeight);
 
       HashMap<Long,Boolean> recipientOf = new HashMap<>();
       for(Long recipientId : recipients ) {
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
       if (recipients.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException(
+        throw new EsgException.NotValidException(
             "Invalid number of recipients listed on multi same out transaction");
       }
     }
 
-    PaymentMultiSameOutCreation(BrsApi.MultiOutSameAttachment attachment) throws AmzException.NotValidException {
+    PaymentMultiSameOutCreation(BrsApi.MultiOutSameAttachment attachment) throws EsgException.NotValidException {
       super(((byte) attachment.getVersion()));
       HashMap<Long,Boolean> recipientOf = new HashMap<>();
       for(Long recipientId : attachment.getRecipientsList()) {
         if (recipientOf.containsKey(recipientId))
-          throw new AmzException.NotValidException("Duplicate recipient on multi same out transaction");
+          throw new EsgException.NotValidException("Duplicate recipient on multi same out transaction");
 
         recipientOf.put(recipientId, true);
         this.recipients.add(recipientId);
       }
       if (recipients.size() > Constants.MAX_MULTI_SAME_OUT_RECIPIENTS || recipients.size() <= 1) {
-        throw new AmzException.NotValidException(
+        throw new EsgException.NotValidException(
                 "Invalid number of recipients listed on multi same out transaction");
       }
     }
@@ -497,7 +497,7 @@ public interface Attachment extends Appendix {
     private final String aliasName;
     private final String aliasURI;
 
-    MessagingAliasAssignment(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    MessagingAliasAssignment(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH).trim();
       aliasURI = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ALIAS_URI_LENGTH).trim();
@@ -575,7 +575,7 @@ public interface Attachment extends Appendix {
     private final String aliasName;
     private final long priceNQT;
 
-    MessagingAliasSell(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    MessagingAliasSell(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH);
       this.priceNQT = buffer.getLong();
@@ -650,7 +650,7 @@ public interface Attachment extends Appendix {
 
     private final String aliasName;
 
-    MessagingAliasBuy(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    MessagingAliasBuy(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.aliasName = Convert.readString(buffer, buffer.get(), Constants.MAX_ALIAS_LENGTH);
     }
@@ -715,7 +715,7 @@ public interface Attachment extends Appendix {
     private final String name;
     private final String description;
 
-    MessagingAccountInfo(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    MessagingAccountInfo(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.name = Convert.readString(buffer, buffer.get(), Constants.MAX_ACCOUNT_NAME_LENGTH);
       this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ACCOUNT_DESCRIPTION_LENGTH);
@@ -795,7 +795,7 @@ public interface Attachment extends Appendix {
     private final long quantityQNT;
     private final byte decimals;
 
-    ColoredCoinsAssetIssuance(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    ColoredCoinsAssetIssuance(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.name = Convert.readString(buffer, buffer.get(), Constants.MAX_ASSET_NAME_LENGTH);
       this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_ASSET_DESCRIPTION_LENGTH);
@@ -896,7 +896,7 @@ public interface Attachment extends Appendix {
     private final long quantityQNT;
     private final String comment;
 
-    ColoredCoinsAssetTransfer(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    ColoredCoinsAssetTransfer(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.assetId = buffer.getLong();
       this.quantityQNT = buffer.getLong();
@@ -1268,7 +1268,7 @@ public interface Attachment extends Appendix {
     private final int quantity;
     private final long priceNQT;
 
-    DigitalGoodsListing(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    DigitalGoodsListing(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.name = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_NAME_LENGTH);
       this.description = Convert.readString(buffer, buffer.getShort(), Constants.MAX_DGS_LISTING_DESCRIPTION_LENGTH);
@@ -1664,7 +1664,7 @@ public interface Attachment extends Appendix {
     private final long discountNQT;
     private final boolean goodsIsText;
 
-    DigitalGoodsDelivery(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    DigitalGoodsDelivery(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.purchaseId = buffer.getLong();
       int length = buffer.getInt();
@@ -1948,21 +1948,21 @@ public interface Attachment extends Appendix {
     }
   }
 
-  final class AmzMiningRewardRecipientAssignment extends AbstractAttachment {
+  final class EsgMiningRewardRecipientAssignment extends AbstractAttachment {
 
-    AmzMiningRewardRecipientAssignment(ByteBuffer buffer, byte transactionVersion) {
+    EsgMiningRewardRecipientAssignment(ByteBuffer buffer, byte transactionVersion) {
       super(buffer, transactionVersion);
     }
 
-    AmzMiningRewardRecipientAssignment(JsonObject attachmentData) {
+    EsgMiningRewardRecipientAssignment(JsonObject attachmentData) {
       super(attachmentData);
     }
 
-    public AmzMiningRewardRecipientAssignment(int blockchainHeight) {
+    public EsgMiningRewardRecipientAssignment(int blockchainHeight) {
       super(blockchainHeight);
     }
 
-    AmzMiningRewardRecipientAssignment(BrsApi.RewardRecipientAssignmentAttachment attachment) {
+    EsgMiningRewardRecipientAssignment(BrsApi.RewardRecipientAssignmentAttachment attachment) {
       super((byte) attachment.getVersion());
     }
 
@@ -1988,7 +1988,7 @@ public interface Attachment extends Appendix {
 
     @Override
     public TransactionType getTransactionType() {
-      return TransactionType.AmzMining.REWARD_RECIPIENT_ASSIGNMENT;
+      return TransactionType.EsgMining.REWARD_RECIPIENT_ASSIGNMENT;
     }
 
     @Override
@@ -2007,7 +2007,7 @@ public interface Attachment extends Appendix {
     private final int deadline;
     private final Escrow.DecisionType deadlineAction;
 
-    AdvancedPaymentEscrowCreation(ByteBuffer buffer, byte transactionVersion) throws AmzException.NotValidException {
+    AdvancedPaymentEscrowCreation(ByteBuffer buffer, byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
       this.amountNQT = buffer.getLong();
       this.deadline = buffer.getInt();
@@ -2015,16 +2015,16 @@ public interface Attachment extends Appendix {
       this.requiredSigners = buffer.get();
       byte totalSigners = buffer.get();
       if(totalSigners > 10 || totalSigners <= 0) {
-        throw new AmzException.NotValidException("Invalid number of signers listed on create escrow transaction");
+        throw new EsgException.NotValidException("Invalid number of signers listed on create escrow transaction");
       }
       for(int i = 0; i < totalSigners; i++) {
         if(!this.signers.add(buffer.getLong())) {
-          throw new AmzException.NotValidException("Duplicate signer on escrow creation");
+          throw new EsgException.NotValidException("Duplicate signer on escrow creation");
         }
       }
     }
 
-    AdvancedPaymentEscrowCreation(JsonObject attachmentData) throws AmzException.NotValidException {
+    AdvancedPaymentEscrowCreation(JsonObject attachmentData) throws EsgException.NotValidException {
       super(attachmentData);
       this.amountNQT = Convert.parseUnsignedLong(JSON.getAsString(attachmentData.get(AMOUNT_NQT_PARAMETER)));
       this.deadline = JSON.getAsInt(attachmentData.get(DEADLINE_PARAMETER));
@@ -2032,34 +2032,34 @@ public interface Attachment extends Appendix {
       this.requiredSigners = JSON.getAsByte(attachmentData.get(REQUIRED_SIGNERS_PARAMETER));
       int totalSigners = (JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER))).size();
       if(totalSigners > 10 || totalSigners <= 0) {
-        throw new AmzException.NotValidException("Invalid number of signers listed on create escrow transaction");
+        throw new EsgException.NotValidException("Invalid number of signers listed on create escrow transaction");
       }
       JsonArray signersJson = JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER));
       for (JsonElement aSignersJson : signersJson) {
         this.signers.add(Convert.parseUnsignedLong(JSON.getAsString(aSignersJson)));
       }
       if(this.signers.size() != (JSON.getAsJsonArray(attachmentData.get(SIGNERS_PARAMETER))).size()) {
-        throw new AmzException.NotValidException("Duplicate signer on escrow creation");
+        throw new EsgException.NotValidException("Duplicate signer on escrow creation");
       }
     }
 
     public AdvancedPaymentEscrowCreation(Long amountNQT, int deadline, Escrow.DecisionType deadlineAction,
-                                         int requiredSigners, Collection<Long> signers, int blockchainHeight) throws AmzException.NotValidException {
+                                         int requiredSigners, Collection<Long> signers, int blockchainHeight) throws EsgException.NotValidException {
       super(blockchainHeight);
       this.amountNQT = amountNQT;
       this.deadline = deadline;
       this.deadlineAction = deadlineAction;
       this.requiredSigners = (byte)requiredSigners;
       if(signers.size() > 10 || signers.isEmpty()) {
-        throw new AmzException.NotValidException("Invalid number of signers listed on create escrow transaction");
+        throw new EsgException.NotValidException("Invalid number of signers listed on create escrow transaction");
       }
       this.signers.addAll(signers);
       if(this.signers.size() != signers.size()) {
-        throw new AmzException.NotValidException("Duplicate signer on escrow creation");
+        throw new EsgException.NotValidException("Duplicate signer on escrow creation");
       }
     }
 
-    AdvancedPaymentEscrowCreation(BrsApi.EscrowCreationAttachment attachment) throws AmzException.NotValidException {
+    AdvancedPaymentEscrowCreation(BrsApi.EscrowCreationAttachment attachment) throws EsgException.NotValidException {
       super((byte) attachment.getVersion());
       this.amountNQT = attachment.getAmount();
       this.requiredSigners = (byte) attachment.getRequiredSigners();
@@ -2067,10 +2067,10 @@ public interface Attachment extends Appendix {
       this.deadlineAction = Escrow.protoBufToDecision(attachment.getDeadlineAction());
       this.signers.addAll(attachment.getSignersList());
       if(signers.size() > 10 || signers.isEmpty()) {
-        throw new AmzException.NotValidException("Invalid number of signers listed on create escrow transaction");
+        throw new EsgException.NotValidException("Invalid number of signers listed on create escrow transaction");
       }
       if(this.signers.size() != attachment.getSignersList().size()) {
-        throw new AmzException.NotValidException("Duplicate signer on escrow creation");
+        throw new EsgException.NotValidException("Duplicate signer on escrow creation");
       }
     }
 
@@ -2461,7 +2461,7 @@ public interface Attachment extends Appendix {
     private final byte[] creationBytes;
 
     AutomatedTransactionsCreation(ByteBuffer buffer,
-                                  byte transactionVersion) throws AmzException.NotValidException {
+                                  byte transactionVersion) throws EsgException.NotValidException {
       super(buffer, transactionVersion);
 
       this.name = Convert.readString( buffer , buffer.get() , Constants.MAX_AUTOMATED_TRANSACTION_NAME_LENGTH );
@@ -2474,7 +2474,7 @@ public interface Attachment extends Appendix {
 
       buffer.getShort(); //future: reserved for future needs
 
-      int pageSize = ( int ) AtConstants.getInstance().pageSize( Amz.getBlockchain().getHeight() );
+      int pageSize = ( int ) AtConstants.getInstance().pageSize( Esg.getBlockchain().getHeight() );
       short codePages = buffer.getShort();
       short dataPages = buffer.getShort();
       buffer.getShort();

@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Transaction;
 import brs.services.ParameterService;
 import brs.services.TransactionService;
@@ -30,7 +30,7 @@ final class ParseTransaction extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     String transactionBytes = Convert.emptyToNull(req.getParameter(TRANSACTION_BYTES_PARAMETER));
     String transactionJSON = Convert.emptyToNull(req.getParameter(TRANSACTION_JSON_PARAMETER));
@@ -38,7 +38,7 @@ final class ParseTransaction extends APIServlet.JsonRequestHandler {
     JsonObject response = JSONData.unconfirmedTransaction(transaction);
     try {
       transactionService.validate(transaction);
-    } catch (AmzException.ValidationException|RuntimeException e) {
+    } catch (EsgException.ValidationException|RuntimeException e) {
       logger.debug(e.getMessage(), e);
       response.addProperty(VALIDATE_RESPONSE, false);
       response.addProperty(ERROR_CODE_RESPONSE, 4);

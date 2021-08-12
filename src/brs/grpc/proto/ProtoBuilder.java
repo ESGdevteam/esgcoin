@@ -388,7 +388,7 @@ public final class ProtoBuilder {
                 }
             }
             return transactionBuilder.build();
-        } catch (AmzException.NotValidException e) {
+        } catch (EsgException.NotValidException e) {
             throw new ApiException("Transaction not valid: " + e.getMessage());
         } catch (InvalidProtocolBufferException e) {
             throw new ApiException("Could not parse an Any: " + e.getMessage());

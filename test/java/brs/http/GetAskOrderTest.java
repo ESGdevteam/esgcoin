@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Order.Ask;
 import brs.assetexchange.AssetExchange;
 import brs.common.QuickMocker;
@@ -33,7 +33,7 @@ public class GetAskOrderTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long orderId = 123L;
 
     final Ask mockOrder = mock(Ask.class);
@@ -49,7 +49,7 @@ public class GetAskOrderTest {
   }
 
   @Test
-  public void processRequest_unknownOrder() throws AmzException {
+  public void processRequest_unknownOrder() throws EsgException {
     final long orderId = 123L;
 
     when(mockAssetExchange.getAskOrder(eq(orderId))).thenReturn(null);

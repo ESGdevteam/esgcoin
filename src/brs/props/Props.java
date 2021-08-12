@@ -56,7 +56,7 @@ public class Props {
 
 
   // DB options
-  public static final Prop<String> DB_URL          = new Prop<>("DB.Url", "jdbc:mariadb://localhost:3306/amzwallet");
+  public static final Prop<String> DB_URL          = new Prop<>("DB.Url", "jdbc:mariadb://localhost:3306/esgwallet");
   public static final Prop<String> DB_USERNAME     = new Prop<>("DB.Username", "");
   public static final Prop<String> DB_PASSWORD     = new Prop<>("DB.Password", "");
   public static final Prop<Integer> DB_CONNECTIONS  = new Prop<>("DB.Connections", 30);

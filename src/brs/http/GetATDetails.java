@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.AccountService;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
@@ -21,7 +21,7 @@ class GetATDetails extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     return JSONData.at(parameterService.getAT(req), accountService);
   }
 }

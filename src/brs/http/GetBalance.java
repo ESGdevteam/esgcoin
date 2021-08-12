@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.http.common.Parameters;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
@@ -17,7 +17,7 @@ public final class GetBalance extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     return JSONData.accountBalance(parameterService.getAccount(req));
   }
 

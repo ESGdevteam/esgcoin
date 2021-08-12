@@ -24,7 +24,7 @@ public final class BuyAlias extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     Account buyer = parameterService.getSenderAccount(req);
     Alias alias = parameterService.getAlias(req);
     long amountNQT = ParameterParser.getAmountNQT(req);

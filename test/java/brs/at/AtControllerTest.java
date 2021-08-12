@@ -1,7 +1,7 @@
 package brs.at;
 
 import brs.Account;
-import brs.Amz;
+import brs.Esg;
 import brs.util.Convert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Amz.class, Account.class})
+@PrepareForTest({Esg.class, Account.class})
 public class AtControllerTest {
     @Before
     public void setUp() {

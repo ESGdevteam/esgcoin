@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class DGSDeliveryTest extends AbstractTransactionTest {
 
   private DGSDelivery t;
@@ -50,7 +50,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long discountNQTParameter = 1;
     final String goodsToEncryptParameter = "beef";
 
@@ -76,9 +76,9 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
     when(parameterServiceMock.getPurchase(eq(req))).thenReturn(mockPurchase);
     when(accountServiceMock.getAccount(eq(mockPurchase.getBuyerId()))).thenReturn(mockBuyerAccount);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsDelivery attachment = (Attachment.DigitalGoodsDelivery) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -88,7 +88,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_sellerAccountIdDifferentFromAccountSellerIdIsIncorrectPurchase() throws AmzException {
+  public void processRequest_sellerAccountIdDifferentFromAccountSellerIdIsIncorrectPurchase() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -104,7 +104,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_purchaseNotPendingIsAlreadyDelivered() throws AmzException {
+  public void processRequest_purchaseNotPendingIsAlreadyDelivered() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockSellerAccount = mock(Account.class);
@@ -122,7 +122,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountNotAValidNumberIsIncorrectDGSDiscount() throws AmzException {
+  public void processRequest_dgsDiscountNotAValidNumberIsIncorrectDGSDiscount() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DISCOUNT_NQT_PARAMETER, "Bob")
     );
@@ -142,7 +142,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountNegativeIsIncorrectDGSDiscount() throws AmzException {
+  public void processRequest_dgsDiscountNegativeIsIncorrectDGSDiscount() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DISCOUNT_NQT_PARAMETER, "-1")
     );
@@ -162,7 +162,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountOverMaxBalanceNQTIsIncorrectDGSDiscount() throws AmzException {
+  public void processRequest_dgsDiscountOverMaxBalanceNQTIsIncorrectDGSDiscount() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DISCOUNT_NQT_PARAMETER, "" + (MAX_BALANCE_NQT + 1))
     );
@@ -182,7 +182,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_dgsDiscountNegativeIsNotSafeMultiply() throws AmzException {
+  public void processRequest_dgsDiscountNegativeIsNotSafeMultiply() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DISCOUNT_NQT_PARAMETER, "99999999999")
     );
@@ -204,7 +204,7 @@ public class DGSDeliveryTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsToEncryptIsEmptyIsIncorrectDGSGoods() throws AmzException {
+  public void processRequest_goodsToEncryptIsEmptyIsIncorrectDGSGoods() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DISCOUNT_NQT_PARAMETER, "9"),
         new MockParam(GOODS_TO_ENCRYPT_PARAMETER, ""),

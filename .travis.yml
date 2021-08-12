@@ -6,10 +6,10 @@ jdk:
 
 addons:
   sonarcloud:
-    organization: "amz-apps-team"
+    organization: "esg-apps-team"
 
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=amz-apps-team -Dsonar.projectKey=amz-apps-team_amazonascoin -Dsonar.login=$SONAR_KEY -Dsonar.verbose=true -Dsonar.exclusions=src/brs/grpc/proto/BrsApi.java,src/brs/grpc/proto/BrsApiServiceGrpc.java,src/brs/schema/**
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=esg-apps-team -Dsonar.projectKey=esg-apps-team_esgcoin -Dsonar.login=$SONAR_KEY -Dsonar.verbose=true -Dsonar.exclusions=src/brs/grpc/proto/BrsApi.java,src/brs/grpc/proto/BrsApiServiceGrpc.java,src/brs/schema/**
 
 cache:
   directories:

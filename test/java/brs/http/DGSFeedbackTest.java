@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class DGSFeedbackTest extends AbstractTransactionTest {
 
   private DGSFeedback t;
@@ -48,7 +48,7 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final long mockPurchaseId = 123L;
@@ -67,9 +67,9 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
     when(mockPurchase.getEncryptedGoods()).thenReturn(mockEncryptedGoods);
     when(mockPurchase.getSellerId()).thenReturn(2L);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsFeedback attachment = (Attachment.DigitalGoodsFeedback) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -79,7 +79,7 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectPurchaseWhenOtherBuyerId() throws AmzException {
+  public void processRequest_incorrectPurchaseWhenOtherBuyerId() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Purchase mockPurchase = mock(Purchase.class);
@@ -95,7 +95,7 @@ public class DGSFeedbackTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_goodsNotDeliveredWhenNoEncryptedGoods() throws AmzException {
+  public void processRequest_goodsNotDeliveredWhenNoEncryptedGoods() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Purchase mockPurchase = mock(Purchase.class);

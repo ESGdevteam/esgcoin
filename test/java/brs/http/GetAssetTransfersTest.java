@@ -3,7 +3,7 @@ package brs.http;
 import brs.Account;
 import brs.Asset;
 import brs.AssetTransfer;
-import brs.AmzException;
+import brs.EsgException;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
@@ -47,7 +47,7 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_byAsset() throws AmzException {
+  public void processRequest_byAsset() throws EsgException {
     final long assetId = 123L;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -75,7 +75,7 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_byAccount() throws AmzException {
+  public void processRequest_byAccount() throws EsgException {
     final long accountId = 234L;
     final int firstIndex = 0;
     final int lastIndex = 1;
@@ -103,7 +103,7 @@ public class GetAssetTransfersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_byAccountAndAsset() throws AmzException {
+  public void processRequest_byAccountAndAsset() throws EsgException {
     final long assetId = 123L;
     final long accountId = 234L;
     final int firstIndex = 0;

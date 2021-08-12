@@ -2,10 +2,10 @@ package brs.at;
 
 import brs.Account;
 import brs.Blockchain;
-import brs.Amz;
+import brs.Esg;
 import brs.common.QuickMocker;
 import brs.common.TestConstants;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.VersionedEntityTable;
 import brs.db.store.ATStore;
@@ -46,10 +46,10 @@ public class AtTestHelper {
         ATStore mockAtStore = mock(ATStore.class);
         FluxCapacitor mockFluxCapacitor = QuickMocker.latestValueFluxCapacitor();
         //noinspection unchecked
-        AmzKey.LongKeyFactory<AT> atLongKeyFactory = mock(AmzKey.LongKeyFactory.class);
+        EsgKey.LongKeyFactory<AT> atLongKeyFactory = mock(EsgKey.LongKeyFactory.class);
         //noinspection unchecked
-        AmzKey.LongKeyFactory<AT.ATState> atStateLongKeyFactory = mock(AmzKey.LongKeyFactory.class);
-        mockStatic(Amz.class);
+        EsgKey.LongKeyFactory<AT.ATState> atStateLongKeyFactory = mock(EsgKey.LongKeyFactory.class);
+        mockStatic(Esg.class);
         Blockchain mockBlockchain = mock(Blockchain.class);
         PropertyService mockPropertyService = mock(PropertyService.class);
         //noinspection unchecked
@@ -60,7 +60,7 @@ public class AtTestHelper {
         VersionedEntityTable<AT.ATState> mockAtStateTable = mock(VersionedEntityTable.class);
         AccountStore mockAccountStore = mock(AccountStore.class);
         //noinspection unchecked
-        AmzKey.LongKeyFactory<Account> mockAccountKeyFactory = mock(AmzKey.LongKeyFactory.class);
+        EsgKey.LongKeyFactory<Account> mockAccountKeyFactory = mock(EsgKey.LongKeyFactory.class);
         Account mockAccount = mock(Account.class);
         mockStatic(Account.class);
 
@@ -72,7 +72,7 @@ public class AtTestHelper {
             }
             return null;
         }).when(mockAtTable).insert(ArgumentMatchers.any());
-        when(mockAccount.getBalanceNQT()).thenReturn(TestConstants.TEN_AMZ);
+        when(mockAccount.getBalanceNQT()).thenReturn(TestConstants.TEN_ESG);
         when(mockAccountStore.getAccountTable()).thenReturn(mockAccountTable);
         when(mockAccountStore.setOrVerify(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.anyInt()))
                 .thenReturn(true);
@@ -99,14 +99,14 @@ public class AtTestHelper {
         when(mockAtStore.getAtStateTable()).thenReturn(mockAtStateTable);
         when(mockPropertyService.getBoolean(ArgumentMatchers.eq(Props.ENABLE_AT_DEBUG_LOG))).thenReturn(true);
         when(mockAtStore.getAtTable()).thenReturn(mockAtTable);
-        when(Amz.getPropertyService()).thenReturn(mockPropertyService);
-        when(Amz.getBlockchain()).thenReturn(mockBlockchain);
+        when(Esg.getPropertyService()).thenReturn(mockPropertyService);
+        when(Esg.getBlockchain()).thenReturn(mockBlockchain);
         when(mockBlockchain.getHeight()).thenReturn(Integer.MAX_VALUE);
         when(mockAtStore.getAtDbKeyFactory()).thenReturn(atLongKeyFactory);
         when(mockAtStore.getAtStateDbKeyFactory()).thenReturn(atStateLongKeyFactory);
         when(mockStores.getAtStore()).thenReturn(mockAtStore);
-        when(Amz.getStores()).thenReturn(mockStores);
-        when(Amz.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
+        when(Esg.getStores()).thenReturn(mockStores);
+        when(Esg.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
     }
 
     static void clearAddedAts() {
@@ -137,7 +137,7 @@ public class AtTestHelper {
         short dpages = 1;
         short cspages = 1;
         short uspages = 1;
-        long minActivationAmount = TestConstants.TEN_AMZ;
+        long minActivationAmount = TestConstants.TEN_ESG;
         byte[] data = new byte[0];
         int creationLength = 4; // version + reserved
         creationLength += 8; // pages

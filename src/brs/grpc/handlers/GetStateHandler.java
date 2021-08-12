@@ -31,8 +31,8 @@ public class GetStateHandler implements GrpcApiHandler<Empty, BrsApi.State> {
         Block lastBlock = blockchain.getLastBlock();
         Peer lastBlockchainFeeder = blockchainProcessor.getLastBlockchainFeeder();
         return BrsApi.State.newBuilder()
-                .setApplication(Amz.APPLICATION)
-                .setVersion(Amz.VERSION.toString())
+                .setApplication(Esg.APPLICATION)
+                .setVersion(Esg.VERSION.toString())
                 .setTime(BrsApi.Time.newBuilder().setTime(timeService.getEpochTime()).build())
                 .setLastBlock(lastBlock.getId())
                 .setLastHeight(blockchain.getHeight())

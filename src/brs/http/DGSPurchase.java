@@ -28,7 +28,7 @@ public final class DGSPurchase extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     DigitalGoodsStore.Goods goods = parameterService.getGoods(req);
     if (goods.isDelisted()) {

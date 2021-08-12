@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class SellAliasTest extends AbstractTransactionTest {
 
   private SellAlias t;
@@ -45,7 +45,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final int priceParameter = 10;
     final int recipientId = 5;
 
@@ -64,9 +64,9 @@ public class SellAliasTest extends AbstractTransactionTest {
     when(parameterServiceMock.getSenderAccount(req)).thenReturn(mockSender);
     when(parameterServiceMock.getAlias(req)).thenReturn(mockAlias);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.MessagingAliasSell attachment = (Attachment.MessagingAliasSell) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -76,14 +76,14 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingPrice() throws AmzException {
+  public void processRequest_missingPrice() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     assertEquals(MISSING_PRICE, t.processRequest(req));
   }
 
   @Test
-  public void processRequest_incorrectPrice_unParsable() throws AmzException {
+  public void processRequest_incorrectPrice_unParsable() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
       new MockParam(PRICE_NQT_PARAMETER, "unParsable")
     );
@@ -92,7 +92,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void processRequest_incorrectPrice_negative() throws AmzException {
+  public void processRequest_incorrectPrice_negative() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(PRICE_NQT_PARAMETER, -10)
     );
@@ -101,7 +101,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void processRequest_incorrectPrice_overMaxBalance() throws AmzException {
+  public void processRequest_incorrectPrice_overMaxBalance() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(PRICE_NQT_PARAMETER, MAX_BALANCE_NQT + 1)
     );
@@ -110,7 +110,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectRecipient_unparsable() throws AmzException {
+  public void processRequest_incorrectRecipient_unparsable() throws EsgException {
     final int price = 10;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -122,7 +122,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectRecipient_zero() throws AmzException {
+  public void processRequest_incorrectRecipient_zero() throws EsgException {
     final int price = 10;
     final int recipientId = 0;
 
@@ -135,7 +135,7 @@ public class SellAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectAliasOwner() throws AmzException {
+  public void processRequest_incorrectAliasOwner() throws EsgException {
     final int price = 10;
     final int recipientId = 5;
 

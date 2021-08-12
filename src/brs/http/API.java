@@ -40,7 +40,7 @@ public final class API {
   private static final Logger logger = LoggerFactory.getLogger(API.class);
 
   @SuppressWarnings("squid:S1075")
-  private static final String API_PATH = "/amz";
+  private static final String API_PATH = "/esg";
   @SuppressWarnings("squid:S1075")
   private static final String API_TEST_PATH = "/test";
 

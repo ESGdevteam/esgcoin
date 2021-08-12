@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
 
@@ -18,7 +18,7 @@ public final class GetDGSPurchase extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     return JSONData.purchase(parameterService.getPurchase(req));
   }
 

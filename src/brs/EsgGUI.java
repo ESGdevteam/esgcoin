@@ -21,14 +21,14 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.security.Permission;
 
-public class AmzGUI extends Application {
-    private static final String ICON_LOCATION = "/images/amz_overlay_logo.png";
-    private static final String FAILED_TO_START_MESSAGE = "AmzGUI caught exception starting BRS";
+public class EsgGUI extends Application {
+    private static final String ICON_LOCATION = "/images/esg_overlay_logo.png";
+    private static final String FAILED_TO_START_MESSAGE = "EsgGUI caught exception starting BRS";
     private static final String UNEXPECTED_EXIT_MESSAGE = "BRS Quit unexpectedly! Exit code ";
 
     private static final int OUTPUT_MAX_LINES = 500;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AmzGUI.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EsgGUI.class);
     private static String[] args;
 
     private boolean userClosed = false;
@@ -36,15 +36,15 @@ public class AmzGUI extends Application {
     private TrayIcon trayIcon = null;
 
     public static void main(String[] args) {
-        AmzGUI.args = args;
+        EsgGUI.args = args;
         Platform.setImplicitExit(false);
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) {
-        System.setSecurityManager(new AmzGUISecurityManager());
-        primaryStage.setTitle("Amz Reference Software version " + Amz.VERSION);
+        System.setSecurityManager(new EsgGUISecurityManager());
+        primaryStage.setTitle("Esg Reference Software version " + Esg.VERSION);
         TextArea textArea = new TextArea() {
             @Override
             public void replaceText(int start, int end, String text) {
@@ -102,7 +102,7 @@ public class AmzGUI extends Application {
             popupMenu.add(showItem);
             popupMenu.add(shutdownItem);
 
-            TrayIcon newTrayIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(AmzGUI.class.getResource(ICON_LOCATION)), "Amz Reference Software", popupMenu);
+            TrayIcon newTrayIcon = new TrayIcon(Toolkit.getDefaultToolkit().createImage(EsgGUI.class.getResource(ICON_LOCATION)), "Esg Reference Software", popupMenu);
             newTrayIcon.setImage(newTrayIcon.getImage().getScaledInstance(newTrayIcon.getSize().width, -1, Image.SCALE_SMOOTH));
             newTrayIcon.addActionListener(e -> openWebUi());
             systemTray.add(newTrayIcon);
@@ -123,7 +123,7 @@ public class AmzGUI extends Application {
 
     private void openWebUi() {
         try {
-            PropertyService propertyService = Amz.getPropertyService();
+            PropertyService propertyService = Esg.getPropertyService();
             int port = propertyService.getBoolean(Props.DEV_TESTNET) ? propertyService.getInt(Props.DEV_API_PORT) : propertyService.getInt(Props.API_PORT);
             String httpPrefix = propertyService.getBoolean(Props.API_SSL) ? "https://" : "http://";
             String address = httpPrefix + "localhost:" + port;
@@ -141,9 +141,9 @@ public class AmzGUI extends Application {
 
     private void runBrs() {
         try {
-            Amz.main(args);
+            Esg.main(args);
             try {
-                if (Amz.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+                if (Esg.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
                     onTestNetEnabled();
                 }
             } catch (Exception t) {
@@ -224,7 +224,7 @@ public class AmzGUI extends Application {
         }
     }
 
-    private class AmzGUISecurityManager extends SecurityManager {
+    private class EsgGUISecurityManager extends SecurityManager {
 
         @Override
         public void checkExit(int status) {

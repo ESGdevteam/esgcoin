@@ -115,7 +115,7 @@ public final class JSONData {
     json.addProperty(NUMBER_OF_TRANSACTIONS_RESPONSE, block.getTransactions().size());
     json.addProperty(TOTAL_AMOUNT_NQT_RESPONSE, String.valueOf(block.getTotalAmountNQT()));
     json.addProperty(TOTAL_FEE_NQT_RESPONSE, String.valueOf(block.getTotalFeeNQT()));
-    json.addProperty(BLOCK_REWARD_RESPONSE, Convert.toUnsignedLong(blockReward / Constants.ONE_AMZ));
+    json.addProperty(BLOCK_REWARD_RESPONSE, Convert.toUnsignedLong(blockReward / Constants.ONE_ESG));
     json.addProperty(PAYLOAD_LENGTH_RESPONSE, block.getPayloadLength());
     json.addProperty(VERSION_RESPONSE, block.getVersion());
     json.addProperty(BASE_TARGET_RESPONSE, Convert.toUnsignedLong(block.getBaseTarget()));

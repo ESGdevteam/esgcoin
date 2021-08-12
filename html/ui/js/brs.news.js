@@ -39,14 +39,14 @@ var BRS = (function(BRS, $, undefined) {
 		    }
 		},
 		"filter": function(entry, tokens) {
-		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("AMZ tipping bot has arrived") == -1;
+		    return tokens.title.indexOf("Donations toward") == -1 && tokens.title.indexOf("ESG tipping bot has arrived") == -1;
 		}
 	    };
 
-	    $("#amzforum_news").rss("https://forums.getamz.net/c/amz-community-announcements", settings, BRS.newsLoaded);
-	    $("#amzforum2_news").rss("https://amzforum.net/category/1/announcements", settings, BRS.newsLoaded);		
-	    $("#reddit_news").rss("http://www.reddit.com/r/amazonascoin/.rss", settingsReddit, BRS.newsLoaded);
-	    $("#amazonascoinist_news").rss("https://www.amazonascoin.ist/category/articles/", settings, BRS.newsLoaded);
+	    $("#esgforum_news").rss("https://forums.getesg.net/c/esg-community-announcements", settings, BRS.newsLoaded);
+	    $("#esgforum2_news").rss("https://esgforum.net/category/1/announcements", settings, BRS.newsLoaded);		
+	    $("#reddit_news").rss("http://www.reddit.com/r/esgcoin/.rss", settingsReddit, BRS.newsLoaded);
+	    $("#esgcoinist_news").rss("https://www.esgcoin.ist/category/articles/", settings, BRS.newsLoaded);
 	}
 
 	BRS.pageLoaded();

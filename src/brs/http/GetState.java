@@ -47,8 +47,8 @@ final class GetState extends APIServlet.JsonRequestHandler {
 
     JsonObject response = new JsonObject();
 
-    response.addProperty("application", Amz.APPLICATION);
-    response.addProperty("version", Amz.VERSION.toString());
+    response.addProperty("application", Esg.APPLICATION);
+    response.addProperty("version", Esg.VERSION.toString());
     response.addProperty(TIME_RESPONSE, timeService.getEpochTime());
     response.addProperty("lastBlock", blockchain.getLastBlock().getStringId());
     response.addProperty("cumulativeDifficulty", blockchain.getLastBlock().getCumulativeDifficulty().toString());
@@ -56,15 +56,15 @@ final class GetState extends APIServlet.JsonRequestHandler {
     if (!"false".equalsIgnoreCase(req.getParameter("includeCounts"))) {
       long totalEffectiveBalance = 0;
       for (Account account : accountService.getAllAccounts(0, -1)) {
-        long effectiveBalanceAMZ = account.getBalanceNQT();
-        if (effectiveBalanceAMZ > 0) {
-          totalEffectiveBalance += effectiveBalanceAMZ;
+        long effectiveBalanceESG = account.getBalanceNQT();
+        if (effectiveBalanceESG > 0) {
+          totalEffectiveBalance += effectiveBalanceESG;
         }
       }
       for (Escrow escrow : escrowService.getAllEscrowTransactions()) {
         totalEffectiveBalance += escrow.getAmountNQT();
       }
-      response.addProperty("totalEffectiveBalanceNXT", totalEffectiveBalance / Constants.ONE_AMZ);
+      response.addProperty("totalEffectiveBalanceNXT", totalEffectiveBalance / Constants.ONE_ESG);
 
       response.addProperty("numberOfBlocks", blockchain.getHeight() + 1);
       response.addProperty("numberOfTransactions", blockchain.getTransactionCount());
@@ -81,10 +81,10 @@ final class GetState extends APIServlet.JsonRequestHandler {
     }
     response.addProperty("numberOfPeers", Peers.getAllPeers().size());
     response.addProperty("numberOfUnlockedAccounts", generator.getAllGenerators().size());
-    Peer lastBlockchainFeeder = Amz.getBlockchainProcessor().getLastBlockchainFeeder();
+    Peer lastBlockchainFeeder = Esg.getBlockchainProcessor().getLastBlockchainFeeder();
     response.addProperty("lastBlockchainFeeder", lastBlockchainFeeder == null ? null : lastBlockchainFeeder.getAnnouncedAddress());
-    response.addProperty("lastBlockchainFeederHeight", Amz.getBlockchainProcessor().getLastBlockchainFeederHeight());
-    response.addProperty("isScanning", Amz.getBlockchainProcessor().isScanning());
+    response.addProperty("lastBlockchainFeederHeight", Esg.getBlockchainProcessor().getLastBlockchainFeederHeight());
+    response.addProperty("isScanning", Esg.getBlockchainProcessor().isScanning());
     response.addProperty("availableProcessors", Runtime.getRuntime().availableProcessors());
     response.addProperty("maxMemory", Runtime.getRuntime().maxMemory());
     response.addProperty("totalMemory", Runtime.getRuntime().totalMemory());

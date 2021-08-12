@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.DigitalGoodsStore;
 import brs.services.DGSGoodsStoreService;
 import com.google.gson.JsonArray;
@@ -23,7 +23,7 @@ public final class GetDGSPendingPurchases extends APIServlet.JsonRequestHandler 
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     long sellerId = ParameterParser.getSellerId(req);
 
     if (sellerId == 0) {

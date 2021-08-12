@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class SubscriptionCancelTest extends AbstractTransactionTest {
 
   private SubscriptionCancel t;
@@ -49,7 +49,7 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final Long subscriptionIdParameter = 123L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -67,9 +67,9 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(mockSender);
     when(subscriptionServiceMock.getSubscription(eq(subscriptionIdParameter))).thenReturn(mockSubscription);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.AdvancedPaymentSubscriptionCancel attachment = (Attachment.AdvancedPaymentSubscriptionCancel) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -79,7 +79,7 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingSubscriptionParameter() throws AmzException {
+  public void processRequest_missingSubscriptionParameter() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final JsonObject response = (JsonObject) t.processRequest(req);
@@ -89,7 +89,7 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_failedToParseSubscription() throws AmzException {
+  public void processRequest_failedToParseSubscription() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
       new MockParam(SUBSCRIPTION_PARAMETER, "notALong")
     );
@@ -101,7 +101,7 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_subscriptionNotFound() throws AmzException {
+  public void processRequest_subscriptionNotFound() throws EsgException {
     final long subscriptionId = 123L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -117,7 +117,7 @@ public class SubscriptionCancelTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_userIsNotSenderOrRecipient() throws AmzException {
+  public void processRequest_userIsNotSenderOrRecipient() throws EsgException {
     final long subscriptionId = 123L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(

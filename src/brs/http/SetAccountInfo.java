@@ -24,7 +24,7 @@ final class SetAccountInfo extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     String name = Convert.nullToEmpty(req.getParameter(NAME_PARAMETER)).trim();
     String description = Convert.nullToEmpty(req.getParameter(DESCRIPTION_PARAMETER)).trim();

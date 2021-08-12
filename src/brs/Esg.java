@@ -39,14 +39,14 @@ import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class Amz {
+public final class Esg {
 
   public static final Version VERSION = Version.parse("v2.5.3");
   public static final String APPLICATION = "BRS";
 
   private static final String DEFAULT_PROPERTIES_NAME = "brs-default.properties";
 
-  private static final Logger logger = LoggerFactory.getLogger(Amz.class);
+  private static final Logger logger = LoggerFactory.getLogger(Esg.class);
 
   private static Stores stores;
   private static Dbs dbs;
@@ -68,7 +68,7 @@ public final class Amz {
   private static PropertyService loadProperties() {
     final Properties defaultProperties = new Properties();
 
-    logger.info("Initializing Amz Reference Software (BRS) version {}", VERSION);
+    logger.info("Initializing Esg Reference Software (BRS) version {}", VERSION);
     try (InputStream is = ClassLoader.getSystemResourceAsStream(DEFAULT_PROPERTIES_NAME)) {
       if (is != null) {
         defaultProperties.load(is);
@@ -102,7 +102,7 @@ public final class Amz {
     return new PropertyServiceImpl(properties);
   }
 
-  private Amz() {
+  private Esg() {
   } // never
 
   public static Blockchain getBlockchain() {
@@ -126,7 +126,7 @@ public final class Amz {
   }
 
   public static void main(String[] args) {
-    Runtime.getRuntime().addShutdownHook(new Thread(Amz::shutdown));
+    Runtime.getRuntime().addShutdownHook(new Thread(Esg::shutdown));
     init();
   }
 
@@ -147,7 +147,7 @@ public final class Amz {
 
   private static void loadWallet(PropertyService propertyService) {
     validateVersionNotDev(propertyService);
-    Amz.propertyService = propertyService;
+    Esg.propertyService = propertyService;
 
     try {
       long startTime = System.currentTimeMillis();
@@ -257,7 +257,7 @@ public final class Amz {
       logger.error(e.getMessage(), e);
       System.exit(1);
     }
-    (new Thread(Amz::commandHandler)).start();
+    (new Thread(Esg::commandHandler)).start();
   }
 
   private static void addBlockchainListeners(BlockchainProcessor blockchainProcessor, AccountService accountService, DGSGoodsStoreService goodsService, Blockchain blockchain,

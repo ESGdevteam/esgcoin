@@ -17,7 +17,7 @@ var BRS = (function(BRS, $, undefined) {
         BRS.showFeeSuggestions("#multi_out_fee", "#suggested_fee_response_multi");
     });
     $('#send_money_modal').on('hide.bs.modal', function (e) {
-           $("#total_amount_multi_out").html('0.1 AMZ');
+           $("#total_amount_multi_out").html('0.1 ESG');
         });
     $("#suggested_fee_ordinary").on("click", function(e) {
         e.preventDefault();
@@ -118,7 +118,7 @@ var BRS = (function(BRS, $, undefined) {
 					var recipient = transaction.attachment.recipients[i];
 					nxtAddress.set(recipient[0]);
 					var address = nxtAddress.toString();
-					var amount = BRS.formatAmount(recipient[1]) + " AMZ";
+					var amount = BRS.formatAmount(recipient[1]) + " ESG";
 					if (i !== 0) {
 						recipientHtml += "<br />";
 					}
@@ -165,7 +165,7 @@ var BRS = (function(BRS, $, undefined) {
 
                 data = {
                     "type": "Multi-out Same Payment",
-                    "amount_formatted_html": BRS.formatAmount(transaction.amountNQT) + " AMZ (" + BRS.formatAmount(amountEach.toString()) + " AMZ for each recipient)",
+                    "amount_formatted_html": BRS.formatAmount(transaction.amountNQT) + " ESG (" + BRS.formatAmount(amountEach.toString()) + " ESG for each recipient)",
                     "fee": transaction.feeNQT,
                     "recipient_formatted_html": recipientHtml,
                     "sender": BRS.getAccountTitle(transaction, "sender")
@@ -345,12 +345,12 @@ var BRS = (function(BRS, $, undefined) {
 			    }
                             else if (transaction.recipient == BRS.account) {
 				message = $.t("alias_sale_direct_offer", {
-				    "amz": BRS.formatAmount(transaction.attachment.priceNQT)
+				    "esg": BRS.formatAmount(transaction.attachment.priceNQT)
 				}) + " <a href='#' data-alias='" + String(transaction.attachment.alias).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>";
 			    }
                             else if (typeof transaction.recipient == "undefined") {
 				message = $.t("alias_sale_indirect_offer", {
-				    "amz": BRS.formatAmount(transaction.attachment.priceNQT)
+				    "esg": BRS.formatAmount(transaction.attachment.priceNQT)
 				}) + " <a href='#' data-alias='" + String(transaction.attachment.alias).escapeHTML() + "' data-toggle='modal' data-target='#buy_alias_modal'>" + $.t("buy_it_q") + "</a>";
 			    }
                             else if (transaction.senderRS == BRS.accountRS) {
@@ -445,8 +445,8 @@ var BRS = (function(BRS, $, undefined) {
 			"type": $.t("ask_order_placement"),
 			"asset_name": asset.name,
 			"quantity": [transaction.attachment.quantityQNT, asset.decimals],
-			"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " AMZ",
-			"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " AMZ"
+			"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " ESG",
+			"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " ESG"
 		    };
 
 		    if (transaction.sender != BRS.account) {
@@ -471,8 +471,8 @@ var BRS = (function(BRS, $, undefined) {
 			"type": $.t("bid_order_placement"),
 			"asset_name": asset.name,
 			"quantity": [transaction.attachment.quantityQNT, asset.decimals],
-			"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " AMZ",
-			"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " AMZ"
+			"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " ESG",
+			"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " ESG"
 		    };
 
 		    if (transaction.sender != BRS.account) {
@@ -501,8 +501,8 @@ var BRS = (function(BRS, $, undefined) {
 				"type": $.t("ask_order_cancellation"),
 				"asset_name": asset.name,
 				"quantity": [transaction.attachment.quantityQNT, asset.decimals],
-				"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " AMZ",
-				"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " AMZ"
+				"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " ESG",
+				"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " ESG"
 			    };
 
 			    if (transaction.sender != BRS.account) {
@@ -536,8 +536,8 @@ var BRS = (function(BRS, $, undefined) {
 				"type": $.t("bid_order_cancellation"),
 				"asset_name": asset.name,
 				"quantity": [transaction.attachment.quantityQNT, asset.decimals],
-				"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " AMZ",
-				"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " AMZ"
+				"price_formatted_html": BRS.formatOrderPricePerWholeQNT(transaction.attachment.priceNQT, asset.decimals) + " ESG",
+				"total_formatted_html": BRS.formatAmount(BRS.calculateOrderTotalNQT(transaction.attachment.quantityQNT, transaction.attachment.priceNQT)) + " ESG"
 			    };
 
 			    if (transaction.sender != BRS.account) {
@@ -607,7 +607,7 @@ var BRS = (function(BRS, $, undefined) {
 		    data = {
 			"type": $.t("marketplace_item_price_change"),
 			"item_name": goods.name,
-			"new_price_formatted_html": BRS.formatAmount(transaction.attachment.priceNQT) + " AMZ",
+			"new_price_formatted_html": BRS.formatAmount(transaction.attachment.priceNQT) + " ESG",
 			"seller": BRS.getAccountFormatted(goods, "seller")
 		    };
 
@@ -721,7 +721,7 @@ var BRS = (function(BRS, $, undefined) {
 
 			if (purchase.quantity != "1") {
 			    var orderTotal = BRS.formatAmount(new BigInteger(String(purchase.quantity)).multiply(new BigInteger(String(purchase.priceNQT))));
-			    data.total_formatted_html = orderTotal + " AMZ";
+			    data.total_formatted_html = orderTotal + " ESG";
 			}
 
 			if (transaction.attachment.discountNQT) {
@@ -844,7 +844,7 @@ var BRS = (function(BRS, $, undefined) {
 
 			var orderTotal = new BigInteger(String(purchase.quantity)).multiply(new BigInteger(String(purchase.priceNQT)));
 
-			data.order_total_formatted_html = BRS.formatAmount(orderTotal) + " AMZ";
+			data.order_total_formatted_html = BRS.formatAmount(orderTotal) + " ESG";
 
 			data.refund = transaction.attachment.refundNQT;
 

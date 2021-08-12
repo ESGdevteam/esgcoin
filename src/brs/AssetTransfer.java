@@ -1,6 +1,6 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 
 public class AssetTransfer {
 
@@ -9,7 +9,7 @@ public class AssetTransfer {
   }
 
   private final long id;
-  public final AmzKey dbKey;
+  public final EsgKey dbKey;
   private final long assetId;
   private final int height;
   private final long senderId;
@@ -17,7 +17,7 @@ public class AssetTransfer {
   private final long quantityQNT;
   private final int timestamp;
 
-  public AssetTransfer(AmzKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
+  public AssetTransfer(EsgKey dbKey, Transaction transaction, Attachment.ColoredCoinsAssetTransfer attachment) {
     this.dbKey = dbKey;
     this.id = transaction.getId();
     this.height = transaction.getHeight();
@@ -28,7 +28,7 @@ public class AssetTransfer {
     this.timestamp = transaction.getBlockTimestamp();
   }
 
-  protected AssetTransfer(long id, AmzKey dbKey, long assetId, int height, long senderId, long recipientId, long quantityQNT, int timestamp) {
+  protected AssetTransfer(long id, EsgKey dbKey, long assetId, int height, long senderId, long recipientId, long quantityQNT, int timestamp) {
     this.id = id;
     this.dbKey = dbKey;
     this.assetId = assetId;

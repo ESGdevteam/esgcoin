@@ -24,7 +24,7 @@ final class PlaceAskOrder extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     final Asset asset = parameterService.getAsset(req);
     final long priceNQT = ParameterParser.getPriceNQT(req);

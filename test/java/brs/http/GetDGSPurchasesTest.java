@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.DigitalGoodsStore.Purchase;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
@@ -38,7 +38,7 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getAllPurchases() throws AmzException {
+  public void processRequest_getAllPurchases() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(SELLER_PARAMETER, 0),
         new MockParam(BUYER_PARAMETER, 0),
@@ -63,7 +63,7 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getSellerPurchases() throws AmzException {
+  public void processRequest_getSellerPurchases() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(SELLER_PARAMETER, 1),
         new MockParam(BUYER_PARAMETER, 0),
@@ -88,7 +88,7 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getBuyerPurchases() throws AmzException {
+  public void processRequest_getBuyerPurchases() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(SELLER_PARAMETER, 0),
         new MockParam(BUYER_PARAMETER, 1),
@@ -113,7 +113,7 @@ public class GetDGSPurchasesTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getSellerBuyerPurchases() throws AmzException {
+  public void processRequest_getSellerBuyerPurchases() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(SELLER_PARAMETER, 1),
         new MockParam(BUYER_PARAMETER, 2),

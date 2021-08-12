@@ -47,9 +47,9 @@ public class GetCountsHandler implements GrpcApiHandler<Empty, BrsApi.Counts> {
         int numberOfPeers = Peers.getAllPeers().size();
         int numberOfGenerators = generator.getAllGenerators().size();
         for (Account account : accountService.getAllAccounts(0, -1)) {
-            long effectiveBalanceAMZ = account.getBalanceNQT();
-            if (effectiveBalanceAMZ > 0) {
-                totalEffectiveBalance += effectiveBalanceAMZ;
+            long effectiveBalanceESG = account.getBalanceNQT();
+            if (effectiveBalanceESG > 0) {
+                totalEffectiveBalance += effectiveBalanceESG;
             }
         }
         for (Escrow escrow : escrowService.getAllEscrowTransactions()) {

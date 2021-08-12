@@ -110,7 +110,7 @@ var BRS = (function(BRS, $, undefined) {
 
                 total_multi_out = amount_total + fee;
 
-                $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+                $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
             }
         } else {
             if (multi_out_recipients < 64) {
@@ -144,7 +144,7 @@ var BRS = (function(BRS, $, undefined) {
 
             total_multi_out = amount_total + fee;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
         } else {
             multi_out_recipients--;
             // get amount for each recipient
@@ -162,7 +162,7 @@ var BRS = (function(BRS, $, undefined) {
             $("#multi_out_fee").val(fee.toFixed(8));
             total_multi_out = amount_total + fee;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
         }
     });
 
@@ -182,7 +182,7 @@ var BRS = (function(BRS, $, undefined) {
         $("#multi_out_fee").val(fee.toFixed(8));
         total_multi_out = amount_total + fee;
 
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
     });
 
     $("#multi-out-same-amount").on("change", function(e) {
@@ -203,12 +203,12 @@ var BRS = (function(BRS, $, undefined) {
 
         total_multi_out = amount_total + fee;
 
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
     });
 
     $(".same_out_checkbox").on("change", function(e) {
         //amount_total = 0 ///fixing incorrect Total when switch from multi same to multi and fee is changed.
-        $(".total_amount_multi_out").html("0.1 AMZ");
+        $(".total_amount_multi_out").html("0.1 ESG");
         if ($(this).is(":checked")) {
             $(".multi-out-same").fadeIn();
             $(".multi-out-ordinary").hide();
@@ -224,7 +224,7 @@ var BRS = (function(BRS, $, undefined) {
             var fee = isNaN(current_fee) ? 1 : (current_fee < 0.00735 ? 0.00735 : current_fee);
             $("#multi_out_fee").val(fee.toFixed(8));
             total_multi_out = amount_total + fee;
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
             }
 
         } else {
@@ -243,7 +243,7 @@ var BRS = (function(BRS, $, undefined) {
             $("#multi_out_fee").val(fee.toFixed(8));
             total_multi_out = amount_total + fee;
 
-            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " AMZ");
+            $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(total_multi_out)) + " ESG");
         }
     });
 
@@ -253,7 +253,7 @@ var BRS = (function(BRS, $, undefined) {
 
         $("#multi_out_fee").val(fee.toFixed(8));
 
-        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(amount_total + fee)) + " AMZ");
+        $(".total_amount_multi_out").html(BRS.formatAmount(BRS.convertToNQT(amount_total + fee)) + " ESG");
     });
 
     $("#multi-out-submit").on("click", function(e) {
@@ -364,11 +364,11 @@ var BRS = (function(BRS, $, undefined) {
 
         $.each($inputFields, function() {
             if ($(this).hasClass("noMask")) {
-                $(this).mask("AMZ-****-****-****-*****", {
+                $(this).mask("ESG-****-****-****-*****", {
                     "noMask": true
                 }).removeClass("noMask");
             } else {
-                $(this).mask("AMZ-****-****-****-*****");
+                $(this).mask("ESG-****-****-****-*****");
             }
         });
 
@@ -486,7 +486,7 @@ var BRS = (function(BRS, $, undefined) {
                 defaultFee = 1;
             }
 
-            $(this).find(".advanced_fee").html(BRS.formatAmount(BRS.convertToNQT(defaultFee)) + " AMZ");
+            $(this).find(".advanced_fee").html(BRS.formatAmount(BRS.convertToNQT(defaultFee)) + " ESG");
         }
 
         BRS.showedFormWarning = false;
@@ -522,7 +522,7 @@ var BRS = (function(BRS, $, undefined) {
         var $feeInfo = $modal.find(".advanced_fee");
 
         if ($feeInfo.length) {
-            $feeInfo.html(BRS.formatAmount(BRS.convertToNQT($(this).val())) + " AMZ");
+            $feeInfo.html(BRS.formatAmount(BRS.convertToNQT($(this).val())) + " ESG");
         }
     });
 

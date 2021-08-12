@@ -8,7 +8,7 @@
 
 package brs.at;
 
-import amz.kit.crypto.AmzCrypto;
+import esg.kit.crypto.EsgCrypto;
 import org.bouncycastle.util.Arrays;
 
 import java.math.BigInteger;
@@ -18,7 +18,7 @@ public class AtApiHelper {
     private AtApiHelper() {
     }
 
-    private static final AmzCrypto amzCrypto = AmzCrypto.getInstance();
+    private static final EsgCrypto esgCrypto = EsgCrypto.getInstance();
 
     public static int longToHeight(long x) {
         return (int) (x >> 32);
@@ -28,11 +28,11 @@ public class AtApiHelper {
         if (bytes.length > 8) {
             throw new BufferOverflowException();
         }
-        return amzCrypto.bytesToLong(bytes);
+        return esgCrypto.bytesToLong(bytes);
     }
 
     public static byte[] getByteArray(long l) {
-        return Arrays.reverse(amzCrypto.longToBytes(l));
+        return Arrays.reverse(esgCrypto.longToBytes(l));
     }
 
     public static int longToNumOfTx(long x) {

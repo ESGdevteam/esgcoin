@@ -6,9 +6,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.LogManager;
 
 /**
- * Java LogManager extension for use with Amz
+ * Java LogManager extension for use with Esg
  */
-class AmzLogManager extends LogManager {
+class EsgLogManager extends LogManager {
 
   /**
    * Logging reconfiguration in progress
@@ -16,14 +16,14 @@ class AmzLogManager extends LogManager {
   private final AtomicBoolean loggingReconfiguration = new AtomicBoolean(false);
 
   /**
-   * Create the Amz log manager
+   * Create the Esg log manager
    *
    * We will let the Java LogManager create its shutdown hook so that the
    * shutdown context will be set up properly.  However, we will intercept
    * the reset() method so we can delay the actual shutdown until we are
-   * done terminating the Amz processes.
+   * done terminating the Esg processes.
    */
-  public AmzLogManager() {
+  public EsgLogManager() {
     super();
   }
 
@@ -46,7 +46,7 @@ class AmzLogManager extends LogManager {
    *
    * This method is called to reset the log handlers.  We will forward the
    * call during logging reconfiguration but will ignore it otherwise.
-   * This allows us to continue to use logging facilities during Amz shutdown.
+   * This allows us to continue to use logging facilities during Esg shutdown.
    */
   @Override
   public void reset() {
@@ -55,10 +55,10 @@ class AmzLogManager extends LogManager {
   }
 
   /**
-   * Amz shutdown is now complete, so call LogManager.reset() to terminate
+   * Esg shutdown is now complete, so call LogManager.reset() to terminate
    * the log handlers.
    */
-  void amzShutdown() {
+  void esgShutdown() {
     super.reset();
   }
 }

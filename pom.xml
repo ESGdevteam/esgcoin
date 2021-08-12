@@ -4,23 +4,23 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>amazonascoin</groupId>
-  <artifactId>amazonascoin</artifactId>
+  <groupId>esgcoin</groupId>
+  <artifactId>esgcoin</artifactId>
   <version>2.5.3</version>
-  <name>Amazonascoin Reference Software</name>
-  <url>https://github.com/AmzDevelopmentTeam/amazonascoin</url>
+  <name>Esgcoin Reference Software</name>
+  <url>https://github.com/ESGdevteam/esgcoin</url>
 
   <scm>
-    <connection>scm:git:git@github.com:AmzDevelopmentTeam/amazonascoin.git</connection>
-    <developerConnection>scm:git:git@github.com:AmzDevelopmentTeam/amazonascoin.git</developerConnection>
-    <url>https://github.com/AmzDevelopmentTeam/amazonascoin</url>
+    <connection>scm:git:git@github.com:ESGdevteam/esgcoin.git</connection>
+    <developerConnection>scm:git:git@github.com:ESGdevteam/esgcoin.git</developerConnection>
+    <url>https://github.com/ESGdevteam/esgcoin</url>
   </scm>
 
   <packaging>jar</packaging>
 
   <properties>
     <bcprov-jdk15on.version>1.62</bcprov-jdk15on.version>
-    <amzkit4j.version>0.15.2</amzkit4j.version>
+    <esgkit4j.version>0.15.3</esgkit4j.version>
     <rxjava.version>2.2.11</rxjava.version>
     <ehcache.version>3.8.0</ehcache.version>
     <flywaydb.version>5.2.4</flywaydb.version>
@@ -66,9 +66,9 @@
   <dependencies>
 
     <dependency>
-      <groupId>com.github.AmzDevelopmentTeam</groupId>
-      <artifactId>amzkit4j</artifactId>
-      <version>${amzkit4j.version}</version>
+      <groupId>com.github.ESGdevteam</groupId>
+      <artifactId>esgkit4j</artifactId>
+      <version>${esgkit4j.version}</version>
     </dependency>
 
     <dependency>
@@ -331,7 +331,7 @@
             <version>3.8.1</version>
             <configuration>
               <excludes>
-                <exclude>brs/AmzGUI.java</exclude>
+                <exclude>brs/EsgGUI.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -371,7 +371,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>brs.AmzLauncher</mainClass>
+              <mainClass>brs.EsgLauncher</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -404,7 +404,7 @@
                 <delete dir="${project.basedir}/dist"/>
                 <mkdir dir="${project.basedir}/dist"/>
                 <mkdir dir="${project.basedir}/dist/tmp"/>
-                <mkdir dir="${project.basedir}/dist/tmp/amz_db"/>
+                <mkdir dir="${project.basedir}/dist/tmp/esg_db"/>
               </target>
             </configuration>
           </execution>
@@ -418,7 +418,7 @@
               <target>
                 <!-- copy jar -->
                 <copy file="${project.basedir}/target/${project.build.finalName}-jar-with-dependencies.jar"
-                  tofile="${project.basedir}/dist/tmp/amz.jar"/>
+                  tofile="${project.basedir}/dist/tmp/esg.jar"/>
 
                 <!-- copy html dir -->
                 <copy todir="${project.basedir}/dist/tmp/html">
@@ -435,22 +435,22 @@
                 <!-- copy remaining files from root dir -->
                 <copy todir="${project.basedir}/dist/tmp">
                   <fileset dir="${project.basedir}">
-                    <include name="Amz_Wallet.url"/>
+                    <include name="Esg_Wallet.url"/>
                     <include name="genscoop.cl"/>
                     <include name="init-mysql.sql"/>
                     <include name="LICENSE.txt"/>
                     <include name="README.md"/>
                     <include name="README_refactoring.md"/>
-                    <include name="amz.cmd"/>
-                    <include name="amz.sh"/>
+                    <include name="esg.cmd"/>
+                    <include name="esg.sh"/>
                   </fileset>
                 </copy>
 
-                <!-- workaround to keep org. amz.(sh|cmd) working, if build with compile scripts -->
-                <copy file="${project.basedir}/amz.sh"
-                      tofile="${project.basedir}/dist/tmp/amz.sh"/>
-                <copy file="${project.basedir}/amz.cmd"
-                  tofile="${project.basedir}/dist/tmp/amz.cmd"/>
+                <!-- workaround to keep org. esg.(sh|cmd) working, if build with compile scripts -->
+                <copy file="${project.basedir}/esg.sh"
+                      tofile="${project.basedir}/dist/tmp/esg.sh"/>
+                <copy file="${project.basedir}/esg.cmd"
+                  tofile="${project.basedir}/dist/tmp/esg.cmd"/>
                 <!-- create zip file -->
                 <zip destfile="${project.basedir}/dist/${project.build.finalName}.zip"
                      basedir="${project.basedir}/dist/tmp"/>
@@ -489,7 +489,7 @@
         <configuration>
           <jdbc>
             <driver>org.mariadb.jdbc.Driver</driver>
-            <url>jdbc:mysql://localhost:3306/amzwallet</url>
+            <url>jdbc:mysql://localhost:3306/esgwallet</url>
             <user>root</user>
             <password />
           </jdbc>
@@ -497,7 +497,7 @@
             <name>org.jooq.codegen.JavaGenerator</name>
             <database>
               <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
-              <inputSchema>amzwallet</inputSchema>
+              <inputSchema>esgwallet</inputSchema>
               <outputSchema>DB</outputSchema>
               <includes>.*</includes>
               <excludes />

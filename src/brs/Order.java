@@ -1,6 +1,6 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.grpc.proto.BrsApi;
 import brs.util.Convert;
 
@@ -70,14 +70,14 @@ public abstract class Order {
 
   public static class Ask extends Order {
 
-    public final AmzKey dbKey;
+    public final EsgKey dbKey;
 
-    public Ask(AmzKey dbKey, Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
+    public Ask(EsgKey dbKey, Transaction transaction, Attachment.ColoredCoinsAskOrderPlacement attachment) {
       super(transaction, attachment);
       this.dbKey = dbKey;
     }
 
-    protected Ask(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, AmzKey dbKey) {
+    protected Ask(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, EsgKey dbKey) {
       super(id, accountId, assetId, priceNQT, creationHeight, quantityQNT);
       this.dbKey = dbKey;
     }
@@ -90,14 +90,14 @@ public abstract class Order {
 
   public static class Bid extends Order {
 
-    public final AmzKey dbKey;
+    public final EsgKey dbKey;
 
-    public Bid(AmzKey dbKey, Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
+    public Bid(EsgKey dbKey, Transaction transaction, Attachment.ColoredCoinsBidOrderPlacement attachment) {
       super(transaction, attachment);
       this.dbKey = dbKey;
     }
 
-    protected Bid(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, AmzKey dbKey) {
+    protected Bid(long id, long accountId, long assetId, long priceNQT, int creationHeight, long quantityQNT, EsgKey dbKey) {
       super(id, accountId, assetId, priceNQT, creationHeight, quantityQNT);
       this.dbKey = dbKey;
     }

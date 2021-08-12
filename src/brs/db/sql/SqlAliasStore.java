@@ -1,8 +1,8 @@
 package brs.db.sql;
 
 import brs.Alias;
-import brs.Amz;
-import brs.db.AmzKey;
+import brs.Esg;
+import brs.db.EsgKey;
 import brs.db.VersionedEntityTable;
 import brs.db.store.AliasStore;
 import brs.db.store.DerivedTableManager;
@@ -23,7 +23,7 @@ public class SqlAliasStore implements AliasStore {
 
   private static final DbKey.LongKeyFactory<Alias.Offer> offerDbKeyFactory = new DbKey.LongKeyFactory<Alias.Offer>(ALIAS_OFFER.ID) {
       @Override
-      public AmzKey newKey(Alias.Offer offer) {
+      public EsgKey newKey(Alias.Offer offer) {
         return offer.dbKey;
       }
     };
@@ -62,20 +62,20 @@ public class SqlAliasStore implements AliasStore {
   }
 
   @Override
-  public AmzKey.LongKeyFactory<Alias.Offer> getOfferDbKeyFactory() {
+  public EsgKey.LongKeyFactory<Alias.Offer> getOfferDbKeyFactory() {
     return offerDbKeyFactory;
   }
 
-  private static final AmzKey.LongKeyFactory<Alias> aliasDbKeyFactory = new DbKey.LongKeyFactory<Alias>(ALIAS.ID) {
+  private static final EsgKey.LongKeyFactory<Alias> aliasDbKeyFactory = new DbKey.LongKeyFactory<Alias>(ALIAS.ID) {
 
       @Override
-      public AmzKey newKey(Alias alias) {
+      public EsgKey newKey(Alias alias) {
         return alias.dbKey;
       }
     };
 
   @Override
-  public AmzKey.LongKeyFactory<Alias> getAliasDbKeyFactory() {
+  public EsgKey.LongKeyFactory<Alias> getAliasDbKeyFactory() {
     return aliasDbKeyFactory;
   }
 
@@ -93,7 +93,7 @@ public class SqlAliasStore implements AliasStore {
   private void saveOffer(Alias.Offer offer) {
     Db.useDSLContext(ctx -> {
       ctx.insertInto(ALIAS_OFFER, ALIAS_OFFER.ID, ALIAS_OFFER.PRICE, ALIAS_OFFER.BUYER_ID, ALIAS_OFFER.HEIGHT)
-              .values(offer.getId(), offer.getPriceNQT(), (offer.getBuyerId() == 0 ? null : offer.getBuyerId()), Amz.getBlockchain().getHeight())
+              .values(offer.getId(), offer.getPriceNQT(), (offer.getBuyerId() == 0 ? null : offer.getBuyerId()), Esg.getBlockchain().getHeight())
               .execute();
     });
   }
@@ -126,7 +126,7 @@ public class SqlAliasStore implements AliasStore {
       set(ALIAS.ALIAS_NAME_LOWER, alias.getAliasName().toLowerCase(Locale.ENGLISH)).
       set(ALIAS.ALIAS_URI, alias.getAliasURI()).
       set(ALIAS.TIMESTAMP, alias.getTimestamp()).
-      set(ALIAS.HEIGHT, Amz.getBlockchain().getHeight()).execute();
+      set(ALIAS.HEIGHT, Esg.getBlockchain().getHeight()).execute();
   }
 
   private final VersionedEntityTable<Alias> aliasTable;

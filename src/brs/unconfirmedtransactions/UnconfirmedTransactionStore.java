@@ -1,6 +1,6 @@
 package brs.unconfirmedtransactions;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Transaction;
 import brs.peer.Peer;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface UnconfirmedTransactionStore {
 
-  boolean put(Transaction transaction, Peer peer) throws AmzException.ValidationException;
+  boolean put(Transaction transaction, Peer peer) throws EsgException.ValidationException;
 
   Transaction get(Long transactionId);
 

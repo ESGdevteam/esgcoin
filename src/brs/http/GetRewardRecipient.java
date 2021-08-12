@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.AccountService;
 import brs.services.ParameterService;
 import brs.util.Convert;
@@ -28,7 +28,7 @@ final class GetRewardRecipient extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     JsonObject response = new JsonObject();
 
     final Account account = parameterService.getAccount(req);

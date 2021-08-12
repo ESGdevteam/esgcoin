@@ -1,9 +1,9 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import com.google.gson.JsonElement;
 
-public final class ParameterException extends AmzException {
+public final class ParameterException extends EsgException {
 
   private transient final JsonElement errorResponse;
 

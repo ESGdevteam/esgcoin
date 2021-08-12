@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.QuickMocker;
 import brs.services.ParameterService;
 import brs.util.JSON;
@@ -30,7 +30,7 @@ public class GetBalanceTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     Account mockAccount = mock(Account.class);
 
@@ -50,7 +50,7 @@ public class GetBalanceTest {
   }
 
   @Test
-  public void processRequest_noAccountFound() throws AmzException {
+  public void processRequest_noAccountFound() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     when(parameterServiceMock.getAccount(eq(req))).thenReturn(null);

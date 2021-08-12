@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.Escrow;
 import brs.services.EscrowService;
 import brs.services.ParameterService;
@@ -28,7 +28,7 @@ public final class GetAccountEscrowTransactions extends APIServlet.JsonRequestHa
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     final Account account = parameterService.getAccount(req);
 
     Collection<Escrow> accountEscrows = escrowService.getEscrowTransactionsByParticipant(account.getId());

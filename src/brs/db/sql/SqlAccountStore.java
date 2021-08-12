@@ -1,7 +1,7 @@
 package brs.db.sql;
 
 import brs.Account;
-import brs.Amz;
+import brs.Esg;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.VersionedEntityTable;
 import brs.db.cache.DBCacheManagerImpl;
@@ -27,7 +27,7 @@ public class SqlAccountStore implements AccountStore {
     = new DbKey.LongKeyFactory<Account.RewardRecipientAssignment>(REWARD_RECIP_ASSIGN.ACCOUNT_ID) {
         @Override
         public DbKey newKey(Account.RewardRecipientAssignment assignment) {
-          return (DbKey) assignment.amzKey;
+          return (DbKey) assignment.esgKey;
         }
       };
   private static final org.slf4j.Logger logger = LoggerFactory.getLogger(SqlAccountStore.class);
@@ -35,7 +35,7 @@ public class SqlAccountStore implements AccountStore {
     = new DbKey.LinkKeyFactory<Account.AccountAsset>("account_id", "asset_id") {
         @Override
         public DbKey newKey(Account.AccountAsset accountAsset) {
-          return (DbKey) accountAsset.amzKey;
+          return (DbKey) accountAsset.esgKey;
         }
     };
 
@@ -51,7 +51,7 @@ public class SqlAccountStore implements AccountStore {
       protected void save(DSLContext ctx, Account.RewardRecipientAssignment assignment) {
         ctx.mergeInto(REWARD_RECIP_ASSIGN, REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.PREV_RECIP_ID, REWARD_RECIP_ASSIGN.RECIP_ID, REWARD_RECIP_ASSIGN.FROM_HEIGHT, REWARD_RECIP_ASSIGN.HEIGHT, REWARD_RECIP_ASSIGN.LATEST)
                 .key(REWARD_RECIP_ASSIGN.ACCOUNT_ID, REWARD_RECIP_ASSIGN.HEIGHT)
-                .values(assignment.accountId, assignment.getPrevRecipientId(), assignment.getRecipientId(), assignment.getFromHeight(), Amz.getBlockchain().getHeight(), true)
+                .values(assignment.accountId, assignment.getPrevRecipientId(), assignment.getRecipientId(), assignment.getFromHeight(), Esg.getBlockchain().getHeight(), true)
                 .execute();
       }
     };
@@ -76,7 +76,7 @@ public class SqlAccountStore implements AccountStore {
       protected void save(DSLContext ctx, Account.AccountAsset accountAsset) {
         ctx.mergeInto(ACCOUNT_ASSET, ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.QUANTITY, ACCOUNT_ASSET.UNCONFIRMED_QUANTITY, ACCOUNT_ASSET.HEIGHT, ACCOUNT_ASSET.LATEST)
                 .key(ACCOUNT_ASSET.ACCOUNT_ID, ACCOUNT_ASSET.ASSET_ID, ACCOUNT_ASSET.HEIGHT)
-                .values(accountAsset.accountId, accountAsset.assetId, accountAsset.getQuantityQNT(), accountAsset.getUnconfirmedQuantityQNT(), Amz.getBlockchain().getHeight(), true)
+                .values(accountAsset.accountId, accountAsset.assetId, accountAsset.getQuantityQNT(), accountAsset.getUnconfirmedQuantityQNT(), Esg.getBlockchain().getHeight(), true)
                 .execute();
       }
 
@@ -95,7 +95,7 @@ public class SqlAccountStore implements AccountStore {
       @Override
       protected void bulkInsert(DSLContext ctx, Collection<Account> accounts) {
         List<Query> accountQueries = new ArrayList<>();
-        int height = Amz.getBlockchain().getHeight();
+        int height = Esg.getBlockchain().getHeight();
         for (Account account: accounts) {
           if (account == null) continue;
           accountQueries.add(
@@ -160,7 +160,7 @@ public class SqlAccountStore implements AccountStore {
 
   @Override
   public Collection<Account.RewardRecipientAssignment> getAccountsWithRewardRecipient(Long recipientId) {
-    return getRewardRecipientAssignmentTable().getManyBy(getAccountsWithRewardRecipientClause(recipientId, Amz.getBlockchain().getHeight() + 1), 0, -1);
+    return getRewardRecipientAssignmentTable().getManyBy(getAccountsWithRewardRecipientClause(recipientId, Esg.getBlockchain().getHeight() + 1), 0, -1);
   }
 
   @Override

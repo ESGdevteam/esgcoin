@@ -723,7 +723,7 @@ var BRS = (function(BRS, $, undefined) {
     };
 
     BRS.convertNumericToRSAccountFormat = function(account) {
-        if (/^AMZ\-/i.test(account)) {
+        if (/^ESG\-/i.test(account)) {
             return String(account).escapeHTML();
         } else {
             var address = new NxtAddress();
@@ -986,7 +986,7 @@ var BRS = (function(BRS, $, undefined) {
                     value = BRS.formatQuantity(value, 0);
                 }
             } else if (key === "price" || key === "total" || key === "amount" || key === "fee" || key === "refund" || key === "discount") {
-                value = BRS.formatAmount(new BigInteger(String(value))) + " AMZ";
+                value = BRS.formatAmount(new BigInteger(String(value))) + " ESG";
             } else if (key === "sender" || key === "recipient" || key === "account" || key === "seller" || key === "buyer") {
                 value = "<a href='#' data-user='" + String(value).escapeHTML() + "'>" + BRS.getAccountTitle(value) + "</a>";
             } else {

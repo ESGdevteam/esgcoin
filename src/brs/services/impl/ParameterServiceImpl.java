@@ -50,7 +50,7 @@ public class ParameterServiceImpl implements ParameterService {
   }
 
   @Override
-  public Account getAccount(HttpServletRequest req) throws AmzException {
+  public Account getAccount(HttpServletRequest req) throws EsgException {
     String accountId = Convert.emptyToNull(req.getParameter(ACCOUNT_PARAMETER));
     if (accountId == null) {
       throw new ParameterException(MISSING_ACCOUNT);
@@ -303,7 +303,7 @@ public class ParameterServiceImpl implements ParameterService {
       try {
         byte[] bytes = Convert.parseHexString(transactionBytes);
         return transactionProcessor.parseTransaction(bytes);
-      } catch (AmzException.ValidationException | RuntimeException e) {
+      } catch (EsgException.ValidationException | RuntimeException e) {
           logger.debug(e.getMessage(), e); // TODO remove?
         JsonObject response = new JsonObject();
         response.addProperty(ERROR_CODE_RESPONSE, 4);
@@ -314,7 +314,7 @@ public class ParameterServiceImpl implements ParameterService {
       try {
         JsonObject json = JSON.getAsJsonObject(JSON.parse(transactionJSON));
         return transactionProcessor.parseTransaction(json);
-      } catch (AmzException.ValidationException | RuntimeException e) {
+      } catch (EsgException.ValidationException | RuntimeException e) {
         logger.debug(e.getMessage(), e);
         JsonObject response = new JsonObject();
         response.addProperty(ERROR_CODE_RESPONSE, 4);

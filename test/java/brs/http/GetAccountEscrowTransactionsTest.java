@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.Escrow;
 import brs.Escrow.Decision;
 import brs.Escrow.DecisionType;
@@ -47,7 +47,7 @@ public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long accountId = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -97,9 +97,9 @@ public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
 
     assertEquals("" + escrow.getId(), JSON.getAsString(result.get(ID_RESPONSE)));
     assertEquals("" + escrow.getSenderId(), JSON.getAsString(result.get(SENDER_RESPONSE)));
-    assertEquals("AMZ-2228-2222-BMNG-22222", JSON.getAsString(result.get(SENDER_RS_RESPONSE)));
+    assertEquals("ESG-2228-2222-BMNG-22222", JSON.getAsString(result.get(SENDER_RS_RESPONSE)));
     assertEquals("" + escrow.getRecipientId(), JSON.getAsString(result.get(RECIPIENT_RESPONSE)));
-    assertEquals("AMZ-2227-2222-ZAYB-22222", JSON.getAsString(result.get(RECIPIENT_RS_RESPONSE)));
+    assertEquals("ESG-2227-2222-ZAYB-22222", JSON.getAsString(result.get(RECIPIENT_RS_RESPONSE)));
     assertEquals("" + escrow.getAmountNQT(), JSON.getAsString(result.get(AMOUNT_NQT_RESPONSE)));
     assertEquals(escrow.getRequiredSigners(), JSON.getAsInt(result.get(REQUIRED_SIGNERS_RESPONSE)));
     assertEquals(escrow.getDeadline(), JSON.getAsInt(result.get(DEADLINE_RESPONSE)));
@@ -110,7 +110,7 @@ public class GetAccountEscrowTransactionsTest extends AbstractUnitTest {
 
     final JsonObject signer = (JsonObject) signersResult.get(0);
     assertEquals("" + decision.getAccountId(), JSON.getAsString(signer.get(ID_RESPONSE)));
-    assertEquals("AMZ-2225-2222-QVC9-22222", JSON.getAsString(signer.get(ID_RS_RESPONSE)));
+    assertEquals("ESG-2225-2222-QVC9-22222", JSON.getAsString(signer.get(ID_RS_RESPONSE)));
     assertEquals("undecided", JSON.getAsString(signer.get(DECISION_RESPONSE)));
   }
 }

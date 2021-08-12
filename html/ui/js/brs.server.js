@@ -180,7 +180,7 @@ var BRS = (function(BRS, $, undefined) {
         }
 
         var type = (("secretPhrase" in data) || (data.broadcast == "false") ) ? "POST" : "GET";
-        var url = BRS.server + "/amz?requestType=" + requestType;
+        var url = BRS.server + "/esg?requestType=" + requestType;
 
         if (type == "GET") {
             // rico666: gives us lots (thousands) of connection refused messages in the UI
@@ -303,7 +303,7 @@ var BRS = (function(BRS, $, undefined) {
 
                 if (typeof data == "object" && "recipient" in data) {
                   var address = new NxtAddress();
-                    if (/^AMZ\-/i.test(data.recipient)) {
+                    if (/^ESG\-/i.test(data.recipient)) {
                         data.recipientRS = data.recipient;
 
                         if (address.set(data.recipient)) {
@@ -488,7 +488,7 @@ var BRS = (function(BRS, $, undefined) {
         if (!("recipient" in data)) {
             //recipient == genesis
             data.recipient = "0";
-            data.recipientRS = "AMZ-2222-2222-2222-22222";
+            data.recipientRS = "ESG-2222-2222-2222-22222";
         }
 
         if (transaction.publicKey != BRS.accountInfo.publicKey) {
@@ -1061,7 +1061,7 @@ var BRS = (function(BRS, $, undefined) {
 
     BRS.broadcastTransactionBytes = function(transactionData, callback, originalResponse, originalData) {
         $.ajax({
-            url: BRS.server + "/amz?requestType=broadcastTransaction",
+            url: BRS.server + "/esg?requestType=broadcastTransaction",
             crossDomain: true,
             dataType: "json",
             type: "POST",

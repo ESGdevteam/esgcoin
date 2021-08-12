@@ -22,7 +22,7 @@ public final class DGSListing extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     String name = Convert.emptyToNull(req.getParameter(NAME_PARAMETER));
     String description = Convert.nullToEmpty(req.getParameter(DESCRIPTION_PARAMETER));

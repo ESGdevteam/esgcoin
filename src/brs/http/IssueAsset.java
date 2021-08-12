@@ -24,7 +24,7 @@ public final class IssueAsset extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     String name = req.getParameter(NAME_PARAMETER);
     String description = req.getParameter(DESCRIPTION_PARAMETER);

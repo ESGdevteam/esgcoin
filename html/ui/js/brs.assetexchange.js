@@ -134,13 +134,13 @@ var BRS = (function(BRS, $, undefined) {
             };
         }
 
-        if (!/^\d+$/.test(data.id) && !/^AMZ\-/i.test(data.id)) {
+        if (!/^\d+$/.test(data.id) && !/^ESG\-/i.test(data.id)) {
             return {
                 "error": $.t("error_asset_or_account_id_invalid")
             };
         }
 
-        if (/^AMZ\-/i.test(data.id)) {
+        if (/^ESG\-/i.test(data.id)) {
             BRS.sendRequest("getAssetsByIssuer", {
                 "account": data.id
             }, function(response) {
@@ -588,10 +588,10 @@ var BRS = (function(BRS, $, undefined) {
             $(".asset_name").html(String(asset.name).escapeHTML());
             $("#sell_asset_button").data("asset", assetId);
             $("#buy_asset_button").data("asset", assetId);
-            $("#sell_asset_for_amz").html($.t("sell_asset_for_amz", {
+            $("#sell_asset_for_esg").html($.t("sell_asset_for_esg", {
                 "assetName": String(asset.name).escapeHTML()
             }));
-            $("#buy_asset_with_amz").html($.t("buy_asset_with_amz", {
+            $("#buy_asset_with_esg").html($.t("buy_asset_with_esg", {
                 "assetName": String(asset.name).escapeHTML()
             }));
             $("#sell_asset_price, #buy_asset_price").val("");
@@ -657,10 +657,10 @@ var BRS = (function(BRS, $, undefined) {
         }
 
         if (BRS.accountInfo.unconfirmedBalanceNQT == "0") {
-            $("#your_amz_balance").html("0");
+            $("#your_esg_balance").html("0");
             $("#buy_automatic_price").addClass("zero").removeClass("nonzero");
         } else {
-            $("#your_amz_balance").html(BRS.formatAmount(BRS.accountInfo.unconfirmedBalanceNQT));
+            $("#your_esg_balance").html(BRS.formatAmount(BRS.accountInfo.unconfirmedBalanceNQT));
             $("#buy_automatic_price").addClass("nonzero").removeClass("zero");
         }
 
@@ -827,7 +827,7 @@ var BRS = (function(BRS, $, undefined) {
         } else {
             BRS.assetSearch = [];
 
-            if (/AMZ\-/i.test(input)) {
+            if (/ESG\-/i.test(input)) {
                 $.each(BRS.assets, function(key, asset) {
                     if (asset.accountRS.toLowerCase() == input || asset.accountRS.toLowerCase().indexOf(input) !== -1) {
                         BRS.assetSearch.push(asset.asset);
@@ -1141,27 +1141,27 @@ var BRS = (function(BRS, $, undefined) {
             description = $.t("buy_order_description", {
                 "quantity": BRS.formatQuantity(quantityQNT, BRS.currentAsset.decimals, true),
                 "asset_name": $("#asset_name").html().escapeHTML(),
-                "amz": BRS.formatAmount(priceNQTPerWholeQNT)
+                "esg": BRS.formatAmount(priceNQTPerWholeQNT)
             });
             tooltipTitle = $.t("buy_order_description_help", {
-                "amz": BRS.formatAmount(priceNQTPerWholeQNT, false, true),
-                "total_amz": totalNXT
+                "esg": BRS.formatAmount(priceNQTPerWholeQNT, false, true),
+                "total_esg": totalNXT
             });
         } else {
             description = $.t("sell_order_description", {
                 "quantity": BRS.formatQuantity(quantityQNT, BRS.currentAsset.decimals, true),
                 "asset_name": $("#asset_name").html().escapeHTML(),
-                "amz": BRS.formatAmount(priceNQTPerWholeQNT)
+                "esg": BRS.formatAmount(priceNQTPerWholeQNT)
             });
             tooltipTitle = $.t("sell_order_description_help", {
-                "amz": BRS.formatAmount(priceNQTPerWholeQNT, false, true),
-                "total_amz": totalNXT
+                "esg": BRS.formatAmount(priceNQTPerWholeQNT, false, true),
+                "total_esg": totalNXT
             });
         }
 
         $("#asset_order_description").html(description);
-        $("#asset_order_total").html(totalNXT + " AMZ");
-        $("#asset_order_fee_paid").html(BRS.formatAmount(feeNQT) + " AMZ");
+        $("#asset_order_total").html(totalNXT + " ESG");
+        $("#asset_order_fee_paid").html(BRS.formatAmount(feeNQT) + " ESG");
 
         if (quantity != "1") {
             $("#asset_order_total_tooltip").show();

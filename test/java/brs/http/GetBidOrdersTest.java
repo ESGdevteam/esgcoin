@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Asset;
-import brs.AmzException;
+import brs.EsgException;
 import brs.Order.Bid;
 import brs.assetexchange.AssetExchange;
 import brs.common.AbstractUnitTest;
@@ -45,7 +45,7 @@ public class GetBidOrdersTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long assetId = 123L;
     final int firstIndex = 0;
     final int lastIndex = 1;

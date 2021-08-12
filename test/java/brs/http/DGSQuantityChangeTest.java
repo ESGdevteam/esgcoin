@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class DGSQuantityChangeTest extends AbstractTransactionTest {
 
   private DGSQuantityChange t;
@@ -44,7 +44,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final int deltaQualityParameter = 5;
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DELTA_QUANTITY_PARAMETER, deltaQualityParameter)
@@ -62,9 +62,9 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
     when(mockParameterService.getSenderAccount(eq(req))).thenReturn(mockSenderAccount);
     when(mockParameterService.getGoods(eq(req))).thenReturn(mockGoods);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsQuantityChange attachment = (Attachment.DigitalGoodsQuantityChange) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -75,7 +75,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_unknownGoodsBecauseDelisted() throws AmzException {
+  public void processRequest_unknownGoodsBecauseDelisted() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Goods mockGoods = mock(Goods.class);
@@ -90,7 +90,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_unknownGoodsBecauseWrongSellerId() throws AmzException {
+  public void processRequest_unknownGoodsBecauseWrongSellerId() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Goods mockGoods = mock(Goods.class);
@@ -107,7 +107,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingDeltaQuantity() throws AmzException {
+  public void processRequest_missingDeltaQuantity() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DELTA_QUANTITY_PARAMETER, null)
     );
@@ -126,7 +126,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_deltaQuantityWrongFormat() throws AmzException {
+  public void processRequest_deltaQuantityWrongFormat() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DELTA_QUANTITY_PARAMETER, "Bob")
     );
@@ -145,7 +145,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_deltaQuantityOverMaxIncorrectDeltaQuantity() throws AmzException {
+  public void processRequest_deltaQuantityOverMaxIncorrectDeltaQuantity() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MIN_VALUE)
     );
@@ -164,7 +164,7 @@ public class DGSQuantityChangeTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_deltaQuantityLowerThanNegativeMaxIncorrectDeltaQuantity() throws AmzException {
+  public void processRequest_deltaQuantityLowerThanNegativeMaxIncorrectDeltaQuantity() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(DELTA_QUANTITY_PARAMETER, Integer.MAX_VALUE)
     );

@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.Subscription;
 import brs.services.ParameterService;
 import brs.services.SubscriptionService;
@@ -27,7 +27,7 @@ public final class GetAccountSubscriptions extends APIServlet.JsonRequestHandler
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     Account account = parameterService.getAccount(req);
 

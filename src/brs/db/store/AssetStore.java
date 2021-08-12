@@ -1,13 +1,13 @@
 package brs.db.store;
 
 import brs.Asset;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.sql.EntitySqlTable;
 
 import java.util.Collection;
 
 public interface AssetStore {
-  AmzKey.LongKeyFactory<Asset> getAssetDbKeyFactory();
+  EsgKey.LongKeyFactory<Asset> getAssetDbKeyFactory();
 
   EntitySqlTable<Asset> getAssetTable();
 

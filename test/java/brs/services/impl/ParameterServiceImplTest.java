@@ -1,7 +1,7 @@
 package brs.services.impl;
 
 import brs.*;
-import brs.AmzException.ValidationException;
+import brs.EsgException.ValidationException;
 import brs.assetexchange.AssetExchange;
 import brs.at.AT;
 import brs.common.QuickMocker;
@@ -57,7 +57,7 @@ public class ParameterServiceImplTest {
   }
 
   @Test
-  public void getAccount() throws AmzException {
+  public void getAccount() throws EsgException {
     final String accountId = "123";
     final Account mockAccount = mock(Account.class);
 
@@ -69,13 +69,13 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getAccount_MissingAccountWhenNoAccountParameterGiven() throws AmzException {
+  public void getAccount_MissingAccountWhenNoAccountParameterGiven() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
     t.getAccount(req);
   }
 
   @Test(expected = ParameterException.class)
-  public void getAccount_UnknownAccountWhenIdNotFound() throws AmzException {
+  public void getAccount_UnknownAccountWhenIdNotFound() throws EsgException {
     final String accountId = "123";
     final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
@@ -85,7 +85,7 @@ public class ParameterServiceImplTest {
   }
 
   @Test(expected = ParameterException.class)
-  public void getAccount_IncorrectAccountWhenRuntimeExceptionOccurs() throws AmzException {
+  public void getAccount_IncorrectAccountWhenRuntimeExceptionOccurs() throws EsgException {
     final String accountId = "123";
     final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(ACCOUNT_PARAMETER, accountId));
 
@@ -662,7 +662,7 @@ public class ParameterServiceImplTest {
 
   @Test(expected = ParameterException.class)
   public void parseTransaction_transactionJSON_validationExceptionOccurs() throws ParameterException, ValidationException {
-    when(transactionProcessorMock.parseTransaction(any(JsonObject.class))).thenThrow(new AmzException.NotValidException(""));
+    when(transactionProcessorMock.parseTransaction(any(JsonObject.class))).thenThrow(new EsgException.NotValidException(""));
 
     t.parseTransaction(null, "{}");
   }

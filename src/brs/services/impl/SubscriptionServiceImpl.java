@@ -1,9 +1,9 @@
 package brs.services.impl;
 
 import brs.*;
-import brs.AmzException.NotValidException;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.EsgException.NotValidException;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.TransactionDb;
 import brs.db.VersionedEntityTable;
 import brs.db.store.SubscriptionStore;
@@ -57,7 +57,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
   @Override
   public void addSubscription(Account sender, Account recipient, Long id, Long amountNQT, int startTimestamp, int frequency) {
-    final AmzKey dbKey = subscriptionDbKeyFactory.newKey(id);
+    final EsgKey dbKey = subscriptionDbKeyFactory.newKey(id);
     final Subscription subscription = new Subscription(sender.getId(), recipient.getId(), id, amountNQT, frequency, startTimestamp + frequency, dbKey);
 
     subscriptionTable.insert(subscription);
@@ -65,7 +65,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
   @Override
   public boolean isEnabled() {
-    if (blockchain.getLastBlock().getHeight() >= Constants.AMZ_SUBSCRIPTION_START_BLOCK) {
+    if (blockchain.getLastBlock().getHeight() >= Constants.ESG_SUBSCRIPTION_START_BLOCK) {
       return true;
     }
 
@@ -87,7 +87,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
   }
 
   private long getFee() {
-    return Constants.ONE_AMZ;
+    return Constants.ONE_ESG;
   }
 
   @Override

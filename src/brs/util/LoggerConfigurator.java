@@ -9,7 +9,7 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 /**
- * Handle logging for the Amz node server
+ * Handle logging for the Esg node server
  */
 
 public final class LoggerConfigurator {
@@ -33,8 +33,8 @@ public final class LoggerConfigurator {
   public static void init() {
     final String managerPackage = "java.util.logging.manager";
     String oldManager = System.getProperty(managerPackage);
-    System.setProperty(managerPackage, "brs.util.AmzLogManager");
-    if (!(LogManager.getLogManager() instanceof AmzLogManager)) {
+    System.setProperty(managerPackage, "brs.util.EsgLogManager");
+    if (!(LogManager.getLogManager() instanceof EsgLogManager)) {
       System.setProperty(managerPackage,
                          (oldManager != null ? oldManager : "java.util.logging.LogManager"));
     }
@@ -76,8 +76,8 @@ public final class LoggerConfigurator {
    * LoggerConfigurator shutdown
    */
   public static void shutdown() {
-    if (LogManager.getLogManager() instanceof AmzLogManager) {
-      ((AmzLogManager) LogManager.getLogManager()).amzShutdown();
+    if (LogManager.getLogManager() instanceof EsgLogManager) {
+      ((EsgLogManager) LogManager.getLogManager()).esgShutdown();
     }
   }
 }

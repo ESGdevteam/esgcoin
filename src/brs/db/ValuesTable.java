@@ -3,7 +3,7 @@ package brs.db;
 import java.util.List;
 
 public interface ValuesTable<T, V> extends DerivedTable {
-  List<V> get(AmzKey dbKey);
+  List<V> get(EsgKey dbKey);
 
   void insert(T t, List<V> values);
 

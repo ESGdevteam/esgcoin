@@ -2,8 +2,8 @@ package brs.http;
 
 import brs.Attachment;
 import brs.Blockchain;
-import brs.Amz;
-import brs.AmzException;
+import brs.Esg;
+import brs.EsgException;
 import brs.common.QuickMocker;
 import brs.common.QuickMocker.MockParam;
 import brs.fluxcapacitor.FluxCapacitor;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class IssueAssetTest extends AbstractTransactionTest {
 
   private IssueAsset t;
@@ -47,7 +47,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final String nameParameter = stringWithLength(MIN_ASSET_NAME_LENGTH + 1);
     final String descriptionParameter = stringWithLength(MAX_ASSET_DESCRIPTION_LENGTH - 1);
     final int decimalsParameter = 4;
@@ -60,9 +60,9 @@ public class IssueAssetTest extends AbstractTransactionTest {
         new MockParam(QUANTITY_QNT_PARAMETER, quantityQNTParameter)
     );
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.ColoredCoinsAssetIssuance attachment = (Attachment.ColoredCoinsAssetIssuance) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -75,14 +75,14 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingName() throws AmzException {
+  public void processRequest_missingName() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     assertEquals(MISSING_NAME, t.processRequest(req));
   }
 
   @Test
-  public void processRequest_incorrectAssetNameLength_smallerThanMin() throws AmzException {
+  public void processRequest_incorrectAssetNameLength_smallerThanMin() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH - 1))
     );
@@ -91,7 +91,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectAssetNameLength_largerThanMax() throws AmzException {
+  public void processRequest_incorrectAssetNameLength_largerThanMax() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MAX_ASSET_NAME_LENGTH + 1))
     );
@@ -100,7 +100,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectAssetName() throws AmzException {
+  public void processRequest_incorrectAssetName() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH + 1) + "[")
     );
@@ -109,7 +109,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectAssetDescription() throws AmzException {
+  public void processRequest_incorrectAssetDescription() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH + 1)),
         new MockParam(DESCRIPTION_PARAMETER, stringWithLength(MAX_ASSET_DESCRIPTION_LENGTH + 1))
@@ -119,7 +119,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDecimals_unParsable() throws AmzException {
+  public void processRequest_incorrectDecimals_unParsable() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH + 1)),
         new MockParam(DESCRIPTION_PARAMETER, stringWithLength(MAX_ASSET_DESCRIPTION_LENGTH - 1)),
@@ -130,7 +130,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDecimals_negativeNumber() throws AmzException {
+  public void processRequest_incorrectDecimals_negativeNumber() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH + 1)),
         new MockParam(DESCRIPTION_PARAMETER, stringWithLength(MAX_ASSET_DESCRIPTION_LENGTH - 1)),
@@ -141,7 +141,7 @@ public class IssueAssetTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDecimals_moreThan8() throws AmzException {
+  public void processRequest_incorrectDecimals_moreThan8() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(NAME_PARAMETER, stringWithLength(MIN_ASSET_NAME_LENGTH + 1)),
         new MockParam(DESCRIPTION_PARAMETER, stringWithLength(MAX_ASSET_DESCRIPTION_LENGTH - 1)),

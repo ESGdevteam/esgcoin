@@ -38,16 +38,16 @@ public class IndirectIncomingServiceImplTest {
     }
 
     @Test
-    public void testIndirectIncomingServiceImplTestMultiOutTransaction() throws AmzException.NotValidException {
+    public void testIndirectIncomingServiceImplTestMultiOutTransaction() throws EsgException.NotValidException {
         addIndirectIncomingsRunnable.set(indirectIncomings -> {
             assertEquals(4, indirectIncomings.size());
             assertEquals(new HashSet<>(indirectIncomings).size(), indirectIncomings.size()); // Assert that there are no duplicates
         });
         List<List<Long>> recipients = new ArrayList<>();
-        recipients.add(Arrays.asList(1L, Constants.ONE_AMZ));
-        recipients.add(Arrays.asList(2L, Constants.ONE_AMZ));
-        recipients.add(Arrays.asList(3L, Constants.ONE_AMZ));
-        recipients.add(Arrays.asList(4L, Constants.ONE_AMZ));
+        recipients.add(Arrays.asList(1L, Constants.ONE_ESG));
+        recipients.add(Arrays.asList(2L, Constants.ONE_ESG));
+        recipients.add(Arrays.asList(3L, Constants.ONE_ESG));
+        recipients.add(Arrays.asList(4L, Constants.ONE_ESG));
         Attachment.PaymentMultiOutCreation attachment = mock(Attachment.PaymentMultiOutCreation.class);
         when(attachment.getRecipients()).thenReturn(recipients);
         Transaction multiOut = mock(Transaction.class);
@@ -57,7 +57,7 @@ public class IndirectIncomingServiceImplTest {
     }
 
     @Test
-    public void testIndirectIncomingServiceImplTestMultiOutSameTransaction() throws AmzException.NotValidException {
+    public void testIndirectIncomingServiceImplTestMultiOutSameTransaction() throws EsgException.NotValidException {
         addIndirectIncomingsRunnable.set(indirectIncomings -> {
             assertEquals(4, indirectIncomings.size());
             assertEquals(new HashSet<>(indirectIncomings).size(), indirectIncomings.size()); // Assert that there are no duplicates

@@ -25,7 +25,7 @@ public final class DGSFeedback extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     DigitalGoodsStore.Purchase purchase = parameterService.getPurchase(req);
     Account buyerAccount = parameterService.getSenderAccount(req);
 

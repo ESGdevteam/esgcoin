@@ -1,6 +1,6 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.util.Convert;
 
 public class Trade {
@@ -19,14 +19,14 @@ public class Trade {
   private final int bidOrderHeight;
   private final long sellerId;
   private final long buyerId;
-  public final AmzKey dbKey;
+  public final EsgKey dbKey;
   private final long quantityQNT;
   private final long priceNQT;
   private final boolean isBuy;
 
   protected Trade(int timestamp, long assetId, long blockId, int height,
                   long askOrderId, long bidOrderId, int askOrderHeight, int bidOrderHeight,
-                  long sellerId, long buyerId, AmzKey dbKey, long quantityQNT, long priceNQT) {
+                  long sellerId, long buyerId, EsgKey dbKey, long quantityQNT, long priceNQT) {
     this.timestamp = timestamp;
     this.assetId = assetId;
     this.blockId = blockId;
@@ -43,7 +43,7 @@ public class Trade {
     this.isBuy = askOrderHeight < bidOrderHeight || (askOrderHeight == bidOrderHeight && askOrderId < bidOrderId);
   }
 
-  public Trade(AmzKey dbKey, long assetId, Block block, Order.Ask askOrder, Order.Bid bidOrder) {
+  public Trade(EsgKey dbKey, long assetId, Block block, Order.Ask askOrder, Order.Bid bidOrder) {
     this.dbKey = dbKey;
     this.blockId = block.getId();
     this.height = block.getHeight();

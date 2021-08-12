@@ -180,7 +180,7 @@ public final class APIServlet extends HttpServlet {
         response = processRequest(req);
       } catch (ParameterException e) {
         response = e.getErrorResponse();
-      } catch (AmzException | RuntimeException e) {
+      } catch (EsgException | RuntimeException e) {
         logger.debug("Error processing API request", e);
         response = ERROR_INCORRECT_REQUEST;
       }
@@ -192,7 +192,7 @@ public final class APIServlet extends HttpServlet {
       writeJsonToResponse(resp, response);
     }
 
-    abstract JsonElement processRequest(HttpServletRequest request) throws AmzException;
+    abstract JsonElement processRequest(HttpServletRequest request) throws EsgException;
   }
 
   abstract static class HttpRequestHandler {

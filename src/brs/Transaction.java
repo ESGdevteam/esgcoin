@@ -65,7 +65,7 @@ public class Transaction implements Comparable<Transaction> {
       this.type = attachment.getTransactionType();
     }
 
-    public Transaction build() throws AmzException.NotValidException {
+    public Transaction build() throws EsgException.NotValidException {
       return new Transaction(this);
     }
 
@@ -190,7 +190,7 @@ public class Transaction implements Comparable<Transaction> {
   private final AtomicLong senderId = new AtomicLong();
   private final AtomicReference<String> fullHash = new AtomicReference<>();
 
-  private Transaction(Builder builder) throws AmzException.NotValidException {
+  private Transaction(Builder builder) throws EsgException.NotValidException {
 
     this.timestamp = builder.timestamp;
     this.deadline = builder.deadline;
@@ -232,11 +232,11 @@ public class Transaction implements Comparable<Transaction> {
       countAppendeges += appendage.getSize();
     }
     this.appendagesSize = countAppendeges;
-    int effectiveHeight = (height.get() < Integer.MAX_VALUE ? height.get() : Amz.getBlockchain().getHeight());
+    int effectiveHeight = (height.get() < Integer.MAX_VALUE ? height.get() : Esg.getBlockchain().getHeight());
     long minimumFeeNQT = type.minimumFeeNQT(effectiveHeight, countAppendeges);
     if(type == null || type.isSigned()) {
       if (builder.feeNQT > 0 && builder.feeNQT < minimumFeeNQT) {
-        throw new AmzException.NotValidException(String.format("Requested fee %d less than the minimum fee %d",
+        throw new EsgException.NotValidException(String.format("Requested fee %d less than the minimum fee %d",
                                                                builder.feeNQT, minimumFeeNQT));
       }
       if (builder.feeNQT <= 0) {
@@ -254,21 +254,21 @@ public class Transaction implements Comparable<Transaction> {
             || amountNQT < 0
             || amountNQT > Constants.MAX_BALANCE_NQT
             || type == null)) {
-      throw new AmzException.NotValidException("Invalid transaction parameters:\n type: " + type + ", timestamp: " + timestamp
+      throw new EsgException.NotValidException("Invalid transaction parameters:\n type: " + type + ", timestamp: " + timestamp
               + ", deadline: " + deadline + ", fee: " + feeNQT + ", amount: " + amountNQT);
     }
 
     if (attachment == null || type != attachment.getTransactionType()) {
-      throw new AmzException.NotValidException("Invalid attachment " + attachment + " for transaction of type " + type);
+      throw new EsgException.NotValidException("Invalid attachment " + attachment + " for transaction of type " + type);
     }
 
     if (!type.hasRecipient() && attachment.getTransactionType() != Payment.MULTI_OUT && attachment.getTransactionType() != Payment.MULTI_SAME_OUT && (recipientId != 0 || getAmountNQT() != 0)) {
-      throw new AmzException.NotValidException("Transactions of this type must have recipient == Genesis, amount == 0");
+      throw new EsgException.NotValidException("Transactions of this type must have recipient == Genesis, amount == 0");
     }
 
     for (Appendix.AbstractAppendix appendage : appendages) {
       if (! appendage.verifyVersion(this.version)) {
-        throw new AmzException.NotValidException("Invalid attachment version " + appendage.getVersion()
+        throw new EsgException.NotValidException("Invalid attachment version " + appendage.getVersion()
                                                  + " for transaction version " + this.version);
       }
     }
@@ -429,7 +429,7 @@ public class Transaction implements Comparable<Transaction> {
       buffer.put((byte) ((version << 4) | ( type.getSubtype() & 0xff ) ));
       buffer.putInt(timestamp);
       buffer.putShort(deadline);
-      if(type.isSigned() || !Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4)) {
+      if(type.isSigned() || !Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4)) {
         buffer.put(senderPublicKey);
       } else {
         buffer.putLong(senderId.get());
@@ -445,8 +445,8 @@ public class Transaction implements Comparable<Transaction> {
           buffer.put(new byte[32]);
         }
       } else {
-        buffer.putInt((int) (amountNQT / Constants.ONE_AMZ));
-        buffer.putInt((int) (feeNQT / Constants.ONE_AMZ));
+        buffer.putInt((int) (amountNQT / Constants.ONE_ESG));
+        buffer.putInt((int) (feeNQT / Constants.ONE_ESG));
         if (referencedTransactionFullHash != null) {
           buffer.putLong(Convert.fullHashToId(Convert.parseHexString(referencedTransactionFullHash)));
         } else {
@@ -469,7 +469,7 @@ public class Transaction implements Comparable<Transaction> {
     }
   }
 
-  public static Transaction parseTransaction(byte[] bytes) throws AmzException.ValidationException {
+  public static Transaction parseTransaction(byte[] bytes) throws EsgException.ValidationException {
     try {
       ByteBuffer buffer = ByteBuffer.wrap(bytes);
       buffer.order(ByteOrder.LITTLE_ENDIAN);
@@ -515,7 +515,7 @@ public class Transaction implements Comparable<Transaction> {
       transactionType.parseAppendices(builder, flags, version, buffer);
 
       return builder.build();
-    } catch (AmzException.NotValidException|RuntimeException e) {
+    } catch (EsgException.NotValidException|RuntimeException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Failed to parse transaction bytes: {}", Convert.toHexString(bytes));
       }
@@ -552,7 +552,7 @@ public class Transaction implements Comparable<Transaction> {
     return json;
   }
 
-  static Transaction parseTransaction(JsonObject transactionData, int height) throws AmzException.NotValidException {
+  static Transaction parseTransaction(JsonObject transactionData, int height) throws EsgException.NotValidException {
     try {
       byte type = JSON.getAsByte(transactionData.get("type"));
       byte subtype = JSON.getAsByte(transactionData.get("subtype"));
@@ -568,7 +568,7 @@ public class Transaction implements Comparable<Transaction> {
 
       TransactionType transactionType = TransactionType.findTransactionType(type, subtype);
       if (transactionType == null) {
-        throw new AmzException.NotValidException("Invalid transaction type: " + type + ", " + subtype);
+        throw new EsgException.NotValidException("Invalid transaction type: " + type + ", " + subtype);
       }
       Transaction.Builder builder = new Builder(version, senderPublicKey,
                                                                             amountNQT, feeNQT, timestamp, deadline,
@@ -588,7 +588,7 @@ public class Transaction implements Comparable<Transaction> {
         builder.ecBlockId(Convert.parseUnsignedLong(JSON.getAsString(transactionData.get("ecBlockId"))));
       }
       return builder.build();
-    } catch (AmzException.NotValidException|RuntimeException e) {
+    } catch (EsgException.NotValidException|RuntimeException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Failed to parse transaction: {}", JSON.toJsonString(transactionData));
       }
@@ -646,7 +646,7 @@ public class Transaction implements Comparable<Transaction> {
   private boolean useNQT() {
     return this.height.get() > Constants.NQT_BLOCK
         && (this.height.get() < Integer.MAX_VALUE
-            || Amz.getBlockchain().getHeight() >= Constants.NQT_BLOCK);
+            || Esg.getBlockchain().getHeight() >= Constants.NQT_BLOCK);
   }
 
   private byte[] zeroSignature(byte[] data) {

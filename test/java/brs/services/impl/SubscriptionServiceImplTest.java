@@ -3,8 +3,8 @@ package brs.services.impl;
 import brs.Blockchain;
 import brs.Subscription;
 import brs.common.AbstractUnitTest;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.TransactionDb;
 import brs.db.VersionedEntityTable;
 import brs.db.store.SubscriptionStore;
@@ -49,7 +49,7 @@ public class SubscriptionServiceImplTest extends AbstractUnitTest {
   public void getSubscription() {
     final long subscriptionId = 123L;
 
-    final AmzKey mockSubscriptionKey = mock(AmzKey.class);
+    final EsgKey mockSubscriptionKey = mock(EsgKey.class);
 
     final Subscription mockSubscription = mock(Subscription.class);
 

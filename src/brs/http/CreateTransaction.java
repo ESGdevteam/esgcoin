@@ -2,8 +2,8 @@ package brs.http;
 
 import brs.Account;
 import brs.Attachment;
-import brs.Amz;
-import brs.AmzException;
+import brs.Esg;
+import brs.EsgException;
 import brs.fluxcapacitor.FluxValues;
 import com.google.gson.JsonElement;
 
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
 import static brs.Constants.FEE_QUANT;
-import static brs.Constants.ONE_AMZ;
+import static brs.Constants.ONE_ESG;
 import static brs.http.common.Parameters.*;
 
 abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
@@ -43,16 +43,16 @@ abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
   }
 
   final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Attachment attachment)
-    throws AmzException {
+    throws EsgException {
     return createTransaction(req, senderAccount, null, 0, attachment);
   }
 
   final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT)
-    throws AmzException {
+    throws EsgException {
     return createTransaction(req, senderAccount, recipientId, amountNQT, Attachment.ORDINARY_PAYMENT);
   }
 
-  final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment) throws AmzException {
+  final JsonElement createTransaction(HttpServletRequest req, Account senderAccount, Long recipientId, long amountNQT, Attachment attachment) throws EsgException {
     return apiTransactionManager.createTransaction(req, senderAccount, recipientId, amountNQT, attachment, minimumFeeNQT());
   }
 
@@ -62,7 +62,7 @@ abstract class CreateTransaction extends APIServlet.JsonRequestHandler {
   }
 
   private long minimumFeeNQT() {
-    return Amz.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? FEE_QUANT : ONE_AMZ;
+    return Esg.getFluxCapacitor().getValue(FluxValues.PRE_DYMAXION) ? FEE_QUANT : ONE_ESG;
   }
 
 }

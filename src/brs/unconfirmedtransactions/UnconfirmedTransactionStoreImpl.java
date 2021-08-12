@@ -1,6 +1,6 @@
 package brs.unconfirmedtransactions;
 
-import brs.AmzException.ValidationException;
+import brs.EsgException.ValidationException;
 import brs.Constants;
 import brs.Transaction;
 import brs.db.TransactionDb;

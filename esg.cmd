@@ -22,7 +22,7 @@ IF "%MY_JAVA%" == "" (
     goto DONE
 )
 
-"%MY_JAVA%" -cp amz.jar;conf brs.Amz
+"%MY_JAVA%" -cp esg.jar;conf brs.Esg
 pause
 
 :DONE

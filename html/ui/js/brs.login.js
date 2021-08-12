@@ -143,10 +143,10 @@ var BRS = (function(BRS, $, undefined) {
             BRS.applySettings("remember_passphrase");
             if ( BRS.hasLocalStorage ) {
                 if ( BRS.settings.remember_passphrase ) {
-                    localStorage.setItem("amz.passphrase", $("#login_password").val());
+                    localStorage.setItem("esg.passphrase", $("#login_password").val());
                 }
                 else {
-                    localStorage.removeItem("amz.passphrase");
+                    localStorage.removeItem("esg.passphrase");
                 }
             }
         }
@@ -272,7 +272,7 @@ var BRS = (function(BRS, $, undefined) {
                 });
             };
 
-            if (password.trim().toUpperCase().substring(0, 6) === "AMZ-" && password.length === 26) {
+            if (password.trim().toUpperCase().substring(0, 6) === "ESG-" && password.length === 26) {
                 // Login to a watch-only address
                 var account_id = password.trim();
 

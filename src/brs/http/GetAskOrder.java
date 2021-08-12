@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Order;
 import brs.assetexchange.AssetExchange;
 import com.google.gson.JsonElement;
@@ -20,7 +20,7 @@ public final class GetAskOrder extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     long orderId = ParameterParser.getOrderId(req);
     Order.Ask askOrder = assetExchange.getAskOrder(orderId);
     if (askOrder == null) {

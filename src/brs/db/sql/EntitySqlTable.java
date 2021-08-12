@@ -1,7 +1,7 @@
 package brs.db.sql;
 
-import brs.Amz;
-import brs.db.AmzKey;
+import brs.Esg;
+import brs.db.EsgKey;
 import brs.db.EntityTable;
 import brs.db.store.DerivedTableManager;
 import org.jooq.*;
@@ -21,11 +21,11 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
   final Field<Integer> heightField;
   final Field<Boolean> latestField;
 
-  EntitySqlTable(String table, TableImpl<?> tableClass, AmzKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
+  EntitySqlTable(String table, TableImpl<?> tableClass, EsgKey.Factory<T> dbKeyFactory, DerivedTableManager derivedTableManager) {
     this(table, tableClass, dbKeyFactory, false, derivedTableManager);
   }
 
-  EntitySqlTable(String table, TableImpl<?> tableClass, AmzKey.Factory<T> dbKeyFactory, boolean multiversion, DerivedTableManager derivedTableManager) {
+  EntitySqlTable(String table, TableImpl<?> tableClass, EsgKey.Factory<T> dbKeyFactory, boolean multiversion, DerivedTableManager derivedTableManager) {
     super(table, tableClass, derivedTableManager);
     this.dbKeyFactory = (DbKey.Factory<T>) dbKeyFactory;
     this.multiversion = multiversion;
@@ -40,7 +40,7 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
     defaultSort.add(heightField.desc());
   }
 
-  private Map<AmzKey, T> getCache() {
+  private Map<EsgKey, T> getCache() {
     return Db.getCache(table);
   }
 
@@ -61,13 +61,13 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
 
   @Override
   public final void checkAvailable(int height) {
-    if (multiversion && height < Amz.getBlockchainProcessor().getMinRollbackHeight()) {
+    if (multiversion && height < Esg.getBlockchainProcessor().getMinRollbackHeight()) {
       throw new IllegalArgumentException("Historical data as of height " + height + " not available, set brs.trimDerivedTables=false and re-scan");
     }
   }
 
   @Override
-  public T get(AmzKey nxtKey) {
+  public T get(EsgKey nxtKey) {
     DbKey dbKey = (DbKey) nxtKey;
     if (Db.isInTransaction()) {
       T t = getCache().get(dbKey);
@@ -89,7 +89,7 @@ public abstract class EntitySqlTable<T> extends DerivedSqlTable implements Entit
   }
 
   @Override
-  public T get(AmzKey nxtKey, int height) {
+  public T get(EsgKey nxtKey, int height) {
     DbKey dbKey = (DbKey) nxtKey;
     checkAvailable(height);
 

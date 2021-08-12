@@ -1,7 +1,7 @@
 package brs.db.cache;
 
 import brs.Account;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.statistics.StatisticsManagerImpl;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
@@ -22,16 +22,16 @@ public class DBCacheManagerImpl {
 
   private final boolean statisticsEnabled;
 
-  private final HashMap<String, CacheConfiguration<AmzKey, ?>> caches = new HashMap<>();
+  private final HashMap<String, CacheConfiguration<EsgKey, ?>> caches = new HashMap<>();
 
   public DBCacheManagerImpl(StatisticsManagerImpl statisticsManager) {
     this.statisticsManager = statisticsManager;
     statisticsEnabled = true;
 
-    caches.put("account", CacheConfigurationBuilder.newCacheConfigurationBuilder(AmzKey.class, Account.class, ResourcePoolsBuilder.heap(8192)).build());
+    caches.put("account", CacheConfigurationBuilder.newCacheConfigurationBuilder(EsgKey.class, Account.class, ResourcePoolsBuilder.heap(8192)).build());
 
     CacheManagerBuilder cacheBuilder = CacheManagerBuilder.newCacheManagerBuilder();
-    for (Map.Entry<String, CacheConfiguration<AmzKey, ?>> cache : caches.entrySet()) {
+    for (Map.Entry<String, CacheConfiguration<EsgKey, ?>> cache : caches.entrySet()) {
       cacheBuilder = cacheBuilder.withCache(cache.getKey(), cache.getValue());
     }
     cacheManager = cacheBuilder.build(true);
@@ -43,17 +43,17 @@ public class DBCacheManagerImpl {
     }
   }
 
-  private <V> Cache<AmzKey, V> getEHCache(String name, Class<V> valueClass) {
-    return cacheManager.getCache(name, AmzKey.class, valueClass);
+  private <V> Cache<EsgKey, V> getEHCache(String name, Class<V> valueClass) {
+    return cacheManager.getCache(name, EsgKey.class, valueClass);
   }
 
-  public <V> Cache<AmzKey, V> getCache(String name, Class<V> valueClass) {
-    Cache<AmzKey, V> cache = getEHCache(name, valueClass);
+  public <V> Cache<EsgKey, V> getCache(String name, Class<V> valueClass) {
+    Cache<EsgKey, V> cache = getEHCache(name, valueClass);
     return statisticsEnabled ? new StatisticsCache<>(cache, name, statisticsManager) : cache;
   }
 
   public void flushCache() {
-    for (Map.Entry<String, CacheConfiguration<AmzKey, ?>> cacheEntry : caches.entrySet()) {
+    for (Map.Entry<String, CacheConfiguration<EsgKey, ?>> cacheEntry : caches.entrySet()) {
       Cache<?,?> cache = getEHCache(cacheEntry.getKey(), cacheEntry.getValue().getValueType());
       if ( cache != null )
         cache.clear();

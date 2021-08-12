@@ -24,7 +24,7 @@ public final class DGSQuantityChange extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     Account account = parameterService.getSenderAccount(req);
     DigitalGoodsStore.Goods goods = parameterService.getGoods(req);

@@ -1,8 +1,8 @@
 package brs.db.sql;
 
 import brs.Asset;
-import brs.Amz;
-import brs.db.AmzKey;
+import brs.Esg;
+import brs.db.EsgKey;
 import brs.db.store.AssetStore;
 import brs.db.store.DerivedTableManager;
 import org.jooq.DSLContext;
@@ -14,10 +14,10 @@ import static brs.schema.tables.Asset.ASSET;
 
 public class SqlAssetStore implements AssetStore {
 
-  private final AmzKey.LongKeyFactory<Asset> assetDbKeyFactory = new DbKey.LongKeyFactory<Asset>(ASSET.ID) {
+  private final EsgKey.LongKeyFactory<Asset> assetDbKeyFactory = new DbKey.LongKeyFactory<Asset>(ASSET.ID) {
 
       @Override
-      public AmzKey newKey(Asset asset) {
+      public EsgKey newKey(Asset asset) {
         return asset.dbKey;
       }
 
@@ -47,11 +47,11 @@ public class SqlAssetStore implements AssetStore {
       set(ASSET.DESCRIPTION, asset.getDescription()).
       set(ASSET.QUANTITY, asset.getQuantityQNT()).
       set(ASSET.DECIMALS, asset.getDecimals()).
-      set(ASSET.HEIGHT, Amz.getBlockchain().getHeight()).execute();
+      set(ASSET.HEIGHT, Esg.getBlockchain().getHeight()).execute();
   }
 
   @Override
-  public AmzKey.LongKeyFactory<Asset> getAssetDbKeyFactory() {
+  public EsgKey.LongKeyFactory<Asset> getAssetDbKeyFactory() {
     return assetDbKeyFactory;
   }
 

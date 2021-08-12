@@ -142,15 +142,15 @@ public final class Peers {
       myAddress = propertyService.getString(Props.P2P_MY_ADDRESS);
     }
 
-    if (myAddress != null && myAddress.endsWith(":" + TESTNET_PEER_PORT) && !Amz.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+    if (myAddress != null && myAddress.endsWith(":" + TESTNET_PEER_PORT) && !Esg.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
       throw new RuntimeException("Port " + TESTNET_PEER_PORT + " should only be used for testnet!!!");
     }
     myPeerServerPort = propertyService.getInt(Props.P2P_PORT);
-    if (myPeerServerPort == TESTNET_PEER_PORT && !Amz.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+    if (myPeerServerPort == TESTNET_PEER_PORT && !Esg.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
       throw new RuntimeException("Port " + TESTNET_PEER_PORT + " should only be used for testnet!!!");
     }
     useUpnp = propertyService.getBoolean(Props.P2P_UPNP);
-    shareMyAddress = propertyService.getBoolean(Props.P2P_SHARE_MY_ADDRESS) && ! Amz.getPropertyService().getBoolean(Props.DEV_OFFLINE);
+    shareMyAddress = propertyService.getBoolean(Props.P2P_SHARE_MY_ADDRESS) && ! Esg.getPropertyService().getBoolean(Props.DEV_OFFLINE);
 
     JsonObject json = new JsonObject();
     if (myAddress != null && ! myAddress.isEmpty()) {
@@ -158,7 +158,7 @@ public final class Peers {
         URI uri = new URI("http://" + myAddress.trim());
         String host = uri.getHost();
         int port = uri.getPort();
-        if (!Amz.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
+        if (!Esg.getPropertyService().getBoolean(Props.DEV_TESTNET)) {
           if (port >= 0) {
             json.addProperty("announcedAddress", myAddress);
           }
@@ -176,8 +176,8 @@ public final class Peers {
       }
     }
 
-    json.addProperty("application",  Amz.APPLICATION);
-    json.addProperty("version",      Amz.VERSION.toString());
+    json.addProperty("application",  Esg.APPLICATION);
+    json.addProperty("version",      Esg.VERSION.toString());
     json.addProperty("platform",     Peers.myPlatform);
     json.addProperty("shareAddress", Peers.shareMyAddress);
     if (logger.isDebugEnabled()) {
@@ -190,19 +190,19 @@ public final class Peers {
 
     if(propertyService.getBoolean(P2P_ENABLE_TX_REBROADCAST)) {
       rebroadcastPeers = Collections
-              .unmodifiableSet(new HashSet<>(propertyService.getStringList(Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Props.DEV_P2P_REBROADCAST_TO : Props.P2P_REBROADCAST_TO)));
+              .unmodifiableSet(new HashSet<>(propertyService.getStringList(Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Props.DEV_P2P_REBROADCAST_TO : Props.P2P_REBROADCAST_TO)));
     } else {
       rebroadcastPeers = Collections.emptySet();
     }
 
-    List<String> wellKnownPeersList = propertyService.getStringList(Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Props.DEV_P2P_BOOTSTRAP_PEERS : Props.P2P_BOOTSTRAP_PEERS);
+    List<String> wellKnownPeersList = propertyService.getStringList(Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Props.DEV_P2P_BOOTSTRAP_PEERS : Props.P2P_BOOTSTRAP_PEERS);
 
     for(String rePeer : rebroadcastPeers) {
       if(!wellKnownPeersList.contains(rePeer)) {
         wellKnownPeersList.add(rePeer);
       }
     }
-    if (wellKnownPeersList.isEmpty() || Amz.getPropertyService().getBoolean(Props.DEV_OFFLINE)) {
+    if (wellKnownPeersList.isEmpty() || Esg.getPropertyService().getBoolean(Props.DEV_OFFLINE)) {
       wellKnownPeers = Collections.emptySet();
     } else {
       wellKnownPeers = Collections.unmodifiableSet(new HashSet<>(wellKnownPeersList));
@@ -226,7 +226,7 @@ public final class Peers {
     blacklistingPeriod = propertyService.getInt(Props.P2P_BLACKLISTING_TIME_MS);
     communicationLoggingMask = propertyService.getInt(Props.BRS_COMMUNICATION_LOGGING_MASK);
     sendToPeersLimit = propertyService.getInt(P2P_SEND_TO_LIMIT);
-    usePeersDb       = propertyService.getBoolean(Props.P2P_USE_PEERS_DB) && ! Amz.getPropertyService().getBoolean(Props.DEV_OFFLINE);
+    usePeersDb       = propertyService.getBoolean(Props.P2P_USE_PEERS_DB) && ! Esg.getPropertyService().getBoolean(Props.DEV_OFFLINE);
     savePeers        = usePeersDb && propertyService.getBoolean(Props.P2P_SAVE_PEERS);
     getMorePeers     = propertyService.getBoolean(Props.P2P_GET_MORE_PEERS);
     getMorePeersThreshold = propertyService.getInt(Props.P2P_GET_MORE_PEERS_THRESHOLD);
@@ -253,7 +253,7 @@ public final class Peers {
         }
         if (usePeersDb) {
           logger.debug("Loading known peers from the database...");
-          loadPeers(Amz.getDbs().getPeerDb().loadPeers());
+          loadPeers(Esg.getDbs().getPeerDb().loadPeers());
         }
         lastSavedPeers= peers.size();
       }
@@ -280,7 +280,7 @@ public final class Peers {
 
     Init.init(timeService, accountService, blockchain, transactionProcessor, blockchainProcessor, propertyService, threadPool);
 
-    if (! Amz.getPropertyService().getBoolean(Props.DEV_OFFLINE)) {
+    if (! Esg.getPropertyService().getBoolean(Props.DEV_OFFLINE)) {
       threadPool.scheduleThread("PeerConnecting", Peers.peerConnectingThread, 5);
       threadPool.scheduleThread("PeerUnBlacklisting", Peers.peerUnBlacklistingThread, 1);
       if (Peers.getMorePeers) {
@@ -323,7 +323,7 @@ public final class Peers {
                 if (gateway.getSpecificPortMappingEntry(port, "TCP", portMapping)) {
                   logger.info("Port was already mapped. Aborting test.");
                 } else {
-                  if (gateway.addPortMapping(port, port, localAddress.getHostAddress(), "TCP", "amazonascoin")) {
+                  if (gateway.addPortMapping(port, port, localAddress.getHostAddress(), "TCP", "esgcoin")) {
                     logger.info("UPnP Mapping successful");
                   } else {
                     logger.warn("UPnP Mapping was denied!");
@@ -343,7 +343,7 @@ public final class Peers {
 
         peerServer = new Server();
         ServerConnector connector = new ServerConnector(peerServer);
-        port = Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? TESTNET_PEER_PORT : Peers.myPeerServerPort;
+        port = Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) ? TESTNET_PEER_PORT : Peers.myPeerServerPort;
         connector.setPort(port);
         final String host = propertyService.getString(Props.P2P_LISTEN);
         connector.setHost(host);
@@ -495,7 +495,7 @@ public final class Peers {
       }
     }
     private void updateSavedPeers() {
-      Set<String> oldPeers = new HashSet<>(Amz.getDbs().getPeerDb().loadPeers());
+      Set<String> oldPeers = new HashSet<>(Esg.getDbs().getPeerDb().loadPeers());
       Set<String> currentPeers = new HashSet<>();
       for (Peer peer : Peers.peers.values()) {
         if (peer.getAnnouncedAddress() != null
@@ -508,16 +508,16 @@ public final class Peers {
       Set<String> toDelete = new HashSet<>(oldPeers);
       toDelete.removeAll(currentPeers);
       try {
-        Amz.getStores().beginTransaction();
-        Amz.getDbs().getPeerDb().deletePeers(toDelete);
+        Esg.getStores().beginTransaction();
+        Esg.getDbs().getPeerDb().deletePeers(toDelete);
         currentPeers.removeAll(oldPeers);
-        Amz.getDbs().getPeerDb().addPeers(currentPeers);
-        Amz.getStores().commitTransaction();
+        Esg.getDbs().getPeerDb().addPeers(currentPeers);
+        Esg.getStores().commitTransaction();
       } catch (Exception e) {
-        Amz.getStores().rollbackTransaction();
+        Esg.getStores().rollbackTransaction();
         throw e;
       } finally {
-        Amz.getStores().endTransaction();
+        Esg.getStores().endTransaction();
       }
     }
 
@@ -723,7 +723,7 @@ public final class Peers {
     }
 
     peer = new PeerImpl(peerAddress, announcedPeerAddress);
-    if (Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) && peer.getPort() > 0 && peer.getPort() != TESTNET_PEER_PORT) {
+    if (Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) && peer.getPort() > 0 && peer.getPort() != TESTNET_PEER_PORT) {
       logger.debug("Peer {} on testnet port is not using port {}, ignoring", peerAddress, TESTNET_PEER_PORT);
       return null;
     }
@@ -876,7 +876,7 @@ public final class Peers {
         connectWellKnownFinished = true;
         logger.info("Finished connecting to {} well known peers.", connectWellKnownFirst);
         // TODO should we remove this?
-        logger.info("You can open your Amz Wallet in your favorite browser with: http://127.0.0.1:8132 or http://localhost:8132");
+        logger.info("You can open your Esg Wallet in your favorite browser with: http://127.0.0.1:8132 or http://localhost:8132");
       }
     }
 

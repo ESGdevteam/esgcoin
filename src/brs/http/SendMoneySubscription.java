@@ -23,7 +23,7 @@ final class SendMoneySubscription extends CreateTransaction {
   }
 	
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     Account sender = parameterService.getSenderAccount(req);
     Long recipient = ParameterParser.getRecipientId(req);
     long amountNQT = ParameterParser.getAmountNQT(req);
@@ -39,8 +39,8 @@ final class SendMoneySubscription extends CreateTransaction {
       return response;
     }
 		
-    if(frequency < Constants.AMZ_SUBSCRIPTION_MIN_FREQ ||
-       frequency > Constants.AMZ_SUBSCRIPTION_MAX_FREQ) {
+    if(frequency < Constants.ESG_SUBSCRIPTION_MIN_FREQ ||
+       frequency > Constants.ESG_SUBSCRIPTION_MAX_FREQ) {
       JsonObject response = new JsonObject();
       response.addProperty(ERROR_CODE_RESPONSE, 4);
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Invalid frequency amount");

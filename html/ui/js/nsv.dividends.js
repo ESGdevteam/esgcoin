@@ -8,7 +8,7 @@ var NSV = (function(NSV, $, undefined) {
     var NSV_div_cur_ass_issued_amount;
 
     var NSV_div_send_out_err = [];
-    var NSV_div_send_out_amz;
+    var NSV_div_send_out_esg;
     var NSV_div_send_out_asset;
     var NSV_div_send_out_amount;
     var NSV_div_unquant_out_mult;
@@ -234,7 +234,7 @@ var NSV = (function(NSV, $, undefined) {
         if (BRS.accountInfo.unconfirmedBalanceNQT) {
             var balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
             if (balance < len) {
-                err_message = "You don't have enough AMZ in this account for this distribution. ".concat(String(len),"AMZ needed.");
+                err_message = "You don't have enough ESG in this account for this distribution. ".concat(String(len),"ESG needed.");
             }
         }
         else {
@@ -296,7 +296,7 @@ var NSV = (function(NSV, $, undefined) {
             if (response.publicKey) {
                 callback({
                     "type": "info",
-                    "message": "The recipient account has a public key and a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " AMZ.",
+                    "message": "The recipient account has a public key and a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " ESG.",
                     "account": response
                 });
             }
@@ -305,7 +305,7 @@ var NSV = (function(NSV, $, undefined) {
                     if (response.errorCode == 4) {
                         callback({
                             "type": "danger",
-                            "message": "The recipient account is malformed, please adjust." + (!(/^(AMZ\-)/i.test(accountId)) ? " If you want to type an alias, prepend it with the @ character." : ""),
+                            "message": "The recipient account is malformed, please adjust." + (!(/^(ESG\-)/i.test(accountId)) ? " If you want to type an alias, prepend it with the @ character." : ""),
                             "account": null
                         });
                     }
@@ -327,7 +327,7 @@ var NSV = (function(NSV, $, undefined) {
                 else {
                     callback({
                         "type": "warning",
-                        "message": "The recipient account does not have a public key, meaning it has never had an outgoing transaction. The account has a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " AMZ. Please double check your recipient address before submitting.",
+                        "message": "The recipient account does not have a public key, meaning it has never had an outgoing transaction. The account has a balance of " + BRS.formatAmount(response.unconfirmedBalanceNQT, false, true) + " ESG. Please double check your recipient address before submitting.",
                         "account": response
                     });
                 }
@@ -339,10 +339,10 @@ var NSV = (function(NSV, $, undefined) {
 
         var d1 = new Date(inp_date);
         if (d1) {
-            var amz_gen = new Date("November 24, 2013, 12:00:00 UTC");
-            var amz_gen_sec = amz_gen.getTime()/1000;
+            var esg_gen = new Date("November 24, 2013, 12:00:00 UTC");
+            var esg_gen_sec = esg_gen.getTime()/1000;
             var entry_time_sec = d1.getTime()/1000;
-            var res = entry_time_sec - amz_gen_sec;
+            var res = entry_time_sec - esg_gen_sec;
             return(res);
         }
         else {
@@ -426,7 +426,7 @@ var NSV = (function(NSV, $, undefined) {
         var outasset_dec1;
         var qnt_amt;
 
-        NSV_div_send_out_amz = true;
+        NSV_div_send_out_esg = true;
 
         var issued_account;
         var issued_amount;
@@ -444,7 +444,7 @@ var NSV = (function(NSV, $, undefined) {
             return;
         }
         else {
-            BRS.sendOutsideRequest("/amz?requestType=" + "getAsset", {
+            BRS.sendOutsideRequest("/esg?requestType=" + "getAsset", {
                 "asset": asset
             }, function(response) {
                 if (response.errorCode) {
@@ -463,20 +463,20 @@ var NSV = (function(NSV, $, undefined) {
 
                 if (outasset !== "") {
                     if (!(/^\d+$/.test(outasset))) {
-                        err_message = "Out Asset ID is invalid. Either enter a valid ID or leave blank to pay in Amz.";
+                        err_message = "Out Asset ID is invalid. Either enter a valid ID or leave blank to pay in Esg.";
 
                     }
                     else {
-                        BRS.sendOutsideRequest("/amz?requestType=" + "getAsset", {
+                        BRS.sendOutsideRequest("/esg?requestType=" + "getAsset", {
                             "asset": outasset
                         }, function(response) {
                             if (response.errorCode) {
-                                err_message = "Incorrect Out Asset ID. Either enter a valid ID or leave blank to pay in Amz.";
+                                err_message = "Incorrect Out Asset ID. Either enter a valid ID or leave blank to pay in Esg.";
                             }
                             else {
                                 outasset_dec1 = response.decimals;
                                 outasset_name = response.name;
-                                NSV_div_send_out_amz = false;
+                                NSV_div_send_out_esg = false;
                                 NSV_div_send_out_asset = outasset;
                             }
                         },false);
@@ -494,7 +494,7 @@ var NSV = (function(NSV, $, undefined) {
                     err_message = "<b>Error!</b>: Amount must not be zero or unset.";
                 }
                 try {
-                    if (NSV_div_send_out_amz) {
+                    if (NSV_div_send_out_esg) {
                         outasset_dec1 = 8;
                         qnt_amt = BRS.convertToNQT(amount);
                     }
@@ -506,7 +506,7 @@ var NSV = (function(NSV, $, undefined) {
                     err_message = "<b>Error!</b>: Amount not set correctly.";
                 }
                 //assetID =transaction ID which issued it. This has the timestamp info
-                BRS.sendOutsideRequest("/amz?requestType=" + "getTransaction", {"transaction": asset}, function(response) {
+                BRS.sendOutsideRequest("/esg?requestType=" + "getTransaction", {"transaction": asset}, function(response) {
                     if (response.errorCode) {
                         err_message = "Unknown error, couldn't getTransaction for asset issuing block.";
                         return;
@@ -515,7 +515,7 @@ var NSV = (function(NSV, $, undefined) {
                         issued_time = response.timestamp;
                     }
                 },false);
-                BRS.sendOutsideRequest("/amz?requestType=" + "getTime", {}, function(response) {
+                BRS.sendOutsideRequest("/esg?requestType=" + "getTime", {}, function(response) {
                     if (response.errorCode) {
                         err_message = "Unknown error, couldn't getTime.";
                     }
@@ -548,7 +548,7 @@ var NSV = (function(NSV, $, undefined) {
                         var account_array = list_nodist_acc.split(',');
                         for (i=0; i<account_array.length; ++i) {
                             var act_acc = account_array[i];
-                            BRS.sendOutsideRequest("/amz?requestType=" + "getAccount", {
+                            BRS.sendOutsideRequest("/esg?requestType=" + "getAccount", {
                                 "account": act_acc
                             }, function(response) {
                                 if (response.errorCode) {
@@ -583,7 +583,7 @@ var NSV = (function(NSV, $, undefined) {
                 init_object.amount = NSV_div_cur_ass_issued_amount;
                 NSV_div_send_acc_array.push(init_object);
 
-                BRS.sendOutsideRequest("/amz?requestType=" + "getTrades", {
+                BRS.sendOutsideRequest("/esg?requestType=" + "getTrades", {
                     "asset": asset
                 }, function(response) {
                     if (response.errorCode) {
@@ -599,7 +599,7 @@ var NSV = (function(NSV, $, undefined) {
                                 var tmp_tran_bid = trade_arr[i].bidOrder;
                                 var trade_amt = parseInt(trade_arr[i].quantityQNT,10);
                                 var sender, recip,sender_amt,recip_amt;
-                                BRS.sendOutsideRequest("/amz?requestType=" + "getTransaction", {
+                                BRS.sendOutsideRequest("/esg?requestType=" + "getTransaction", {
                                     "transaction": tmp_tran_ask, "_":tmp_tran_bid
                                 }, function(response,input) {
                                     tmp2_tran_bid = input._;
@@ -613,7 +613,7 @@ var NSV = (function(NSV, $, undefined) {
                                         sender_amt = parseInt(response.attachment.quantityQNT,10);
                                     }
 
-                                    BRS.sendOutsideRequest("/amz?requestType=" + "getTransaction", {
+                                    BRS.sendOutsideRequest("/esg?requestType=" + "getTransaction", {
                                         "transaction": tmp2_tran_bid
                                     }, function(response) {
                                         if (response.errorCode) {
@@ -695,8 +695,8 @@ var NSV = (function(NSV, $, undefined) {
                     err_message = "Negative balances in calculation. Try again. If that fails, forward the output log to the developer.";
                 }
                 output = output.concat(asset_name, " (",String(asset),") Total found assets: ", String(tot_assets/unquant_mult), ", Assets to be distributed: ", String(tot2_assets/unquant_mult), "\n");
-                if (NSV_div_send_out_amz) {
-                    output = output.concat("Summary of proposed distribution of  ", amount, "AMZ to ", String(aa_len),"\n");
+                if (NSV_div_send_out_esg) {
+                    output = output.concat("Summary of proposed distribution of  ", amount, "ESG to ", String(aa_len),"\n");
                 }
                 else {
                     output = output.concat("Summary of proposed distribution of ", amount, " [",outasset_name, "] assets to ", String(aa_len),"\n");
@@ -787,14 +787,14 @@ var NSV = (function(NSV, $, undefined) {
         var len = NSV_div_send_acc_array.length;
         var i;
         var pro_pct;
-        if (NSV_div_send_out_amz) {
+        if (NSV_div_send_out_esg) {
             var tot_quant = BRS.convertToNQT(tot_amount);
             var total_cost = len*100000000 + parseInt(tot_quant,10);
 
             if (BRS.accountInfo.unconfirmedBalanceNQT) {
                 balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
                 if (balance < total_cost) {
-                    err_message = "You don't have enough Amz in this account for this distribution. ".concat(String(len),"AMZ needed.");
+                    err_message = "You don't have enough Esg in this account for this distribution. ".concat(String(len),"ESG needed.");
                 }
             }
             else {
@@ -874,7 +874,7 @@ var NSV = (function(NSV, $, undefined) {
             if (BRS.accountInfo.unconfirmedBalanceNQT) {
                 balance = parseFloat(BRS.accountInfo.unconfirmedBalanceNQT);
                 if (balance < (len*100000000)) {
-                    err_message = "You don't have enough Amz in this account to pay the fees for this distribution. ".concat(String(len),"AMZ needed.");
+                    err_message = "You don't have enough Esg in this account to pay the fees for this distribution. ".concat(String(len),"ESG needed.");
                 }
             }
             else {
@@ -973,7 +973,7 @@ var NSV = (function(NSV, $, undefined) {
             var warn_mess = "This calculation can take several minutes, please be patient. Progress ".concat(String(pro_pct),"%");
             $("#nsv_div_send_warn_message").html(warn_mess);
             var tmp_acc = asset_array[i].account;
-            BRS.sendOutsideRequest("/amz?requestType=" + "getAccountTransactionIds", {
+            BRS.sendOutsideRequest("/esg?requestType=" + "getAccountTransactionIds", {
                 "account":tmp_acc , "type":"2", "subtype":"1","timestamp":str_init_time
             }, function(response,input) {
                 if (response.errorCode) {
@@ -986,7 +986,7 @@ var NSV = (function(NSV, $, undefined) {
                     var tmp2_acc = input.account;
                     for (var j=0; j<tran_len; j++) {
                         var tmp_tran = tran_arr[j];
-                        NSV.sendOutsideRequest("/amz?requestType=" + "getTransaction", {
+                        NSV.sendOutsideRequest("/esg?requestType=" + "getTransaction", {
                             "transaction": tmp_tran, "_":tmp2_acc
                         }, function(response, input) {
                             var cur_account = input._;
@@ -1008,7 +1008,7 @@ var NSV = (function(NSV, $, undefined) {
 
                                         if (response.senderRS == cur_account) {
                                             NSV_div_send_acc_array[cur_index].amount -= parseInt(response.attachment.quantityQNT,10);
-                                            if (response.recipientRS != "AMZ-NU58-Z4QR-XXKE-94DHH") {	//genesis (86281612813136630310)
+                                            if (response.recipientRS != "ESG-NU58-Z4QR-XXKE-94DHH") {	//genesis (86281612813136630310)
                                                 if (NSV.div_send_check_arr(response.recipientRS) == -1) {
                                                     NSV.div_send_push_newacc(response.recipientRS);
                                                 }
@@ -1146,7 +1146,7 @@ var NSV = (function(NSV, $, undefined) {
             err_message = "Original asset not specified";
         }
         else {
-            BRS.sendOutsideRequest("/amz?requestType=" + "getAccountTransactionIds", {
+            BRS.sendOutsideRequest("/esg?requestType=" + "getAccountTransactionIds", {
                 "account":redeem_ac , "type":"2", "subtype":"1"
             }, function(response,input) {
                 if (response.errorCode) {
@@ -1158,7 +1158,7 @@ var NSV = (function(NSV, $, undefined) {
                     var tran_len = tran_arr.length;
                     for (var j=0; j<tran_len; j++) {
                         var tmp_tran = tran_arr[j];
-                        NSV.sendOutsideRequest("/amz?requestType=" + "getTransaction", {
+                        NSV.sendOutsideRequest("/esg?requestType=" + "getTransaction", {
                             "transaction": tmp_tran
                         }, function(response, input) {
                             if (response.errorCode) {
@@ -1186,7 +1186,7 @@ var NSV = (function(NSV, $, undefined) {
         else {
             out_message = out_message + "Assets Sent, Account, Sending TX, Assets Recieved, Recieving TX\n";
             for (var k=0; k<NSV_redeemed_assets.length; k++) {
-                BRS.sendOutsideRequest("/amz?requestType=" + "getAccountTransactionIds", {
+                BRS.sendOutsideRequest("/esg?requestType=" + "getAccountTransactionIds", {
                     "account":NSV_redeemed_assets[k].sender , "type":"2", "subtype":"1"
                 }, function(response,input) {
                     if (response.errorCode) {
@@ -1198,7 +1198,7 @@ var NSV = (function(NSV, $, undefined) {
                         var tran_len = tran_arr.length;
                         for (var j=0; j<tran_len; j++) {
                             var tmp_tran = tran_arr[j];
-                            NSV.sendOutsideRequest("/amz?requestType=" + "getTransaction", {
+                            NSV.sendOutsideRequest("/esg?requestType=" + "getTransaction", {
                                 "transaction": tmp_tran
                             }, function(response, input) {
                                 if (response.errorCode) {
@@ -1248,7 +1248,7 @@ var NSV = (function(NSV, $, undefined) {
             }
             out_message = out_message + "-----------------------\n";
             if (num_tobe_swapped > 0) {
-                out_message = out_message + "AMZ needed for transactions: " + num_tobe_swapped.toString() + ", Replacement Assets needed: " + total_replacement_assets.toString() + "\n";
+                out_message = out_message + "ESG needed for transactions: " + num_tobe_swapped.toString() + ", Replacement Assets needed: " + total_replacement_assets.toString() + "\n";
                 document.getElementById("nsv_shareswap_but").disabled=false;
             }
             else {

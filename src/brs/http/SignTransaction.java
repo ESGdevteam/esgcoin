@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Transaction;
 import brs.crypto.Crypto;
 import brs.services.ParameterService;
@@ -33,7 +33,7 @@ final class SignTransaction extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     String transactionBytes = Convert.emptyToNull(req.getParameter(UNSIGNED_TRANSACTION_BYTES_PARAMETER));
     String transactionJSON = Convert.emptyToNull(req.getParameter(UNSIGNED_TRANSACTION_JSON_PARAMETER));
@@ -63,7 +63,7 @@ final class SignTransaction extends APIServlet.JsonRequestHandler {
       response.addProperty(TRANSACTION_BYTES_RESPONSE, Convert.toHexString(transaction.getBytes()));
       response.addProperty(SIGNATURE_HASH_RESPONSE, Convert.toHexString(Crypto.sha256().digest(transaction.getSignature())));
       response.addProperty(VERIFY_RESPONSE, transaction.verifySignature() && transactionService.verifyPublicKey(transaction));
-    } catch (AmzException.ValidationException|RuntimeException e) {
+    } catch (EsgException.ValidationException|RuntimeException e) {
       logger.debug(e.getMessage(), e);
       response.addProperty(ERROR_CODE_RESPONSE, 4);
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "Incorrect unsigned transaction: " + e.toString());

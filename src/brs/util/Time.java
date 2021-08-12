@@ -2,7 +2,7 @@ package brs.util;
 
 import brs.Constants;
 
-// TODO amzkit4j integration
+// TODO esgkit4j integration
 public interface Time {
 
   int getTime();

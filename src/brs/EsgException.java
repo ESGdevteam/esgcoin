@@ -1,24 +1,24 @@
 package brs;
 
-public abstract class AmzException extends Exception {
+public abstract class EsgException extends Exception {
 
-  protected AmzException() {
+  protected EsgException() {
     super();
   }
 
-  AmzException(String message) {
+  EsgException(String message) {
     super(message);
   }
 
-  AmzException(String message, Throwable cause) {
+  EsgException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  protected AmzException(Throwable cause) {
+  protected EsgException(Throwable cause) {
     super(cause);
   }
 
-  public abstract static class ValidationException extends AmzException {
+  public abstract static class ValidationException extends EsgException {
 
     private ValidationException(String message) {
       super(message);

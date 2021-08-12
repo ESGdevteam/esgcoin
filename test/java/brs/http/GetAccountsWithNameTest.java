@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.services.AccountService;
@@ -36,7 +36,7 @@ public class GetAccountsWithNameTest extends AbstractUnitTest {
     }
 
     @Test
-    public void processRequest() throws AmzException {
+    public void processRequest() throws EsgException {
         final long targetAccountId = 4L;
         final String targetAccountName = "exampleAccountName";
 
@@ -61,7 +61,7 @@ public class GetAccountsWithNameTest extends AbstractUnitTest {
     }
 
     @Test
-    public void processRequest_noAccountFound() throws AmzException {
+    public void processRequest_noAccountFound() throws EsgException {
         final String targetAccountName = "exampleAccountName";
 
         final HttpServletRequest req = QuickMocker.httpServletRequest(

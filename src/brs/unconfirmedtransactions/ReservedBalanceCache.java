@@ -1,8 +1,8 @@
 package brs.unconfirmedtransactions;
 
 import brs.Account;
-import brs.AmzException;
-import brs.AmzException.ValidationException;
+import brs.EsgException;
+import brs.EsgException.ValidationException;
 import brs.Transaction;
 import brs.db.store.AccountStore;
 import brs.util.Convert;
@@ -27,7 +27,7 @@ class ReservedBalanceCache {
     this.reservedBalanceCache = new HashMap<>();
   }
 
-  void reserveBalanceAndPut(Transaction transaction) throws AmzException.ValidationException {
+  void reserveBalanceAndPut(Transaction transaction) throws EsgException.ValidationException {
     Account senderAccount = null;
 
     if (transaction.getSenderId() != 0) {
@@ -44,13 +44,13 @@ class ReservedBalanceCache {
         LOGGER.info(String.format("Transaction %d: Account %d does not exist and has no balance. Required funds: %d", transaction.getId(), transaction.getSenderId(), amountNQT));
       }
 
-      throw new AmzException.NotCurrentlyValidException("Account unknown");
+      throw new EsgException.NotCurrentlyValidException("Account unknown");
     } else if ( amountNQT > senderAccount.getUnconfirmedBalanceNQT() ) {
       if (LOGGER.isInfoEnabled()) {
         LOGGER.info(String.format("Transaction %d: Account %d balance too low. You have  %d > %d Balance", transaction.getId(), transaction.getSenderId(), amountNQT, senderAccount.getUnconfirmedBalanceNQT()));
       }
 
-      throw new AmzException.NotCurrentlyValidException("Insufficient funds");
+      throw new EsgException.NotCurrentlyValidException("Insufficient funds");
     }
 
     reservedBalanceCache.put(transaction.getSenderId(), amountNQT);

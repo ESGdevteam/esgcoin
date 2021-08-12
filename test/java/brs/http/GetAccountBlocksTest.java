@@ -3,7 +3,7 @@ package brs.http;
 import brs.Account;
 import brs.Block;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.common.QuickMocker.MockParam;
@@ -47,7 +47,7 @@ public class GetAccountBlocksTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final int mockTimestamp = 1;
     final int mockFirstIndex = 2;
     final int mockLastIndex = 3;

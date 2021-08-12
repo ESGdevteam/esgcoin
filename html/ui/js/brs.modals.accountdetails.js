@@ -21,16 +21,16 @@ var BRS = (function(BRS, $, undefined) {
 	    $("#account_balance_warning").hide();
 
 	    if (BRS.accountInfo.errorCode && BRS.accountInfo.errorCode == 5) {
-		$("#account_balance_balance, #account_balance_unconfirmed_balance, #account_balance_effective_balance, #account_balance_guaranteed_balance").html("0 AMZ");
+		$("#account_balance_balance, #account_balance_unconfirmed_balance, #account_balance_effective_balance, #account_balance_guaranteed_balance").html("0 ESG");
 		$("#account_balance_public_key").html(String(BRS.publicKey).escapeHTML());
 		$("#account_balance_account_rs").html(String(BRS.accountRS).escapeHTML());
 		$("#account_balance_account").html(String(BRS.account).escapeHTML());
 	    }
             else {
-		$("#account_balance_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.balanceNQT)) + " AMZ");
-		$("#account_balance_unconfirmed_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.unconfirmedBalanceNQT)) + " AMZ");
-		$("#account_balance_effective_balance").html(BRS.formatAmount(BRS.accountInfo.effectiveBalanceAMZ) + " AMZ");
-		$("#account_balance_guaranteed_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.guaranteedBalanceNQT)) + " AMZ");
+		$("#account_balance_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.balanceNQT)) + " ESG");
+		$("#account_balance_unconfirmed_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.unconfirmedBalanceNQT)) + " ESG");
+		$("#account_balance_effective_balance").html(BRS.formatAmount(BRS.accountInfo.effectiveBalanceESG) + " ESG");
+		$("#account_balance_guaranteed_balance").html(BRS.formatAmount(new BigInteger(BRS.accountInfo.guaranteedBalanceNQT)) + " ESG");
 
 		$("#account_balance_public_key").html(String(BRS.accountInfo.publicKey).escapeHTML());
 		$("#account_balance_account_rs").html(String(BRS.accountInfo.accountRS).escapeHTML());

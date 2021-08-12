@@ -3,7 +3,7 @@ package brs.http;
 import brs.Account;
 import brs.Attachment;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.AccountService;
 import brs.services.ParameterService;
 import com.google.gson.JsonElement;
@@ -29,7 +29,7 @@ public final class SetRewardRecipient extends CreateTransaction {
   }
 	
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     final Account account = parameterService.getSenderAccount(req);
     Long recipient = ParameterParser.getRecipientId(req);
     Account recipientAccount = accountService.getAccount(recipient);
@@ -39,7 +39,7 @@ public final class SetRewardRecipient extends CreateTransaction {
       response.addProperty(ERROR_DESCRIPTION_RESPONSE, "recipient account does not have public key");
       return response;
     }
-    Attachment attachment = new Attachment.AmzMiningRewardRecipientAssignment(blockchain.getHeight());
+    Attachment attachment = new Attachment.EsgMiningRewardRecipientAssignment(blockchain.getHeight());
     return createTransaction(req, account, recipient, 0, attachment);
   }
 

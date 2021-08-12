@@ -1,14 +1,14 @@
 package brs.db.store;
 
 import brs.Alias;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.VersionedEntityTable;
 
 import java.util.Collection;
 
 public interface AliasStore {
-  AmzKey.LongKeyFactory<Alias> getAliasDbKeyFactory();
-  AmzKey.LongKeyFactory<Alias.Offer> getOfferDbKeyFactory();
+  EsgKey.LongKeyFactory<Alias> getAliasDbKeyFactory();
+  EsgKey.LongKeyFactory<Alias.Offer> getOfferDbKeyFactory();
 
   VersionedEntityTable<Alias> getAliasTable();
 

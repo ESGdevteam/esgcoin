@@ -24,7 +24,7 @@ public final class CancelBidOrder extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     long orderId = ParameterParser.getOrderId(req);
     Account account = parameterService.getSenderAccount(req);
     Order.Bid orderData = assetExchange.getBidOrder(orderId);

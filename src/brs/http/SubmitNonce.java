@@ -10,8 +10,8 @@ import brs.props.PropertyService;
 import brs.props.Props;
 import brs.services.AccountService;
 import brs.util.Convert;
-import amz.kit.crypto.AmzCrypto;
-import amz.kit.entity.AmzAddress;
+import esg.kit.crypto.EsgCrypto;
+import esg.kit.entity.EsgAddress;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
@@ -34,10 +34,10 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
 
   SubmitNonce(PropertyService propertyService, AccountService accountService, Blockchain blockchain, Generator generator) {
     super(new APITag[] {APITag.MINING}, SECRET_PHRASE_PARAMETER, NONCE_PARAMETER, ACCOUNT_ID_PARAMETER, BLOCK_HEIGHT_PARAMETER);
-    AmzCrypto amzCrypto = AmzCrypto.getInstance();
+    EsgCrypto esgCrypto = EsgCrypto.getInstance();
     this.passphrases = propertyService.getStringList(Props.SOLO_MINING_PASSPHRASES)
             .stream()
-            .collect(Collectors.toMap(passphrase -> amzCrypto.getAmzAddressFromPassphrase(passphrase).getAmzID().getSignedLongId(), Function.identity()));
+            .collect(Collectors.toMap(passphrase -> esgCrypto.getEsgAddressFromPassphrase(passphrase).getEsgID().getSignedLongId(), Function.identity()));
     this.allowOtherSoloMiners = propertyService.getBoolean(Props.ALLOW_OTHER_SOLO_MINERS);
 
     this.accountService = accountService;
@@ -72,7 +72,7 @@ final class SubmitNonce extends APIServlet.JsonRequestHandler {
     if (secret == null || Objects.equals(secret, "")) {
       long accountIdLong;
       try {
-        accountIdLong = AmzAddress.fromEither(accountId).getAmzID().getSignedLongId();
+        accountIdLong = EsgAddress.fromEither(accountId).getEsgID().getSignedLongId();
       } catch (Exception e) {
         response.addProperty("result", "Missing Passphrase and Account ID is malformed");
         return response;

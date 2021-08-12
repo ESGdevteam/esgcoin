@@ -133,13 +133,13 @@ final class PeerImpl implements Peer {
   }
 
   public boolean isAtLeastMyVersion() {
-    return isHigherOrEqualVersionThan(Amz.VERSION);
+    return isHigherOrEqualVersionThan(Esg.VERSION);
   }
   
   void setVersion(String version) {
     this.version.set(Version.EMPTY);
     isOldVersion.set(false);
-    if (Amz.APPLICATION.equals(getApplication()) && version != null) {
+    if (Esg.APPLICATION.equals(getApplication()) && version != null) {
       try {
         this.version.set(Version.parse(version));
         isOldVersion.set(Constants.MIN_VERSION.isGreaterThan(this.version.get()));
@@ -221,7 +221,7 @@ final class PeerImpl implements Peer {
 
   @Override
   public void blacklist(Exception cause, String description) {
-    if (cause instanceof AmzException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
+    if (cause instanceof EsgException.NotCurrentlyValidException || cause instanceof BlockchainProcessor.BlockOutOfOrderException
         || cause instanceof SQLException || cause.getCause() instanceof SQLException) {
       // don't blacklist peers just because a feature is not yet enabled, or because of database timeouts
       // prevents erroneous blacklisting during loading of blockchain from scratch
@@ -308,9 +308,9 @@ final class PeerImpl implements Peer {
       buf.append(address);
       if (port.get() <= 0) {
         buf.append(':');
-        buf.append(Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Peers.TESTNET_PEER_PORT : Peers.DEFAULT_PEER_PORT);
+        buf.append(Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) ? Peers.TESTNET_PEER_PORT : Peers.DEFAULT_PEER_PORT);
       }
-      buf.append("/amz");
+      buf.append("/esg");
       URL url = new URL(buf.toString());
 
       if (Peers.communicationLoggingMask != 0) {
@@ -324,7 +324,7 @@ final class PeerImpl implements Peer {
       connection.setDoOutput(true);
       connection.setConnectTimeout(Peers.connectTimeout);
       connection.setReadTimeout(Peers.readTimeout);
-      connection.addRequestProperty("User-Agent", "BRS/" + Amz.VERSION.toString());
+      connection.addRequestProperty("User-Agent", "BRS/" + Esg.VERSION.toString());
       connection.setRequestProperty("Accept-Encoding", "gzip");
       connection.setRequestProperty("Connection", "close");
 

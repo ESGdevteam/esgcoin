@@ -1,6 +1,6 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.grpc.proto.BrsApi;
 
 import java.util.Collection;
@@ -108,10 +108,10 @@ public class Escrow {
 
     public final Long escrowId;
     public final Long accountId;
-    public final AmzKey dbKey;
+    public final EsgKey dbKey;
     private DecisionType decisionType;
 
-    public Decision(AmzKey dbKey, Long escrowId, Long accountId, DecisionType decisionType) {
+    public Decision(EsgKey dbKey, Long escrowId, Long accountId, DecisionType decisionType) {
       this.dbKey = dbKey;
       this.escrowId = escrowId;
       this.accountId = accountId;
@@ -139,13 +139,13 @@ public class Escrow {
   public final Long senderId;
   public final Long recipientId;
   public final Long id;
-  public final AmzKey dbKey;
+  public final EsgKey dbKey;
   public final Long amountNQT;
   public final int requiredSigners;
   public final int deadline;
   public final DecisionType deadlineAction;
 
-  public Escrow(AmzKey dbKey, Account sender,
+  public Escrow(EsgKey dbKey, Account sender,
       Account recipient,
       Long id,
       Long amountNQT,
@@ -162,7 +162,7 @@ public class Escrow {
     this.deadlineAction = deadlineAction;
   }
 
-  protected Escrow(Long id, Long senderId, Long recipientId, AmzKey dbKey, Long amountNQT,
+  protected Escrow(Long id, Long senderId, Long recipientId, EsgKey dbKey, Long amountNQT,
       int requiredSigners, int deadline, DecisionType deadlineAction) {
     this.senderId = senderId;
     this.recipientId = recipientId;
@@ -195,7 +195,7 @@ public class Escrow {
   }
 
   public Collection<Decision> getDecisions() {
-    return Amz.getStores().getEscrowStore().getDecisions(id);
+    return Esg.getStores().getEscrowStore().getDecisions(id);
   }
 
   public int getDeadline() {

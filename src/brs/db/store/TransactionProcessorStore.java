@@ -1,7 +1,7 @@
 package brs.db.store;
 
 import brs.Transaction;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.sql.EntitySqlTable;
 
 import java.util.Collection;
@@ -12,7 +12,7 @@ public interface TransactionProcessorStore {
   // WATCH: BUSINESS-LOGIC
   void processLater(Collection<Transaction> transactions);
 
-  AmzKey.LongKeyFactory<Transaction> getUnconfirmedTransactionDbKeyFactory();
+  EsgKey.LongKeyFactory<Transaction> getUnconfirmedTransactionDbKeyFactory();
 
   Set<Transaction> getLostTransactions();
 

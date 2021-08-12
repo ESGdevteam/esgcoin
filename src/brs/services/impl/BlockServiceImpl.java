@@ -51,7 +51,7 @@ public class BlockServiceImpl implements BlockService {
       Account genAccount = accountService.getAccount(block.getGeneratorPublicKey());
       Account.RewardRecipientAssignment rewardAssignment;
       rewardAssignment = genAccount == null ? null : accountService.getRewardRecipientAssignment(genAccount);
-      if (genAccount == null || rewardAssignment == null || !Amz.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
+      if (genAccount == null || rewardAssignment == null || !Esg.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
         publicKey = block.getGeneratorPublicKey();
       } else {
         if (previousBlock.getHeight() + 1 >= rewardAssignment.getFromHeight()) {
@@ -138,7 +138,7 @@ public class BlockServiceImpl implements BlockService {
   public void apply(Block block) {
     Account generatorAccount = accountService.getOrAddAccount(block.getGeneratorId());
     generatorAccount.apply(block.getGeneratorPublicKey(), block.getHeight());
-    if (!Amz.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
+    if (!Esg.getFluxCapacitor().getValue(FluxValues.REWARD_RECIPIENT_ENABLE)) {
       accountService.addToBalanceAndUnconfirmedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
       accountService.addToForgedBalanceNQT(generatorAccount, block.getTotalFeeNQT() + getBlockReward(block));
     } else {
@@ -166,8 +166,8 @@ public class BlockServiceImpl implements BlockService {
       return 0;
     }
     int month = block.getHeight() / 10800;
-    return BigInteger.valueOf(10000).multiply(BigInteger.valueOf(95).pow(month))
-        .divide(BigInteger.valueOf(100).pow(month)).longValue() * Constants.ONE_AMZ;
+    return BigInteger.valueOf(393).multiply(BigInteger.valueOf(95).pow(month))
+        .divide(BigInteger.valueOf(100).pow(month)).longValue() * Constants.ONE_ESG;
   }
 
   @Override
@@ -199,7 +199,7 @@ public class BlockServiceImpl implements BlockService {
     } else if (block.getHeight() < 4) {
       block.setBaseTarget(Constants.INITIAL_BASE_TARGET);
       block.setCumulativeDifficulty(previousBlock.getCumulativeDifficulty().add(Convert.two64.divide(BigInteger.valueOf(Constants.INITIAL_BASE_TARGET))));
-    } else if (block.getHeight() < Constants.AMZ_DIFF_ADJUST_CHANGE_BLOCK) {
+    } else if (block.getHeight() < Constants.ESG_DIFF_ADJUST_CHANGE_BLOCK) {
       Block itBlock = previousBlock;
       BigInteger avgBaseTarget = BigInteger.valueOf(itBlock.getBaseTarget());
       do {

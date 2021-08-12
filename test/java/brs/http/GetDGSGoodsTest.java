@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.DigitalGoodsStore;
 import brs.DigitalGoodsStore.Goods;
 import brs.common.AbstractUnitTest;
@@ -46,7 +46,7 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getSellerGoods() throws AmzException {
+  public void processRequest_getSellerGoods() throws EsgException {
     final long sellerId = 1L;
     final int firstIndex = 2;
     final int lastIndex = 3;
@@ -86,7 +86,7 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getAllGoods() throws AmzException {
+  public void processRequest_getAllGoods() throws EsgException {
     final long sellerId = 0L;
     final int firstIndex = 2;
     final int lastIndex = 3;
@@ -126,7 +126,7 @@ public class GetDGSGoodsTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_getGoodsInStock() throws AmzException {
+  public void processRequest_getGoodsInStock() throws EsgException {
     final long sellerId = 0L;
     final int firstIndex = 2;
     final int lastIndex = 3;

@@ -3,8 +3,8 @@ package brs.services.impl;
 import brs.*;
 import brs.Escrow.Decision;
 import brs.Escrow.DecisionType;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.VersionedEntityTable;
 import brs.db.sql.DbKey.LinkKeyFactory;
 import brs.db.store.EscrowStore;
@@ -60,7 +60,7 @@ public class EscrowServiceImpl implements EscrowService {
 
   @Override
   public boolean isEnabled() {
-    if(blockchain.getLastBlock().getHeight() >= Constants.AMZ_ESCROW_START_BLOCK) {
+    if(blockchain.getLastBlock().getHeight() >= Constants.ESG_ESCROW_START_BLOCK) {
       return true;
     }
 
@@ -81,17 +81,17 @@ public class EscrowServiceImpl implements EscrowService {
 
   @Override
   public void addEscrowTransaction(Account sender, Account recipient, Long id, Long amountNQT, int requiredSigners, Collection<Long> signers, int deadline, DecisionType deadlineAction) {
-    final AmzKey dbKey = escrowDbKeyFactory.newKey(id);
+    final EsgKey dbKey = escrowDbKeyFactory.newKey(id);
     Escrow newEscrowTransaction = new Escrow(dbKey, sender, recipient, id, amountNQT, requiredSigners, deadline, deadlineAction);
     escrowTable.insert(newEscrowTransaction);
-    AmzKey senderDbKey = decisionDbKeyFactory.newKey(id, sender.getId());
+    EsgKey senderDbKey = decisionDbKeyFactory.newKey(id, sender.getId());
     Decision senderDecision = new Decision(senderDbKey, id, sender.getId(), DecisionType.UNDECIDED);
     decisionTable.insert(senderDecision);
-    AmzKey recipientDbKey = decisionDbKeyFactory.newKey(id, recipient.getId());
+    EsgKey recipientDbKey = decisionDbKeyFactory.newKey(id, recipient.getId());
     Decision recipientDecision = new Decision(recipientDbKey, id, recipient.getId(), DecisionType.UNDECIDED);
     decisionTable.insert(recipientDecision);
     for(Long signer : signers) {
-      AmzKey signerDbKey = decisionDbKeyFactory.newKey(id, signer);
+      EsgKey signerDbKey = decisionDbKeyFactory.newKey(id, signer);
       Decision decision = new Decision(signerDbKey, id, signer, DecisionType.UNDECIDED);
       decisionTable.insert(decision);
     }
@@ -133,7 +133,7 @@ public class EscrowServiceImpl implements EscrowService {
     int countRefund = 0;
     int countSplit = 0;
 
-    for (Decision decision : Amz.getStores().getEscrowStore().getDecisions(escrow.getId())) {
+    for (Decision decision : Esg.getStores().getEscrowStore().getDecisions(escrow.getId())) {
       if(decision.getAccountId().equals(escrow.getSenderId()) ||
           decision.getAccountId().equals(escrow.getRecipientId())) {
         continue;
@@ -193,7 +193,7 @@ public class EscrowServiceImpl implements EscrowService {
         }
       }
       if (!resultTransactions.isEmpty()) {
-        Amz.getDbs().getTransactionDb().saveTransactions( resultTransactions);
+        Esg.getDbs().getTransactionDb().saveTransactions( resultTransactions);
       }
       updatedEscrowIds.clear();
     }
@@ -244,11 +244,11 @@ public class EscrowServiceImpl implements EscrowService {
     try {
       transaction = builder.build();
     }
-    catch(AmzException.NotValidException e) {
+    catch(EsgException.NotValidException e) {
       throw new RuntimeException(e.toString(), e);
     }
 
-    if(!Amz.getDbs().getTransactionDb().hasTransaction(transaction.getId())) {
+    if(!Esg.getDbs().getTransactionDb().hasTransaction(transaction.getId())) {
       resultTransactions.add(transaction);
     }
   }

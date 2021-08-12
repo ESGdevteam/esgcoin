@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Block;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.EconomicClustering;
 import brs.services.TimeService;
 import com.google.gson.JsonElement;
@@ -27,7 +27,7 @@ final class GetECBlock extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     int timestamp = ParameterParser.getTimestamp(req);
     if (timestamp == 0) {
       timestamp = timeService.getEpochTime();

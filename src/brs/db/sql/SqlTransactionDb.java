@@ -1,7 +1,7 @@
 package brs.db.sql;
 
 import brs.Appendix;
-import brs.AmzException;
+import brs.EsgException;
 import brs.Transaction;
 import brs.TransactionType;
 import brs.db.TransactionDb;
@@ -24,7 +24,7 @@ public class SqlTransactionDb implements TransactionDb {
       try {
         TransactionRecord transactionRecord = ctx.selectFrom(TRANSACTION).where(TRANSACTION.ID.eq(transactionId)).fetchOne();
         return loadTransaction(transactionRecord);
-      } catch (AmzException.ValidationException e) {
+      } catch (EsgException.ValidationException e) {
         throw new RuntimeException("Transaction already in database, id = " + transactionId + ", does not pass validation!", e);
       }
     });
@@ -36,7 +36,7 @@ public class SqlTransactionDb implements TransactionDb {
       try {
         TransactionRecord transactionRecord = ctx.selectFrom(TRANSACTION).where(TRANSACTION.FULL_HASH.eq(Convert.parseHexString(fullHash))).fetchOne();
         return loadTransaction(transactionRecord);
-      } catch (AmzException.ValidationException e) {
+      } catch (EsgException.ValidationException e) {
         throw new RuntimeException("Transaction already in database, full_hash = " + fullHash + ", does not pass validation!", e);
       }
     });
@@ -57,7 +57,7 @@ public class SqlTransactionDb implements TransactionDb {
   }
 
   @Override
-  public Transaction loadTransaction(TransactionRecord tr) throws AmzException.ValidationException {
+  public Transaction loadTransaction(TransactionRecord tr) throws EsgException.ValidationException {
     if (tr == null) {
       return null;
     }
@@ -112,7 +112,7 @@ public class SqlTransactionDb implements TransactionDb {
               .fetch(record -> {
                 try {
                   return loadTransaction(record);
-                } catch (AmzException.ValidationException e) {
+                } catch (EsgException.ValidationException e) {
                   throw new RuntimeException("Transaction already in database for block_id = " + Convert.toUnsignedLong(blockId) + " does not pass validation!", e);
                 }
               });

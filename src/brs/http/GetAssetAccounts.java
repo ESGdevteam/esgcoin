@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Asset;
-import brs.AmzException;
+import brs.EsgException;
 import brs.assetexchange.AssetExchange;
 import brs.services.ParameterService;
 import com.google.gson.JsonArray;
@@ -25,7 +25,7 @@ final class GetAssetAccounts extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     Asset asset = parameterService.getAsset(req);
     int firstIndex = ParameterParser.getFirstIndex(req);

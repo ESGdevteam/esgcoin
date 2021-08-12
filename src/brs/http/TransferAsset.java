@@ -24,7 +24,7 @@ public final class TransferAsset extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     long recipient = ParameterParser.getRecipientId(req);
 

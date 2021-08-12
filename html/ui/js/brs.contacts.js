@@ -52,7 +52,7 @@ var BRS = (function(BRS, $, undefined) {
 			contactDescription = "-";
 		    }
 
-		    rows += "<tr><td><a href='#' data-toggle='modal' data-target='#update_contact_modal' data-contact='" + String(contact.id).escapeHTML() + "'>" + contact.name.escapeHTML() + "</a></td><td><a href='#' data-user='" + BRS.getAccountFormatted(contact, "account") + "' class='user_info'>" + BRS.getAccountFormatted(contact, "account") + "</a></td><td>" + (contact.email ? contact.email.escapeHTML() : "-") + "</td><td>" + contactDescription.escapeHTML() + "</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#send_money_modal' data-contact='" + String(contact.name).escapeHTML() + "'>" + $.t("send_amz") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#send_message_modal' data-contact='" + String(contact.name).escapeHTML() + "'>" + $.t("message") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#delete_contact_modal' data-contact='" + String(contact.id).escapeHTML() + "'>" + $.t("delete") + "</a></td></tr>";
+		    rows += "<tr><td><a href='#' data-toggle='modal' data-target='#update_contact_modal' data-contact='" + String(contact.id).escapeHTML() + "'>" + contact.name.escapeHTML() + "</a></td><td><a href='#' data-user='" + BRS.getAccountFormatted(contact, "account") + "' class='user_info'>" + BRS.getAccountFormatted(contact, "account") + "</a></td><td>" + (contact.email ? contact.email.escapeHTML() : "-") + "</td><td>" + contactDescription.escapeHTML() + "</td><td style='white-space:nowrap'><a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#send_money_modal' data-contact='" + String(contact.name).escapeHTML() + "'>" + $.t("send_esg") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#send_message_modal' data-contact='" + String(contact.name).escapeHTML() + "'>" + $.t("message") + "</a> <a class='btn btn-xs btn-default' href='#' data-toggle='modal' data-target='#delete_contact_modal' data-contact='" + String(contact.id).escapeHTML() + "'>" + $.t("delete") + "</a></td></tr>";
 		});
 	    }
 
@@ -76,7 +76,7 @@ var BRS = (function(BRS, $, undefined) {
 	    };
 	}
 
-	if (/^\d+$/.test(data.name) || /^AMZ\-/i.test(data.name)) {
+	if (/^\d+$/.test(data.name) || /^ESG\-/i.test(data.name)) {
 	    return {
 		"error": $.t("error_contact_name_alpha")
 	    };
@@ -100,7 +100,7 @@ var BRS = (function(BRS, $, undefined) {
 	    }
 	}
 
-	if (/^AMZ\-/i.test(data.account_id)) {
+	if (/^ESG\-/i.test(data.account_id)) {
 	    data.account_rs = data.account_id;
 
 	    var address = new NxtAddress();
@@ -208,7 +208,7 @@ var BRS = (function(BRS, $, undefined) {
 	if (!contactId && BRS.selectedContext) {
 	    var accountId = BRS.selectedContext.data("account");
 
-	    var dbKey = (/^AMZ\-/i.test(accountId) ? "accountRS" : "account");
+	    var dbKey = (/^ESG\-/i.test(accountId) ? "accountRS" : "account");
 
 	    var dbQuery = {};
 	    dbQuery[dbKey] = accountId;
@@ -275,7 +275,7 @@ var BRS = (function(BRS, $, undefined) {
 	    };
 	}
 
-	if (/^AMZ\-/i.test(data.account_id)) {
+	if (/^ESG\-/i.test(data.account_id)) {
 	    data.account_rs = data.account_id;
 
 	    var address = new NxtAddress();

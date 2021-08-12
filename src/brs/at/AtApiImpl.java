@@ -7,7 +7,7 @@
 
 package brs.at;
 
-import brs.Amz;
+import brs.Esg;
 import brs.crypto.Crypto;
 import brs.fluxcapacitor.FluxValues;
 
@@ -532,7 +532,7 @@ public class AtApiImpl implements AtApi {
 
     @Override
     public long checkMd5AWithB(AtMachineState state) {
-        if (Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
+        if (Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
             ByteBuffer b = ByteBuffer.allocate(16);
             b.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -571,7 +571,7 @@ public class AtApiImpl implements AtApi {
 
     @Override
     public long checkHash160AWithB(AtMachineState state) {
-        if (Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
+        if (Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
             ByteBuffer b = ByteBuffer.allocate(32);
             b.order(ByteOrder.LITTLE_ENDIAN);
 
@@ -616,7 +616,7 @@ public class AtApiImpl implements AtApi {
 
     @Override
     public long checkSha256AWithB(AtMachineState state) {
-        if (Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
+        if (Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_3)) {
             ByteBuffer b = ByteBuffer.allocate(32);
             b.order(ByteOrder.LITTLE_ENDIAN);
 

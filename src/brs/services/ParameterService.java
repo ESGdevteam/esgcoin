@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface ParameterService {
 
-  Account getAccount(HttpServletRequest req) throws AmzException;
+  Account getAccount(HttpServletRequest req) throws EsgException;
 
   List<Account> getAccounts(HttpServletRequest req) throws ParameterException;
 

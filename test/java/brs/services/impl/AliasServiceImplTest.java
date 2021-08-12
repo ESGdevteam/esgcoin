@@ -6,8 +6,8 @@ import brs.Attachment.MessagingAliasAssignment;
 import brs.Attachment.MessagingAliasSell;
 import brs.Transaction;
 import brs.common.AbstractUnitTest;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.VersionedEntityTable;
 import brs.db.store.AliasStore;
 import org.junit.Before;
@@ -27,9 +27,9 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
   private AliasStore aliasStoreMock;
   private VersionedEntityTable<Alias> aliasTableMock;
-  private AmzKey.LongKeyFactory<Alias> aliasDbKeyFactoryMock;
+  private EsgKey.LongKeyFactory<Alias> aliasDbKeyFactoryMock;
   private VersionedEntityTable<Offer> offerTableMock;
-  private AmzKey.LongKeyFactory<Offer> offerDbKeyFactoryMock;
+  private EsgKey.LongKeyFactory<Offer> offerDbKeyFactoryMock;
 
   @Before
   public void setUp() {
@@ -60,7 +60,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
   @Test
   public void getAlias_byId() {
     final long id = 123l;
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Alias mockAlias = mock(Alias.class);
 
     when(aliasDbKeyFactoryMock.newKey(eq(id))).thenReturn(mockKey);
@@ -74,7 +74,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
     final Long aliasId = 123l;
     final Alias mockAlias = mock(Alias.class);
     when(mockAlias.getId()).thenReturn(aliasId);
-    final AmzKey mockOfferKey = mock(AmzKey.class);
+    final EsgKey mockOfferKey = mock(EsgKey.class);
     final Offer mockOffer = mock(Offer.class);
 
     when(offerDbKeyFactoryMock.newKey(eq(aliasId))).thenReturn(mockOfferKey);
@@ -150,7 +150,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
   }
 
   @Test
-  public void sellAlias_forAmz_newOffer() {
+  public void sellAlias_forEsg_newOffer() {
     final String aliasName = "aliasName";
     final long aliasId = 123L;
     final Alias mockAlias = mock(Alias.class);
@@ -158,7 +158,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
     when(aliasStoreMock.getAlias(eq(aliasName))).thenReturn(mockAlias);
 
-    final AmzKey mockOfferKey = mock(AmzKey.class);
+    final EsgKey mockOfferKey = mock(EsgKey.class);
     when(offerDbKeyFactoryMock.newKey(eq(aliasId))).thenReturn(mockOfferKey);
 
     final long priceNQT = 500L;
@@ -185,7 +185,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
   }
 
   @Test
-  public void sellAlias_forAmz_offerExists() {
+  public void sellAlias_forEsg_offerExists() {
     final String aliasName = "aliasName";
     final long aliasId = 123L;
     final Alias mockAlias = mock(Alias.class);
@@ -193,7 +193,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
     when(aliasStoreMock.getAlias(eq(aliasName))).thenReturn(mockAlias);
 
-    final AmzKey mockOfferKey = mock(AmzKey.class);
+    final EsgKey mockOfferKey = mock(EsgKey.class);
     final Offer mockOffer = mock(Offer.class);
     when(offerDbKeyFactoryMock.newKey(eq(aliasId))).thenReturn(mockOfferKey);
     when(offerTableMock.get(eq(mockOfferKey))).thenReturn(mockOffer);
@@ -227,7 +227,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
     when(aliasStoreMock.getAlias(eq(aliasName))).thenReturn(mockAlias);
 
-    final AmzKey mockOfferKey = mock(AmzKey.class);
+    final EsgKey mockOfferKey = mock(EsgKey.class);
     final Offer mockOffer = mock(Offer.class);
     when(offerDbKeyFactoryMock.newKey(eq(aliasId))).thenReturn(mockOfferKey);
     when(offerTableMock.get(eq(mockOfferKey))).thenReturn(mockOffer);
@@ -262,7 +262,7 @@ public class AliasServiceImplTest extends AbstractUnitTest {
 
     when(aliasStoreMock.getAlias(eq(aliasName))).thenReturn(mockAlias);
 
-    final AmzKey mockOfferKey = mock(AmzKey.class);
+    final EsgKey mockOfferKey = mock(EsgKey.class);
     final Offer mockOffer = mock(Offer.class);
     when(offerDbKeyFactoryMock.newKey(eq(aliasId))).thenReturn(mockOfferKey);
     when(offerTableMock.get(eq(mockOfferKey))).thenReturn(mockOffer);

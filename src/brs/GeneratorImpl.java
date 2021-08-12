@@ -10,7 +10,7 @@ import brs.util.Convert;
 import brs.util.Listener;
 import brs.util.Listeners;
 import brs.util.ThreadPool;
-import amz.kit.crypto.AmzCrypto;
+import esg.kit.crypto.EsgCrypto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +28,7 @@ public class GeneratorImpl implements Generator {
 
   private final Listeners<GeneratorState, Event> listeners = new Listeners<>();
   private final ConcurrentMap<Long, GeneratorStateImpl> generators = new ConcurrentHashMap<>();
-  private final AmzCrypto amzCrypto = AmzCrypto.getInstance();
+  private final EsgCrypto esgCrypto = EsgCrypto.getInstance();
   private final Blockchain blockchain;
   private final TimeService timeService;
   private final FluxCapacitor fluxCapacitor;
@@ -111,12 +111,12 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public byte[] calculateGenerationSignature(byte[] lastGenSig, long lastGenId) {
-    return amzCrypto.calculateGenerationSignature(lastGenSig, lastGenId);
+    return esgCrypto.calculateGenerationSignature(lastGenSig, lastGenId);
   }
 
   @Override
   public int calculateScoop(byte[] genSig, long height) {
-    return amzCrypto.calculateScoop(genSig, height);
+    return esgCrypto.calculateScoop(genSig, height);
   }
 
   private int getPocVersion(int blockHeight) {
@@ -125,17 +125,17 @@ public class GeneratorImpl implements Generator {
 
   @Override
   public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, int scoop, int blockHeight) {
-    return amzCrypto.calculateHit(accountId, nonce, genSig, scoop, getPocVersion(blockHeight));
+    return esgCrypto.calculateHit(accountId, nonce, genSig, scoop, getPocVersion(blockHeight));
   }
 
   @Override
   public BigInteger calculateHit(long accountId, long nonce, byte[] genSig, byte[] scoopData) {
-    return amzCrypto.calculateHit(accountId, nonce, genSig, scoopData);
+    return esgCrypto.calculateHit(accountId, nonce, genSig, scoopData);
   }
 
   @Override
   public BigInteger calculateDeadline(long accountId, long nonce, byte[] genSig, int scoop, long baseTarget, int blockHeight) {
-    return amzCrypto.calculateDeadline(accountId, nonce, genSig, scoop, baseTarget, getPocVersion(blockHeight));
+    return esgCrypto.calculateDeadline(accountId, nonce, genSig, scoop, baseTarget, getPocVersion(blockHeight));
   }
 
   public class GeneratorStateImpl implements GeneratorState {

@@ -1,79 +1,79 @@
 package brs.crypto;
 
-import amz.kit.crypto.AmzCrypto;
-import amz.kit.entity.AmzID;
+import esg.kit.crypto.EsgCrypto;
+import esg.kit.entity.EsgID;
 import org.bouncycastle.jcajce.provider.digest.MD5;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public final class Crypto {
-  static final AmzCrypto amzCrypto = AmzCrypto.getInstance();
+  static final EsgCrypto esgCrypto = EsgCrypto.getInstance();
 
   private Crypto() {
   } //never
 
   public static MessageDigest sha256() {
-    return amzCrypto.getSha256();
+    return esgCrypto.getSha256();
   }
 
   public static MessageDigest shabal256() {
-    return amzCrypto.getShabal256();
+    return esgCrypto.getShabal256();
   }
 
   public static MessageDigest ripemd160() {
-    return amzCrypto.getRipeMD160();
+    return esgCrypto.getRipeMD160();
   }
 
   public static MessageDigest md5() {// TODO unit test
     try {
-      return MessageDigest.getInstance("MD5"); // TODO amzkit4j integration
+      return MessageDigest.getInstance("MD5"); // TODO esgkit4j integration
     } catch (NoSuchAlgorithmException e) {
       return new MD5.Digest();
     }
   }
 
   public static byte[] getPublicKey(String secretPhrase) {
-    return amzCrypto.getPublicKey(secretPhrase);
+    return esgCrypto.getPublicKey(secretPhrase);
   }
 
   public static byte[] getPrivateKey(String secretPhrase) {
-    return amzCrypto.getPrivateKey(secretPhrase);
+    return esgCrypto.getPrivateKey(secretPhrase);
   }
 
   public static byte[] sign(byte[] message, String secretPhrase) {
-      return amzCrypto.sign(message, secretPhrase);
+      return esgCrypto.sign(message, secretPhrase);
   }
 
   public static boolean verify(byte[] signature, byte[] message, byte[] publicKey, boolean enforceCanonical) {
-      return amzCrypto.verify(signature, message, publicKey, enforceCanonical);
+      return esgCrypto.verify(signature, message, publicKey, enforceCanonical);
   }
 
   public static byte[] aesEncrypt(byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey) {
-    return amzCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey);
+    return esgCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey);
   }
 
   public static byte[] aesEncrypt(byte[] plaintext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
-    return amzCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey, nonce);
+    return esgCrypto.aesSharedEncrypt(plaintext, myPrivateKey, theirPublicKey, nonce);
   }
 
   public static byte[] aesDecrypt(byte[] ivCiphertext, byte[] myPrivateKey, byte[] theirPublicKey) {
-    return amzCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey);
+    return esgCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey);
   }
 
   public static byte[] aesDecrypt(byte[] ivCiphertext, byte[] myPrivateKey, byte[] theirPublicKey, byte[] nonce) {
-    return amzCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey, nonce);
+    return esgCrypto.aesSharedDecrypt(ivCiphertext, myPrivateKey, theirPublicKey, nonce);
   }
 
   public static byte[] getSharedSecret(byte[] myPrivateKey, byte[] theirPublicKey) {
-    return amzCrypto.getSharedSecret(myPrivateKey, theirPublicKey);
+    return esgCrypto.getSharedSecret(myPrivateKey, theirPublicKey);
   }
 
   public static String rsEncode(long id) {
-    return amzCrypto.rsEncode(AmzID.fromLong(id));
+    return esgCrypto.rsEncode(EsgID.fromLong(id));
   }
 
   public static long rsDecode(String rsString) {
-    return amzCrypto.rsDecode(rsString).getSignedLongId();
+    return esgCrypto.rsDecode(rsString).getSignedLongId();
   }
 }

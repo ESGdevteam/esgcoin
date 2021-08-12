@@ -3,7 +3,7 @@ package brs.http;
 import brs.Account;
 import brs.Block;
 import brs.Blockchain;
-import brs.AmzException;
+import brs.EsgException;
 import brs.http.common.Parameters;
 import brs.services.BlockService;
 import brs.services.ParameterService;
@@ -30,7 +30,7 @@ public final class GetAccountBlocks extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     Account account = parameterService.getAccount(req);
     int timestamp = ParameterParser.getTimestamp(req);

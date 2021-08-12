@@ -2,8 +2,8 @@ package brs.http;
 
 import brs.Attachment;
 import brs.Blockchain;
-import brs.Amz;
-import brs.AmzException;
+import brs.Esg;
+import brs.EsgException;
 import brs.common.QuickMocker;
 import brs.common.QuickMocker.MockParam;
 import brs.fluxcapacitor.FluxCapacitor;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class SetAliasTest extends AbstractTransactionTest {
 
   private SetAlias t;
@@ -50,7 +50,7 @@ public class SetAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final String aliasNameParameter = "aliasNameParameter";
     final String aliasUrl = "aliasUrl";
 
@@ -59,9 +59,9 @@ public class SetAliasTest extends AbstractTransactionTest {
         new MockParam(ALIAS_URI_PARAMETER, aliasUrl)
     );
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.MessagingAliasAssignment attachment = (Attachment.MessagingAliasAssignment) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -72,7 +72,7 @@ public class SetAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_missingAliasName() throws AmzException {
+  public void processRequest_missingAliasName() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(ALIAS_NAME_PARAMETER, null),
         new MockParam(ALIAS_URI_PARAMETER, "aliasUrl")
@@ -82,7 +82,7 @@ public class SetAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectAliasLength_nameOnlySpaces() throws AmzException {
+  public void processRequest_incorrectAliasLength_nameOnlySpaces() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(ALIAS_NAME_PARAMETER, "  "),
         new MockParam(ALIAS_URI_PARAMETER, null)
@@ -93,7 +93,7 @@ public class SetAliasTest extends AbstractTransactionTest {
 
 
   @Test
-  public void processRequest_incorrectAliasLength_incorrectAliasName() throws AmzException {
+  public void processRequest_incorrectAliasLength_incorrectAliasName() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(
         new MockParam(ALIAS_NAME_PARAMETER, "[]"),
         new MockParam(ALIAS_URI_PARAMETER, null)
@@ -103,7 +103,7 @@ public class SetAliasTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectUriLengthWhenOver1000Characters() throws AmzException {
+  public void processRequest_incorrectUriLengthWhenOver1000Characters() throws EsgException {
     final StringBuilder uriOver1000Characters = new StringBuilder();
 
     for (int i = 0; i < 1001; i++) {

@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Order;
 import brs.assetexchange.AssetExchange;
 import brs.services.ParameterService;
@@ -25,7 +25,7 @@ public final class GetAskOrders extends APIServlet.JsonRequestHandler {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
 
     long assetId = parameterService.getAsset(req).getId();
     int firstIndex = ParameterParser.getFirstIndex(req);

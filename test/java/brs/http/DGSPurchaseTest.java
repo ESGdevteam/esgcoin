@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class DGSPurchaseTest extends AbstractTransactionTest {
 
   private DGSPurchase t;
@@ -51,7 +51,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
     final long deliveryDeadlineTimestamp = 100;
@@ -78,9 +78,9 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
 
     when(mockAccountService.getAccount(eq(mockSellerId))).thenReturn(mockSellerAccount);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.DigitalGoodsPurchase attachment = (Attachment.DigitalGoodsPurchase) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
@@ -93,7 +93,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_unknownGoods() throws AmzException {
+  public void processRequest_unknownGoods() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Goods mockGoods = mock(Goods.class);
@@ -105,7 +105,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectPurchaseQuantity() throws AmzException {
+  public void processRequest_incorrectPurchaseQuantity() throws EsgException {
     final int goodsQuantity = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -122,7 +122,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectPurchasePrice() throws AmzException {
+  public void processRequest_incorrectPurchasePrice() throws EsgException {
     final int goodsQuantity = 5;
     final long goodsPrice = 5L;
 
@@ -143,7 +143,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
 
 
   @Test
-  public void processRequest_missingDeliveryDeadlineTimestamp() throws AmzException {
+  public void processRequest_missingDeliveryDeadlineTimestamp() throws EsgException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
 
@@ -163,7 +163,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDeliveryDeadlineTimestamp_unParsable() throws AmzException {
+  public void processRequest_incorrectDeliveryDeadlineTimestamp_unParsable() throws EsgException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
 
@@ -184,7 +184,7 @@ public class DGSPurchaseTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_incorrectDeliveryDeadlineTimestamp_beforeCurrentTime() throws AmzException {
+  public void processRequest_incorrectDeliveryDeadlineTimestamp_beforeCurrentTime() throws EsgException {
     final int goodsQuantity = 5;
     final long goodsPrice = 10L;
     final long deliveryDeadlineTimestamp = 100;

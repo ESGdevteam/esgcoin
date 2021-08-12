@@ -1,6 +1,6 @@
 package brs.http;
 
-import brs.Amz;
+import brs.Esg;
 import brs.Constants;
 import brs.Genesis;
 import brs.TransactionType;
@@ -24,7 +24,7 @@ final class GetConstants extends APIServlet.JsonRequestHandler {
         JsonObject response = new JsonObject();
         response.addProperty("genesisBlockId", Convert.toUnsignedLong(Genesis.GENESIS_BLOCK_ID));
         response.addProperty("genesisAccountId", Convert.toUnsignedLong(Genesis.CREATOR_ID));
-        response.addProperty("maxBlockPayloadLength", (Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)));
+        response.addProperty("maxBlockPayloadLength", (Esg.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH)));
         response.addProperty("maxArbitraryMessageLength", Constants.MAX_ARBITRARY_MESSAGE_LENGTH);
 
         JsonArray transactionTypes = new JsonArray();

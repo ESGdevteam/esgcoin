@@ -6,6 +6,6 @@ API.allowed = *
 
 # Database connection JDBC url
 # Append ;AUTO_SERVER=TRUE to enable automatic mixed mode access.
-DB.Url=jdbc:mariadb://mariadb:3306/amz
+DB.Url=jdbc:mariadb://mariadb:3306/esg
 DB.Username=root
-DB.Password=amz
+DB.Password=esg

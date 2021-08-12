@@ -24,7 +24,7 @@ public interface BlockchainProcessor extends Observable<Block, BlockchainProcess
 
   int getMinRollbackHeight();
 
-  void processPeerBlock(JsonObject request, Peer peer) throws AmzException;
+  void processPeerBlock(JsonObject request, Peer peer) throws EsgException;
 
   void fullReset();
 
@@ -33,7 +33,7 @@ public interface BlockchainProcessor extends Observable<Block, BlockchainProcess
 
   List<Block> popOffTo(int height);
 
-  class BlockNotAcceptedException extends AmzException {
+  class BlockNotAcceptedException extends EsgException {
 
     BlockNotAcceptedException(String message) {
       super(message);

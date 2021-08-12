@@ -9,11 +9,11 @@ RUN mkdir -p html/ui/doc && mvn javadoc:javadoc-no-fork && cp -r target/site/api
 FROM openjdk:8-jre-alpine
 RUN apk update && apk upgrade && apk add --no-cache bash
 WORKDIR /app
-COPY --from=builder /app/dist/tmp/amz.jar .
+COPY --from=builder /app/dist/tmp/esg.jar .
 COPY --from=builder /app/html html
 VOLUME ["/conf"]
 COPY conf/brs.properties.mariadb /conf/brs.properties
 COPY conf/brs-default.properties /conf/brs-default.properties
 COPY conf/logging-default.properties /conf/logging-default.properties
 EXPOSE 8132 8131 8121
-ENTRYPOINT ["java", "-classpath", "/app/amz.jar:/conf", "brs.Amz"]
+ENTRYPOINT ["java", "-classpath", "/app/esg.jar:/conf", "brs.Esg"]

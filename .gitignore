@@ -1,7 +1,7 @@
 /*.iml
 /dist
 /.idea
-amz.jar
+esg.jar
 brs.log
 brs.log.*
 /conf/logging.properties
@@ -13,5 +13,5 @@ target
 .project
 .classpath
 .settings
-amz_db
+esg_db
 *.jar

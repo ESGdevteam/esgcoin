@@ -1,6 +1,6 @@
 package brs.db.sql;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.ValuesTable;
 import brs.db.store.DerivedTableManager;
 import org.jooq.DSLContext;
@@ -31,7 +31,7 @@ public abstract class ValuesSqlTable<T,V> extends DerivedSqlTable implements Val
 
   @SuppressWarnings("unchecked")
   @Override
-  public final List<V> get(AmzKey nxtKey) {
+  public final List<V> get(EsgKey nxtKey) {
     return Db.useDSLContext(ctx -> {
       DbKey dbKey = (DbKey) nxtKey;
       List<V> values;

@@ -1,7 +1,7 @@
 package brs.at;
 
 import brs.Account;
-import brs.Amz;
+import brs.Esg;
 import brs.crypto.Crypto;
 import brs.fluxcapacitor.FluxValues;
 import brs.props.Props;
@@ -22,7 +22,7 @@ public abstract class AtController {
 
     private static final Logger logger = LoggerFactory.getLogger(AtController.class);
 
-    private static final Logger debugLogger = Amz.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG) ? logger : NOPLogger.NOP_LOGGER;
+    private static final Logger debugLogger = Esg.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG) ? logger : NOPLogger.NOP_LOGGER;
 
     private static int runSteps(AtMachineState state) {
         state.getMachineState().running = true;
@@ -31,7 +31,7 @@ public abstract class AtController {
         state.getMachineState().dead = false;
         state.getMachineState().steps = 0;
 
-        AtMachineProcessor processor = new AtMachineProcessor(state, Amz.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG));
+        AtMachineProcessor processor = new AtMachineProcessor(state, Esg.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG));
 
         state.setFreeze(false);
 
@@ -98,7 +98,7 @@ public abstract class AtController {
 
     private static void listCode(AtMachineState state, boolean disassembly, boolean determineJumps) {
 
-        AtMachineProcessor machineProcessor = new AtMachineProcessor(state, Amz.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG));
+        AtMachineProcessor machineProcessor = new AtMachineProcessor(state, Esg.getPropertyService().getBoolean(Props.ENABLE_AT_DEBUG_LOG));
 
         int opc = state.getMachineState().pc;
         int osteps = state.getMachineState().steps;
@@ -253,7 +253,7 @@ public abstract class AtController {
                     at.setpBalance(at.getgBalance());
 
                     long amount = makeTransactions(at);
-                    if (!Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, blockHeight)) {
+                    if (!Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, blockHeight)) {
                         totalAmount = amount;
                     } else {
                         totalAmount += amount;
@@ -329,7 +329,7 @@ public abstract class AtController {
                 }
                 at.setpBalance(at.getgBalance());
 
-                if (!Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, blockHeight)) {
+                if (!Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, blockHeight)) {
                     totalAmount = makeTransactions(at);
                 } else {
                     totalAmount += makeTransactions(at);
@@ -415,7 +415,7 @@ public abstract class AtController {
     //platform based
     private static long makeTransactions(AT at) throws AtException {
         long totalAmount = 0;
-        if (!Amz.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, at.getHeight())) {
+        if (!Esg.getFluxCapacitor().getValue(FluxValues.AT_FIX_BLOCK_4, at.getHeight())) {
             for (AtTransaction tx : at.getTransactions()) {
                 if (AT.findPendingTransaction(tx.getRecipientId())) {
                     throw new AtException("Conflicting transaction found");

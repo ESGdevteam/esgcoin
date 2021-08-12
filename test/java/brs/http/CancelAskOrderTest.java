@@ -27,7 +27,7 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class CancelAskOrderTest extends AbstractTransactionTest {
 
   private CancelAskOrder t;
@@ -48,7 +48,7 @@ public class CancelAskOrderTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long orderId = 5;
     final long sellerId = 6;
 
@@ -65,9 +65,9 @@ public class CancelAskOrderTest extends AbstractTransactionTest {
     when(assetExchangeMock.getAskOrder(eq(orderId))).thenReturn(order);
     when(parameterServiceMock.getSenderAccount(eq(req))).thenReturn(sellerAccount);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
     final Attachment.ColoredCoinsAskOrderCancellation attachment = (brs.Attachment.ColoredCoinsAskOrderCancellation) attachmentCreatedTransaction(() -> t.processRequest(req),
         apiTransactionManagerMock);
@@ -78,7 +78,7 @@ public class CancelAskOrderTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_orderDataNotFound() throws AmzException {
+  public void processRequest_orderDataNotFound() throws EsgException {
     int orderId = 5;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -91,7 +91,7 @@ public class CancelAskOrderTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_orderOtherAccount() throws AmzException {
+  public void processRequest_orderOtherAccount() throws EsgException {
     final long orderId = 5;
     final long accountId = 6;
     final long otherAccountId = 7;

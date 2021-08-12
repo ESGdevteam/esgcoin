@@ -2,7 +2,7 @@ package brs;
 
 import brs.crypto.Crypto;
 import brs.crypto.EncryptedData;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.VersionedBatchEntityTable;
 import brs.util.Convert;
 
@@ -14,7 +14,7 @@ public class Account {
   private static final Logger logger = Logger.getLogger(Account.class.getSimpleName());
 
   public final long id;
-  public final AmzKey nxtKey;
+  public final EsgKey nxtKey;
   private final int creationHeight;
   private byte[] publicKey;
   private int keyHeight;
@@ -62,22 +62,22 @@ public class Account {
   public static class AccountAsset {
     public final long accountId;
     public final long assetId;
-    public final AmzKey amzKey;
+    public final EsgKey esgKey;
     private long quantityQNT;
     private long unconfirmedQuantityQNT;
 
-    protected AccountAsset(long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT, AmzKey amzKey) {
+    protected AccountAsset(long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT, EsgKey esgKey) {
       this.accountId = accountId;
       this.assetId = assetId;
       this.quantityQNT = quantityQNT;
       this.unconfirmedQuantityQNT = unconfirmedQuantityQNT;
-      this.amzKey = amzKey;
+      this.esgKey = esgKey;
     }
 
-    public AccountAsset(AmzKey amzKey, long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT) {
+    public AccountAsset(EsgKey esgKey, long accountId, long assetId, long quantityQNT, long unconfirmedQuantityQNT) {
       this.accountId = accountId;
       this.assetId = assetId;
-      this.amzKey = amzKey;
+      this.esgKey = esgKey;
       this.quantityQNT = quantityQNT;
       this.unconfirmedQuantityQNT = unconfirmedQuantityQNT;
     }
@@ -128,14 +128,14 @@ public class Account {
     private Long prevRecipientId;
     private Long recipientId;
     private int fromHeight;
-    public final AmzKey amzKey;
+    public final EsgKey esgKey;
 
-    public RewardRecipientAssignment(Long accountId, Long prevRecipientId, Long recipientId, int fromHeight, AmzKey amzKey) {
+    public RewardRecipientAssignment(Long accountId, Long prevRecipientId, Long recipientId, int fromHeight, EsgKey esgKey) {
       this.accountId = accountId;
       this.prevRecipientId = prevRecipientId;
       this.recipientId = recipientId;
       this.fromHeight = fromHeight;
-      this.amzKey = amzKey;
+      this.esgKey = esgKey;
     }
 
     public long getAccountId() {
@@ -168,16 +168,16 @@ public class Account {
 
   }
 
-  private static AmzKey.LongKeyFactory<Account> accountAmzKeyFactory() {
-    return Amz.getStores().getAccountStore().getAccountKeyFactory();
+  private static EsgKey.LongKeyFactory<Account> accountEsgKeyFactory() {
+    return Esg.getStores().getAccountStore().getAccountKeyFactory();
   }
 
   private static VersionedBatchEntityTable<Account> accountTable() {
-    return Amz.getStores().getAccountStore().getAccountTable();
+    return Esg.getStores().getAccountStore().getAccountTable();
   }
 
   public static Account getAccount(long id) {
-    return id == 0 ? null : accountTable().get(accountAmzKeyFactory().newKey(id));
+    return id == 0 ? null : accountTable().get(accountEsgKeyFactory().newKey(id));
   }
 
   public static long getId(byte[] publicKey) {
@@ -199,16 +199,16 @@ public class Account {
       logger.log(Level.INFO, "CRITICAL ERROR: Reed-Solomon encoding fails for {0}", id);
     }
     this.id = id;
-    this.nxtKey = accountAmzKeyFactory().newKey(this.id);
-    this.creationHeight = Amz.getBlockchain().getHeight();
+    this.nxtKey = accountEsgKeyFactory().newKey(this.id);
+    this.creationHeight = Esg.getBlockchain().getHeight();
   }
 
-  protected Account(long id, AmzKey amzKey, int creationHeight) {
+  protected Account(long id, EsgKey esgKey, int creationHeight) {
     if (id != Crypto.rsDecode(Crypto.rsEncode(id))) {
       logger.log(Level.INFO, "CRITICAL ERROR: Reed-Solomon encoding fails for {0}", id);
     }
     this.id = id;
-    this.nxtKey = amzKey;
+    this.nxtKey = esgKey;
     this.creationHeight = creationHeight;
   }
 
@@ -278,7 +278,7 @@ public class Account {
   // or
   // this.publicKey is already set to an array equal to key
   public boolean setOrVerify(byte[] key, int height) {
-    return Amz.getStores().getAccountStore().setOrVerify(this, key, height);
+    return Esg.getStores().getAccountStore().setOrVerify(this, key, height);
   }
 
   public void apply(byte[] key, int height) {

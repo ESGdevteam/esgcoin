@@ -7,7 +7,7 @@ import brs.grpc.GrpcApiHandler;
 import brs.grpc.proto.ApiException;
 import brs.grpc.proto.BrsApi;
 import brs.services.TimeService;
-import amz.kit.crypto.AmzCrypto;
+import esg.kit.crypto.EsgCrypto;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -32,7 +32,7 @@ public class CompleteBasicTransactionHandler implements GrpcApiHandler<BrsApi.Ba
                 builder.setDeadline(1440);
             }
             if (builder.getSenderId() == 0) {
-                builder.setSenderId(AmzCrypto.getInstance().getAmzAddressFromPublic(builder.getSenderPublicKey().toByteArray()).getAmzID().getSignedLongId());
+                builder.setSenderId(EsgCrypto.getInstance().getEsgAddressFromPublic(builder.getSenderPublicKey().toByteArray()).getEsgID().getSignedLongId());
             }
             builder.setVersion(transactionProcessor.getTransactionVersion(blockchain.getHeight()));
             builder.setType(attachment.getTransactionType().getType());

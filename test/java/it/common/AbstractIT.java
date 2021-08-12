@@ -1,6 +1,6 @@
 package it.common;
 
-import brs.Amz;
+import brs.Esg;
 import brs.common.TestInfrastructure;
 import brs.peer.Peers;
 import brs.peer.ProcessBlock;
@@ -29,14 +29,14 @@ public abstract class AbstractIT {
   @Before
   public void setUp() {
     mockStatic(Peers.class);
-    Amz.init(testProperties());
+    Esg.init(testProperties());
 
-    processBlock = new ProcessBlock(Amz.getBlockchain(), Amz.getBlockchainProcessor());
+    processBlock = new ProcessBlock(Esg.getBlockchain(), Esg.getBlockchainProcessor());
   }
 
   @After
   public void shutdown() {
-    Amz.shutdown(true);
+    Esg.shutdown(true);
   }
 
   private Properties testProperties() {
@@ -62,6 +62,6 @@ public abstract class AbstractIT {
   }
 
   public void rollback(int height) {
-    Amz.getBlockchainProcessor().popOffTo(0);
+    Esg.getBlockchainProcessor().popOffTo(0);
   }
 }

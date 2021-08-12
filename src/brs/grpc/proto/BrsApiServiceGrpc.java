@@ -1744,7 +1744,7 @@ public final class BrsApiServiceGrpc {
 
     /**
      * <pre>
-     * Get the current Amz time (number of seconds since Amz epoch)
+     * Get the current Esg time (number of seconds since Esg epoch)
      * </pre>
      */
     public void getCurrentTime(com.google.protobuf.Empty request,
@@ -2506,7 +2506,7 @@ public final class BrsApiServiceGrpc {
 
     /**
      * <pre>
-     * Get the current Amz time (number of seconds since Amz epoch)
+     * Get the current Esg time (number of seconds since Esg epoch)
      * </pre>
      */
     public void getCurrentTime(com.google.protobuf.Empty request,
@@ -2937,7 +2937,7 @@ public final class BrsApiServiceGrpc {
 
     /**
      * <pre>
-     * Get the current Amz time (number of seconds since Amz epoch)
+     * Get the current Esg time (number of seconds since Esg epoch)
      * </pre>
      */
     public brs.grpc.proto.BrsApi.Time getCurrentTime(com.google.protobuf.Empty request) {
@@ -3373,7 +3373,7 @@ public final class BrsApiServiceGrpc {
 
     /**
      * <pre>
-     * Get the current Amz time (number of seconds since Amz epoch)
+     * Get the current Esg time (number of seconds since Esg epoch)
      * </pre>
      */
     public com.google.common.util.concurrent.ListenableFuture<brs.grpc.proto.BrsApi.Time> getCurrentTime(

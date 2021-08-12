@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static brs.TransactionType.AmzMining.REWARD_RECIPIENT_ASSIGNMENT;
+import static brs.TransactionType.EsgMining.REWARD_RECIPIENT_ASSIGNMENT;
 import static brs.http.common.Parameters.RECIPIENT_PARAMETER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class SetRewardRecipientTest extends AbstractTransactionTest {
 
   private SetRewardRecipient t;
@@ -49,7 +49,7 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
     final Account mockRecipientAccount = mock(Account.class);
@@ -59,18 +59,18 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
     when(parameterServiceMock.getAccount(eq(req))).thenReturn(mockSenderAccount);
     when(accountServiceMock.getAccount(eq(123L))).thenReturn(mockRecipientAccount);
 
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
     final FluxCapacitor fluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.DIGITAL_GOODS_STORE);
-    when(Amz.getFluxCapacitor()).thenReturn(fluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(fluxCapacitor);
 
-    final Attachment.AmzMiningRewardRecipientAssignment attachment = (Attachment.AmzMiningRewardRecipientAssignment) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
+    final Attachment.EsgMiningRewardRecipientAssignment attachment = (Attachment.EsgMiningRewardRecipientAssignment) attachmentCreatedTransaction(() -> t.processRequest(req), apiTransactionManagerMock);
     assertNotNull(attachment);
 
     assertEquals(REWARD_RECIPIENT_ASSIGNMENT, attachment.getTransactionType());
   }
 
   @Test
-  public void processRequest_recipientAccountDoesNotExist_errorCode8() throws AmzException {
+  public void processRequest_recipientAccountDoesNotExist_errorCode8() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
 
@@ -80,7 +80,7 @@ public class SetRewardRecipientTest extends AbstractTransactionTest {
   }
 
   @Test
-  public void processRequest_recipientAccountDoesNotHavePublicKey_errorCode8() throws AmzException {
+  public void processRequest_recipientAccountDoesNotHavePublicKey_errorCode8() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest(new MockParam(RECIPIENT_PARAMETER, "123"));
     final Account mockSenderAccount = mock(Account.class);
     final Account mockRecipientAccount = mock(Account.class);

@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.AccountService;
 import brs.services.ParameterService;
 import brs.util.Convert;
@@ -26,7 +26,7 @@ public final class GetAccountsWithRewardRecipient extends APIServlet.JsonRequest
   }
 	
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     JsonObject response = new JsonObject();
 		
     Account targetAccount = parameterService.getAccount(req);

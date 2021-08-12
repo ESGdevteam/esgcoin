@@ -1,11 +1,11 @@
 package brs.crypto;
 
-import brs.AmzException;
-import amz.kit.entity.AmzEncryptedMessage;
+import brs.EsgException;
+import esg.kit.entity.EsgEncryptedMessage;
 
 import java.nio.ByteBuffer;
 
-// TODO replace this class with the one from amzkit4j
+// TODO replace this class with the one from esgkit4j
 public class EncryptedData {
   private static final EncryptedData EMPTY_DATA = new EncryptedData(new byte[0], new byte[0]);
 
@@ -13,17 +13,17 @@ public class EncryptedData {
     if (plaintext.length == 0) {
       return EMPTY_DATA;
     }
-    AmzEncryptedMessage message = Crypto.amzCrypto.encryptBytesMessage(plaintext, myPrivateKey, theirPublicKey);
+    EsgEncryptedMessage message = Crypto.esgCrypto.encryptBytesMessage(plaintext, myPrivateKey, theirPublicKey);
     return new EncryptedData(message.getData(), message.getNonce());
   }
 
   public static EncryptedData readEncryptedData(ByteBuffer buffer, int length, int maxLength)
-    throws AmzException.NotValidException {
+    throws EsgException.NotValidException {
     if (length == 0) {
       return EMPTY_DATA;
     }
     if (length > maxLength) {
-      throw new AmzException.NotValidException("Max encrypted data length exceeded: " + length);
+      throw new EsgException.NotValidException("Max encrypted data length exceeded: " + length);
     }
     byte[] noteBytes = new byte[length];
     buffer.get(noteBytes);
@@ -44,7 +44,7 @@ public class EncryptedData {
     if (data.length == 0) {
       return data;
     }
-    return Crypto.amzCrypto.decryptMessage(new AmzEncryptedMessage(data, nonce, false), myPrivateKey, theirPublicKey);
+    return Crypto.esgCrypto.decryptMessage(new EsgEncryptedMessage(data, nonce, false), myPrivateKey, theirPublicKey);
   }
 
   public byte[] getData() {

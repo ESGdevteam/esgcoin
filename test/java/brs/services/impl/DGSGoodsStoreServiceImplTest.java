@@ -5,8 +5,8 @@ import brs.DigitalGoodsStore;
 import brs.DigitalGoodsStore.Goods;
 import brs.DigitalGoodsStore.Purchase;
 import brs.common.AbstractUnitTest;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.VersionedEntityTable;
 import brs.db.store.DigitalGoodsStoreStore;
 import brs.services.AccountService;
@@ -51,7 +51,7 @@ public class DGSGoodsStoreServiceImplTest extends AbstractUnitTest {
 
   @Test
   public void getGoods() {
-    final AmzKey mockKey = mock(AmzKey.class);
+    final EsgKey mockKey = mock(EsgKey.class);
     final Goods mockGoods = mock(Goods.class);
 
     when(mockGoodsDbKeyFactory.newKey(eq(1l))).thenReturn(mockKey);

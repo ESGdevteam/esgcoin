@@ -12,9 +12,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 
-public class AmzLauncher {
+public class EsgLauncher {
     public static void main(String[] args) {
-        Logger logger = LoggerFactory.getLogger(AmzLauncher.class);
+        Logger logger = LoggerFactory.getLogger(EsgLauncher.class);
         boolean canRunGui = true;
 
         addToClasspath(logger, "./conf");
@@ -40,15 +40,15 @@ public class AmzLauncher {
 
         if (canRunGui) {
             try {
-                Class.forName("brs.AmzGUI")
+                Class.forName("brs.EsgGUI")
                         .getDeclaredMethod("main", String[].class)
                         .invoke(null, (Object) args);
             } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                logger.warn("Your build does not seem to include the AmzGUI extension or it cannot be run. Running as headless...");
-                Amz.main(args);
+                logger.warn("Your build does not seem to include the EsgGUI extension or it cannot be run. Running as headless...");
+                Esg.main(args);
             }
         } else {
-            Amz.main(args);
+            Esg.main(args);
         }
     }
 

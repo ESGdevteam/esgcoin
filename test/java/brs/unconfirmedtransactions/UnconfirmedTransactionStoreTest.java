@@ -2,13 +2,13 @@ package brs.unconfirmedtransactions;
 
 import brs.*;
 import brs.Attachment.MessagingAliasSell;
-import brs.AmzException.NotCurrentlyValidException;
-import brs.AmzException.ValidationException;
+import brs.EsgException.NotCurrentlyValidException;
+import brs.EsgException.ValidationException;
 import brs.Transaction.Builder;
 import brs.common.QuickMocker;
 import brs.common.TestConstants;
-import brs.db.AmzKey;
-import brs.db.AmzKey.LongKeyFactory;
+import brs.db.EsgKey;
+import brs.db.EsgKey.LongKeyFactory;
 import brs.db.TransactionDb;
 import brs.db.VersionedBatchEntityTable;
 import brs.db.store.AccountStore;
@@ -39,48 +39,48 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Amz.class)
+@PrepareForTest(Esg.class)
 public class UnconfirmedTransactionStoreTest {
 
   private BlockchainImpl mockBlockChain;
 
   private AccountStore accountStoreMock;
   private VersionedBatchEntityTable<Account> accountTableMock;
-  private LongKeyFactory<Account> accountAmzKeyFactoryMock;
+  private LongKeyFactory<Account> accountEsgKeyFactoryMock;
 
   private TimeService timeService = new TimeServiceImpl();
   private UnconfirmedTransactionStore t;
 
   @Before
   public void setUp() {
-    mockStatic(Amz.class);
+    mockStatic(Esg.class);
 
     final PropertyService mockPropertyService = mock(PropertyService.class);
     when(mockPropertyService.getInt(eq(Props.DB_MAX_ROLLBACK))).thenReturn(1440);
-    when(Amz.getPropertyService()).thenReturn(mockPropertyService);
+    when(Esg.getPropertyService()).thenReturn(mockPropertyService);
     when(mockPropertyService.getInt(eq(Props.P2P_MAX_UNCONFIRMED_TRANSACTIONS))).thenReturn(8192);
     when(mockPropertyService.getInt(eq(Props.P2P_MAX_PERCENTAGE_UNCONFIRMED_TRANSACTIONS_FULL_HASH_REFERENCE))).thenReturn(5);
     when(mockPropertyService.getInt(eq(Props.P2P_MAX_UNCONFIRMED_TRANSACTIONS_RAW_SIZE_BYTES_TO_SEND))).thenReturn(175000);
 
     mockBlockChain = mock(BlockchainImpl.class);
-    when(Amz.getBlockchain()).thenReturn(mockBlockChain);
+    when(Esg.getBlockchain()).thenReturn(mockBlockChain);
 
     accountStoreMock = mock(AccountStore.class);
     accountTableMock = mock(VersionedBatchEntityTable.class);
-    accountAmzKeyFactoryMock = mock(LongKeyFactory.class);
+    accountEsgKeyFactoryMock = mock(LongKeyFactory.class);
     TransactionDb transactionDbMock = mock(TransactionDb.class, Answers.RETURNS_DEFAULTS);
     when(accountStoreMock.getAccountTable()).thenReturn(accountTableMock);
-    when(accountStoreMock.getAccountKeyFactory()).thenReturn(accountAmzKeyFactoryMock);
+    when(accountStoreMock.getAccountKeyFactory()).thenReturn(accountEsgKeyFactoryMock);
 
     final Account mockAccount = mock(Account.class);
-    final AmzKey mockAccountKey = mock(AmzKey.class);
-    when(accountAmzKeyFactoryMock.newKey(eq(123L))).thenReturn(mockAccountKey);
+    final EsgKey mockAccountKey = mock(EsgKey.class);
+    when(accountEsgKeyFactoryMock.newKey(eq(123L))).thenReturn(mockAccountKey);
     when(accountTableMock.get(eq(mockAccountKey))).thenReturn(mockAccount);
     when(mockAccount.getUnconfirmedBalanceNQT()).thenReturn(Constants.MAX_BALANCE_NQT);
 
     FluxCapacitor mockFluxCapacitor = QuickMocker.fluxCapacitorEnabledFunctionalities(FluxValues.PRE_DYMAXION, FluxValues.DIGITAL_GOODS_STORE);
 
-    when(Amz.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
+    when(Esg.getFluxCapacitor()).thenReturn(mockFluxCapacitor);
 
     TransactionType.init(mockBlockChain, mockFluxCapacitor, null, null, null, null, null, null);
 

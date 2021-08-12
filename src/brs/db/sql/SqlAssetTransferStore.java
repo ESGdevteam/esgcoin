@@ -1,7 +1,7 @@
 package brs.db.sql;
 
 import brs.AssetTransfer;
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 import brs.db.store.AssetTransferStore;
 import brs.db.store.DerivedTableManager;
 import brs.schema.tables.records.AssetTransferRecord;
@@ -15,10 +15,10 @@ import static brs.schema.Tables.ASSET_TRANSFER;
 
 public class SqlAssetTransferStore implements AssetTransferStore {
 
-  private static final AmzKey.LongKeyFactory<AssetTransfer> transferDbKeyFactory = new DbKey.LongKeyFactory<AssetTransfer>(ASSET_TRANSFER.ID) {
+  private static final EsgKey.LongKeyFactory<AssetTransfer> transferDbKeyFactory = new DbKey.LongKeyFactory<AssetTransfer>(ASSET_TRANSFER.ID) {
 
       @Override
-      public AmzKey newKey(AssetTransfer assetTransfer) {
+      public EsgKey newKey(AssetTransfer assetTransfer) {
         return assetTransfer.dbKey;
       }
     };
@@ -59,7 +59,7 @@ public class SqlAssetTransferStore implements AssetTransferStore {
   }
 
   @Override
-  public AmzKey.LongKeyFactory<AssetTransfer> getTransferDbKeyFactory() {
+  public EsgKey.LongKeyFactory<AssetTransfer> getTransferDbKeyFactory() {
     return transferDbKeyFactory;
   }
   @Override

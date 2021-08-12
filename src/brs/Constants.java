@@ -7,27 +7,27 @@ import java.util.TimeZone;
 
 public final class Constants {
 
-  public static final int AMZ_DIFF_ADJUST_CHANGE_BLOCK = 2700;
+  public static final int ESG_DIFF_ADJUST_CHANGE_BLOCK = 2700;
 
-  public static final long AMZ_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME = 4;
+  public static final long ESG_REWARD_RECIPIENT_ASSIGNMENT_WAIT_TIME = 4;
 
   // not sure when these were enabled, but they each do an alias lookup every block if greater than the current height
-  public static final long AMZ_ESCROW_START_BLOCK = 0;
-  public static final long AMZ_SUBSCRIPTION_START_BLOCK = 0;
-  public static final int AMZ_SUBSCRIPTION_MIN_FREQ = 3600;
-  public static final int AMZ_SUBSCRIPTION_MAX_FREQ = 31536000;
+  public static final long ESG_ESCROW_START_BLOCK = 0;
+  public static final long ESG_SUBSCRIPTION_START_BLOCK = 0;
+  public static final int ESG_SUBSCRIPTION_MIN_FREQ = 3600;
+  public static final int ESG_SUBSCRIPTION_MAX_FREQ = 31536000;
 
   public static final int BLOCK_HEADER_LENGTH = 232;
 
-  public static final long MAX_BALANCE_AMZ = 2158812800L;
+  public static final long MAX_BALANCE_ESG = 2158812800L;
   
   public static final long FEE_QUANT =    735000;
-  public static final long ONE_AMZ = 100000000;
+  public static final long ONE_ESG = 100000000;
 
-  public static final long MAX_BALANCE_NQT = MAX_BALANCE_AMZ * ONE_AMZ;
+  public static final long MAX_BALANCE_NQT = MAX_BALANCE_ESG * ONE_ESG;
   public static final long INITIAL_BASE_TARGET = 18325193796L;
   public static final long MAX_BASE_TARGET = 18325193796L;
-  public static final int MAX_ROLLBACK = Amz.getPropertyService().getInt(Props.DB_MAX_ROLLBACK);
+  public static final int MAX_ROLLBACK = Esg.getPropertyService().getInt(Props.DB_MAX_ROLLBACK);
 
   public static final int MAX_ALIAS_URI_LENGTH = 1000;
   public static final int MAX_ALIAS_LENGTH = 100;
@@ -42,7 +42,7 @@ public final class Constants {
   public static final int MAX_ACCOUNT_DESCRIPTION_LENGTH = 1000;
 
   public static final long MAX_ASSET_QUANTITY_QNT = 1000000000L * 100000000L;
-  public static final long ASSET_ISSUANCE_FEE_NQT = 1000 * ONE_AMZ;
+  public static final long ASSET_ISSUANCE_FEE_NQT = 1000 * ONE_ESG;
   public static final int MIN_ASSET_NAME_LENGTH = 3;
   public static final int MAX_ASSET_NAME_LENGTH = 10;
   public static final int MAX_ASSET_DESCRIPTION_LENGTH = 1000;
@@ -75,9 +75,9 @@ public final class Constants {
 
   public static final Version MIN_VERSION = Version.parse("v2.4.2");
 
-  static final long UNCONFIRMED_POOL_DEPOSIT_NQT = (Amz.getPropertyService().getBoolean(Props.DEV_TESTNET) ? 50 : 100) * ONE_AMZ;
+  static final long UNCONFIRMED_POOL_DEPOSIT_NQT = (Esg.getPropertyService().getBoolean(Props.DEV_TESTNET) ? 50 : 100) * ONE_ESG;
 
-  // TODO amzkit4j integration
+  // TODO esgkit4j integration
   public static final long EPOCH_BEGINNING;
 
   static {

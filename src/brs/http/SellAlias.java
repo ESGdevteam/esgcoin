@@ -22,7 +22,7 @@ public final class SellAlias extends CreateTransaction {
   }
 
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     Alias alias = parameterService.getAlias(req);
     Account owner = parameterService.getSenderAccount(req);
 

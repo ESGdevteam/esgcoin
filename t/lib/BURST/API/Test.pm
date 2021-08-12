@@ -1,5 +1,5 @@
 # For Emacs: -*- mode:cperl; eval: (folding-mode 1); coding:utf-8; -*-
-package AMZ::API::Test;
+package ESG::API::Test;
 
 # {{{ use block
 

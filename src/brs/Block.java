@@ -56,10 +56,10 @@ public class Block {
   Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT,
       int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature,
       byte[] blockSignature, byte[] previousBlockHash, List<Transaction> transactions,
-      long nonce, byte[] blockATs, int height) throws AmzException.ValidationException {
+      long nonce, byte[] blockATs, int height) throws EsgException.ValidationException {
 
-    if (payloadLength > Amz.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height) || payloadLength < 0) {
-      throw new AmzException.NotValidException(
+    if (payloadLength > Esg.getFluxCapacitor().getValue(FluxValues.MAX_PAYLOAD_LENGTH, height) || payloadLength < 0) {
+      throw new EsgException.NotValidException(
           "attempted to create a block with payloadLength " + payloadLength + " height " + height + "previd " + previousBlockId);
     }
 
@@ -77,14 +77,14 @@ public class Block {
     this.previousBlockHash = previousBlockHash;
     if (transactions != null) {
       this.blockTransactions.set(Collections.unmodifiableList(transactions));
-      if (blockTransactions.get().size() > (Amz.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {
-        throw new AmzException.NotValidException(
+      if (blockTransactions.get().size() > (Esg.getFluxCapacitor().getValue(FluxValues.MAX_NUMBER_TRANSACTIONS, height))) {
+        throw new EsgException.NotValidException(
             "attempted to create a block with " + blockTransactions.get().size() + " transactions");
       }
       long previousId = 0;
       for (Transaction transaction : this.blockTransactions.get()) {
         if (transaction.getId() <= previousId && previousId != 0) {
-          throw new AmzException.NotValidException("Block transactions are not sorted!");
+          throw new EsgException.NotValidException("Block transactions are not sorted!");
         }
         previousId = transaction.getId();
       }
@@ -94,7 +94,7 @@ public class Block {
   }
 
   public Block(int version, int timestamp, long previousBlockId, long totalAmountNQT, long totalFeeNQT, int payloadLength, byte[] payloadHash, byte[] generatorPublicKey, byte[] generationSignature, byte[] blockSignature, byte[] previousBlockHash, BigInteger cumulativeDifficulty, long baseTarget,
-      long nextBlockId, int height, Long id, long nonce, byte[] blockATs) throws AmzException.ValidationException {
+      long nextBlockId, int height, Long id, long nonce, byte[] blockATs) throws EsgException.ValidationException {
 
     this(version, timestamp, previousBlockId, totalAmountNQT, totalFeeNQT, payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature, previousBlockHash, null, nonce, blockATs, height);
 
@@ -106,7 +106,7 @@ public class Block {
   }
 
   private TransactionDb transactionDb() {
-    return Amz.getDbs().getTransactionDb();
+    return Esg.getDbs().getTransactionDb();
   }
 
   public boolean isVerified() {
@@ -270,7 +270,7 @@ public class Block {
     return json;
   }
 
-  static Block parseBlock(JsonObject blockData, int height) throws AmzException.ValidationException {
+  static Block parseBlock(JsonObject blockData, int height) throws EsgException.ValidationException {
     try {
       int version = JSON.getAsInt(blockData.get("version"));
       int timestamp = JSON.getAsInt(blockData.get("timestamp"));
@@ -291,7 +291,7 @@ public class Block {
       for (JsonElement transactionData : transactionsData) {
         Transaction transaction = Transaction.parseTransaction(JSON.getAsJsonObject(transactionData), height);
         if (transaction.getSignature() != null && blockTransactions.put(transaction.getId(), transaction) != null) {
-          throw new AmzException.NotValidException("Block contains duplicate transactions: " + transaction.getStringId());
+          throw new EsgException.NotValidException("Block contains duplicate transactions: " + transaction.getStringId());
         }
       }
     
@@ -299,7 +299,7 @@ public class Block {
       return new Block(version, timestamp, previousBlock, totalAmountNQT, totalFeeNQT,
           payloadLength, payloadHash, generatorPublicKey, generationSignature, blockSignature,
           previousBlockHash, new ArrayList<>(blockTransactions.values()), nonce, blockATs, height);
-    } catch (AmzException.ValidationException | RuntimeException e) {
+    } catch (EsgException.ValidationException | RuntimeException e) {
       if (logger.isDebugEnabled()) {
         logger.debug("Failed to parse block: {}", JSON.toJsonString(blockData));
       }
@@ -316,8 +316,8 @@ public class Block {
     buffer.putLong(previousBlockId);
     buffer.putInt(getTransactions().size());
     if (version < 3) {
-      buffer.putInt((int) (totalAmountNQT / Constants.ONE_AMZ));
-      buffer.putInt((int) (totalFeeNQT / Constants.ONE_AMZ));
+      buffer.putInt((int) (totalAmountNQT / Constants.ONE_ESG));
+      buffer.putInt((int) (totalFeeNQT / Constants.ONE_ESG));
     } else {
       buffer.putLong(totalAmountNQT);
       buffer.putLong(totalFeeNQT);

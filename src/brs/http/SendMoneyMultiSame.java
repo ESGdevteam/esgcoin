@@ -32,7 +32,7 @@ final class SendMoneyMultiSame extends CreateTransaction {
   }
 	
   @Override
-  JsonElement processRequest(HttpServletRequest req) throws AmzException {
+  JsonElement processRequest(HttpServletRequest req) throws EsgException {
     long amountNQT = ParameterParser.getAmountNQT(req);
     Account sender = parameterService.getSenderAccount(req);
     String recipientString = Convert.emptyToNull(req.getParameter(RECIPIENTS_PARAMETER));

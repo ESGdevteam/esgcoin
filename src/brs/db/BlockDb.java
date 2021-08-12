@@ -1,7 +1,7 @@
 package brs.db;
 
 import brs.Block;
-import brs.AmzException;
+import brs.EsgException;
 import brs.schema.tables.records.BlockRecord;
 import org.jooq.DSLContext;
 
@@ -18,7 +18,7 @@ public interface BlockDb extends Table {
 
   Block findLastBlock(int timestamp);
 
-  Block loadBlock(BlockRecord r) throws AmzException.ValidationException;
+  Block loadBlock(BlockRecord r) throws EsgException.ValidationException;
 
   void saveBlock(DSLContext ctx, Block block);
 

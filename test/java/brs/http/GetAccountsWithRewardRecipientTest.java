@@ -2,7 +2,7 @@ package brs.http;
 
 import brs.Account;
 import brs.Account.RewardRecipientAssignment;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.AbstractUnitTest;
 import brs.common.QuickMocker;
 import brs.common.QuickMocker.MockParam;
@@ -40,7 +40,7 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final long targetAccountId = 4L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(
@@ -68,7 +68,7 @@ public class GetAccountsWithRewardRecipientTest extends AbstractUnitTest {
   }
 
   @Test
-  public void processRequest_withRewardRecipientAssignmentKnown() throws AmzException {
+  public void processRequest_withRewardRecipientAssignmentKnown() throws EsgException {
     final long targetAccountId = 4L;
 
     final HttpServletRequest req = QuickMocker.httpServletRequest(

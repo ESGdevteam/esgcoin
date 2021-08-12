@@ -1,6 +1,6 @@
 package brs.db;
 
-import brs.AmzException;
+import brs.EsgException;
 import brs.Transaction;
 import brs.schema.tables.records.TransactionRecord;
 
@@ -15,7 +15,7 @@ public interface TransactionDb extends Table {
 
   boolean hasTransactionByFullHash(String fullHash); // TODO add byte[] method
 
-  Transaction loadTransaction(TransactionRecord transactionRecord) throws AmzException.ValidationException;
+  Transaction loadTransaction(TransactionRecord transactionRecord) throws EsgException.ValidationException;
 
   List<Transaction> findBlockTransactions(long blockId);
 

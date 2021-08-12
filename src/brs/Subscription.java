@@ -1,6 +1,6 @@
 package brs;
 
-import brs.db.AmzKey;
+import brs.db.EsgKey;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -9,7 +9,7 @@ public class Subscription {
   public final Long senderId;
   public final Long recipientId;
   public final Long id;
-  public final AmzKey dbKey;
+  public final EsgKey dbKey;
   public final Long amountNQT;
   public final int frequency;
   private final AtomicInteger timeNext;
@@ -20,7 +20,7 @@ public class Subscription {
                          Long amountNQT,
                          int frequency,
                          int timeNext,
-                         AmzKey dbKey
+                         EsgKey dbKey
                          ) {
     this.senderId = senderId;
     this.recipientId = recipientId;

@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.services.AccountService;
 import brs.util.Convert;
 import com.google.gson.JsonArray;
@@ -24,7 +24,7 @@ public class GetAccountsWithName extends APIServlet.JsonRequestHandler {
     }
 
     @Override
-    JsonElement processRequest(HttpServletRequest request) throws AmzException {
+    JsonElement processRequest(HttpServletRequest request) throws EsgException {
         Collection<Account> accounts = accountService.getAccountsWithName(request.getParameter(NAME_PARAMETER));
         JsonArray accountIds = new JsonArray();
 

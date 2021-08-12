@@ -1,7 +1,7 @@
 package brs.http;
 
 import brs.Account;
-import brs.AmzException;
+import brs.EsgException;
 import brs.common.QuickMocker;
 import brs.common.TestConstants;
 import brs.services.ParameterService;
@@ -33,7 +33,7 @@ public class GetAccountPublicKeyTest {
   }
 
   @Test
-  public void processRequest() throws AmzException {
+  public void processRequest() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockAccount = mock(Account.class);
@@ -48,7 +48,7 @@ public class GetAccountPublicKeyTest {
   }
 
   @Test
-  public void processRequest_withoutPublicKey() throws AmzException {
+  public void processRequest_withoutPublicKey() throws EsgException {
     final HttpServletRequest req = QuickMocker.httpServletRequest();
 
     final Account mockAccount = mock(Account.class);
