@@ -3,7 +3,7 @@
 HDD-mined cryptocurrency using an energy efficient
 and fair Proof-of-Capacity (PoC) consensus algorithm (BURST based).
 
-This wallet version is developed and maintained by the Esg Development Team (ADT). The two supported database servers are:
+This wallet version is developed and maintained by the Esg Development Team (EDT). The two supported database servers are:
 
 - MariaDB (recommended)
 - H2 (embedded, easier install)
@@ -18,8 +18,8 @@ This wallet version is developed and maintained by the Esg Development Team (ADT
 ## Network Specification
 
 - 4 minute block time
-- Total Supply: [2,158,812,800 ESG](https://esgwiki.org/en/block-reward/)
-- Block reward starts at 10,000/block
+- Total Supply: [84,110,007 ESG]
+- Block reward starts at 393/block
 - Block Reward Decreases at 5% each month
 
 ## ARS Features
